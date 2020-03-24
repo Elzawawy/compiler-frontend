@@ -1,26 +1,32 @@
 
 #include "dfa_state.h"
 
-bool DFAState::isAccepting_state() const {
+/****************************** Constructor of the class. ******************************/
+
+DFAState::DFAState(bool accepting_state): accepting_state_(accepting_state) {
+
+}
+
+/****************************** Getters for member variables of instance. ******************************/
+
+int DFAState::get_id() const {
+    return this->id_;
+}
+
+bool DFAState::is_accepting_state() const {
     return false;
 }
 
-const unordered_map<string, DFAState *> &DFAState::getNeighbours() const {
-    return this->neighbours;
+const unordered_map<string, DFAState *> &DFAState::get_neighbours() const {
+    return this->neighbours_;
 }
 
-int DFAState::getId() const {
-    return 0;
+const vector<NFAState *> &DFAState::get_generators() const {
+    return generators_;
 }
 
-void DFAState::add_neighbour(string input, DFAState *neighbour) {
-    this->neighbours.insert(make_pair(input, neighbour));
-}
+/****************************** Public functions of instance. ******************************/
 
-DFAState::DFAState(bool accepting_state): accepting_state(accepting_state) {
-
-}
-
-const vector<NFAState *> &DFAState::getGenerators() const {
-    return generators;
+void DFAState::AddNeighbour(string input, DFAState *neighbour) {
+    this->neighbours_.insert(make_pair(input, neighbour));
 }

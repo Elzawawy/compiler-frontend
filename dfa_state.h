@@ -12,22 +12,27 @@
 using namespace std;
 
 class DFAState {
+private:
+    int id_;
+    bool accepting_state_;
+    unordered_map<string, DFAState *> neighbours_;
+    vector<NFAState *> generators_;
+
 public:
+    // Constructor of the class.
     explicit DFAState(bool accepting_state);
-    void add_neighbour(string input, DFAState* neighbour);
 
     // Getters for member variables of instance.
-    int getId() const;
-    const unordered_map<string, DFAState *> &getNeighbours() const;
-    bool isAccepting_state() const;
+    int get_id() const;
 
-private:
-    int id;
-    bool accepting_state;
-    unordered_map<string, DFAState *> neighbours;
-    vector<NFAState*> generators;
-public:
-    const vector<NFAState *> &getGenerators() const;
+    bool is_accepting_state() const;
+
+    const unordered_map<string, DFAState *> &get_neighbours() const;
+
+    const vector<NFAState *> &get_generators() const;
+
+    // Public functions of instance.
+    void AddNeighbour(string input, DFAState *neighbour);
 
 };
 
