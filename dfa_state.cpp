@@ -14,7 +14,7 @@ int DFAState::get_id() const {
 }
 
 bool DFAState::is_accepting_state() const {
-    return false;
+    return this->accepting_state_;
 }
 
 const unordered_map<string, DFAState *> &DFAState::get_neighbours() const {
@@ -22,7 +22,7 @@ const unordered_map<string, DFAState *> &DFAState::get_neighbours() const {
 }
 
 const vector<NFAState *> &DFAState::get_generators() const {
-    return generators_;
+    return this->generators_;
 }
 
 /****************************** Public functions of instance. ******************************/
