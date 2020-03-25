@@ -11,7 +11,10 @@ using namespace std;
 #include <string>
 #include <unordered_set>
 #include "nfa_state.h"
+
 class NFA {
+    typedef enum state_type
+    {start_state, normal_state,acceptance_state}state_type;
 public:
 
     NFA();
@@ -19,12 +22,14 @@ public:
 
 private:
     NFAState concat(NFAState first_nfa_state,NFAState second_nfa_state);
-    NFAState or_combiner(vector<NFAState> selections, int no_of_selections);
+    NFAState or_combiner(NFAState first_nfa_state,NFAState second_nfa_state);
     NFAState kleene(NFAState nfa_state);
-    string infix_to_postfix(string regex);
-    string pre_process_regex(string regex);
+    NFAState plus(NFAState nfa_state);
+    NFAState construct_one_transition_state(string transition);
+    string infix_to_postfix(string regex,vector<string>input_table);
+    NFAState postfix_to_NFA(string postfix,vector<string>input_table);
     int precedence_decision(string operator_symbol);
-    string char_to_string_converter(char character);
+
     bool is_operator(char character);
     bool is_operand(char character);
 
