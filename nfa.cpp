@@ -9,13 +9,13 @@ NFA::NFA(){
 NFAState NFA::regex_to_nfa(){
 //    for(int i=0;i<regex.size();i++)
 //    {
-
+vector<string>input_table={"a-z","A-Z","B-E"};
     struct regex{
         string name;
         string value;
     }regex;
-    regex.value="A|W*";
-    cout<<this->infix_to_postfix(regex.value);
+    regex.value="a-z|(A-Z)*|(B-E)+";
+   cout<<this->infix_to_postfix(regex.value,input_table);
 
 //    }
 
@@ -35,20 +35,38 @@ NFAState NFA::or_combiner(vector<NFAState> selections, int no_of_selections) {
     return NFAState(false);
 }
 
-string NFA::infix_to_postfix(string regex) {
+string NFA::infix_to_postfix(string regex,vector<string>input_table) {
     // Declaring a Stack from Standard template library in C++.
     stack<string> infix_to_postfix_stack;
     string postfix = ""; // Initialize postfix as empty string.
     string input_identifier="";
+    bool input_acceptor=false;
     infix_to_postfix_stack.push("N");
-
+    string input_detector="";
     for(int i = 0; i < regex.size(); i++)
     {
 
         // If the scanned character is an operand, add it to output string.
-        if(isalpha(regex[i]))
-            postfix+=regex[i];
+        if(isalpha(regex[i])) {
+            while(input_acceptor==false) {
+                input_identifier += regex[i];
+                for (int comparison_iterator = 0; comparison_iterator < input_table.size(); comparison_iterator++) {
+                    if (input_identifier.compare(input_table[comparison_iterator])==0) {
+                        input_acceptor = true;
+                        break;
+                    }
 
+                }
+                i++;
+            }
+            i--;
+
+
+            postfix += input_identifier;
+            input_acceptor=false;
+            input_identifier="";
+
+        }
             // If the scanned character is an ‘(‘, push it to the stack.
         else if(regex[i] == '(')
 
@@ -70,7 +88,6 @@ string NFA::infix_to_postfix(string regex) {
                 popped_character = infix_to_postfix_stack.top();
                 infix_to_postfix_stack.pop();
             }
-
         }
 
             //If an operator is scanned
@@ -82,6 +99,7 @@ string NFA::infix_to_postfix(string regex) {
                 infix_to_postfix_stack.pop();
                 postfix += popped_character;
             }
+
             infix_to_postfix_stack.push(std::string (1, regex[i]));
         }
 
