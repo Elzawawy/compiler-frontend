@@ -10,7 +10,8 @@ const std::vector<regular_expression> &LanguageParser::getExpressions() const {
 const std::vector<std::string> &LanguageParser::getInput_table() const {
     return input_table;
 }
-void LanguageParser::parse(std::string file_path) {
+void LanguageParser::parse(std::string rules_file_path) {
+
 
 
 }

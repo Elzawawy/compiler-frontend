@@ -23,7 +23,7 @@ typedef struct regular_expression {
 class LanguageParser {
 
  public:
-  void parse(std::string file_path);
+  void parse(std::string rules_file_path);
   const std::vector<std::string> &getInput_table() const;
   const std::vector<regular_expression> &getExpressions() const;
 
