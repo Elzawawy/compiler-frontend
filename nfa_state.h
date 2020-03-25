@@ -8,18 +8,22 @@
 using namespace std;
 
 class NFAState {
+    typedef enum state_type
+    {start_state, normal_state,acceptance_state}state_type;
 public:
-    explicit NFAState(bool accepting_state);
+    explicit NFAState();
     void add_neighbour(string input, NFAState* neighbour);
 
     // Getters for member variables of instance.
     int getId() const;
     const unordered_map<string, NFAState *> &getNeighbours() const;
-    bool isAccepting_state() const;
+
 
 private:
+    void set_state_type(state_type type);
+    state_type get_state_type();
+    state_type type;
     int id;
-    bool accepting_state;
     unordered_map<string, NFAState *> neighbours;
 };
 
