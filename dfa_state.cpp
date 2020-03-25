@@ -1,10 +1,12 @@
 
 #include "dfa_state.h"
+#include <utility>
 
 /****************************** Constructor of the class. ******************************/
 
-DFAState::DFAState(bool accepting_state): accepting_state_(accepting_state) {
-
+DFAState::DFAState(bool accepting_state, vector<NFAState>  generators): accepting_state_{accepting_state}, generators_{std::move(generators)} {
+    static int id_counter = 0;
+    this->id_=id_counter++;
 }
 
 /****************************** Getters for member variables of instance. ******************************/
@@ -21,7 +23,7 @@ const unordered_map<string, DFAState *> &DFAState::get_neighbours() const {
     return this->neighbours_;
 }
 
-const vector<NFAState *> &DFAState::get_generators() const {
+const vector<NFAState> &DFAState::get_generators() const {
     return this->generators_;
 }
 

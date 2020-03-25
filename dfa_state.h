@@ -16,11 +16,11 @@ private:
     int id_;
     bool accepting_state_;
     unordered_map<string, DFAState *> neighbours_;
-    vector<NFAState *> generators_;
+    vector<NFAState> generators_;
 
 public:
     // Constructor of the class.
-    explicit DFAState(bool accepting_state);
+    explicit DFAState(bool accepting_state, vector<NFAState>  generators);
 
     // Getters for member variables of instance.
     int get_id() const;
@@ -29,7 +29,7 @@ public:
 
     const unordered_map<string, DFAState *> &get_neighbours() const;
 
-    const vector<NFAState *> &get_generators() const;
+    const vector<NFAState> &get_generators() const;
 
     // Public functions of instance.
     void AddNeighbour(string input, DFAState *neighbour);

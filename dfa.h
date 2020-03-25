@@ -13,11 +13,13 @@ using namespace std;
 
 class DFA {
 private:
-    DFAState EpsilonClosure(vector<NFAState> &nfa_states);
+    unordered_set<DFAState *> unmarked_dfa_states_, marked_dfa_states_;
+
+    DFAState *EpsilonClosureOnNFAStates(vector<NFAState> nfa_states);
 
     vector<NFAState> Move(DFAState &dfa_state, string input);
 
-    vector<NFAState> EpsilonClosure(NFAState &nfa_state);
+    vector<NFAState> EpsilonClosureOnNFAState(NFAState &nfa_state);
 
 public:
     DFAState GenerateDFA(NFAState &nfa_root_state, unordered_set<string> input_table);
