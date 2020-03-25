@@ -13,8 +13,7 @@ using namespace std;
 #include "nfa_state.h"
 
 class NFA {
-    typedef enum state_type
-    {start_state, normal_state,acceptance_state}state_type;
+
 public:
 
     NFA();

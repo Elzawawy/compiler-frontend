@@ -142,7 +142,13 @@ int NFA::precedence_decision(string operator_symbol) {
 
 
 NFAState NFA::construct_one_transition_state(string transition) {
-    return NFAState();
+    NFAState state=NFAState();
+    NFAState neighbour=NFAState();
+    state.add_neighbour(transition,&neighbour);
+    state.set_state_type(state.start_state);
+    neighbour.set_state_type(neighbour.acceptance_state);
+    cout<<neighbour.get_state_type();
+    return state;
 }
 
 NFAState NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
@@ -150,7 +156,7 @@ NFAState NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
     stack <NFAState> nfa_state_stack;
     bool input_acceptor=false;
     string input_identifier="";
-    cout<<postfix;
+    cout<<postfix.size();
 
     // Scan all characters one by one
    int i=0;
@@ -197,9 +203,9 @@ NFAState NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
                    break;
                }
                case '|': {
-                   NFAState first_operand_union_state = nfa_state_stack.top();
-                   nfa_state_stack.pop();
                    NFAState second_operand_union_state = nfa_state_stack.top();
+                   nfa_state_stack.pop();
+                   NFAState first_operand_union_state = nfa_state_stack.top();
                    nfa_state_stack.pop();
                    nfa_state_stack.push(this->or_combiner(first_operand_union_state, second_operand_union_state));
                    break;
@@ -207,7 +213,8 @@ NFAState NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
            }
        }
    i++;
-   }while(!nfa_state_stack.empty());
+
+   }while(nfa_state_stack.size()>=1 && i<postfix.size());
     return NFAState();
     return NFAState();
 }
