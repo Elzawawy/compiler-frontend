@@ -10,27 +10,28 @@
 #include <vector>
 #include <unordered_set>
 
-typedef struct regular_definition {
+typedef struct RegularDefinition {
   std::string name;
   std::string value;
-} regular_definition;
+} RegularDefinition;
 
-typedef struct regular_expression {
+typedef struct RegularExpression {
   std::string name;
   std::string value;
-} regular_expression;
+} RegularExpression;
 
 class LanguageParser {
 
- public:
-  void parse(std::string rules_file_path);
-  const std::vector<std::string> &getInput_table() const;
-  const std::vector<regular_expression> &getExpressions() const;
+public:
+    void parseFile(std::string rules_file_path);
+    const std::vector<std::string>& getInput_table() const;
+    const std::vector<RegularExpression>& getExpressions() const;
 
- private:
-  std::vector<std::string> input_table;
-  std::vector<regular_expression> expressions;
-  std::vector<regular_definition> definitions;
+private:
+    std::vector<std::string> input_table_;
+    std::vector<RegularExpression> expressions_;
+    std::vector<RegularDefinition> definitions_;
+    void parseRule(std::string rule);
 };
 
 #endif //LEXGEN_LANGUAGE_PARSER_H
