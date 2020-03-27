@@ -9,16 +9,8 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
+#include "RegularExpression.h"
 
-typedef struct RegularDefinition {
-  std::string name;
-  std::string value;
-} RegularDefinition;
-
-typedef struct RegularExpression {
-  std::string name;
-  std::string value;
-} RegularExpression;
 
 class LanguageParser {
 
@@ -30,7 +22,7 @@ public:
 private:
     std::vector<std::string> input_table_;
     std::vector<RegularExpression> expressions_;
-    std::vector<RegularDefinition> definitions_;
+    std::vector<std::pair<std::string,std::string>> definitions_;
     void parseRule(std::string rule);
 };
 
