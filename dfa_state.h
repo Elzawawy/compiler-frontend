@@ -1,4 +1,4 @@
-//
+
 // Created by omar_swidan on 23/03/20.
 //
 
@@ -21,13 +21,24 @@ public:
     const unordered_map<string, DFAState *> &getNeighbours() const;
     bool isAccepting_state() const;
 
+
 private:
     int id;
     bool accepting_state;
     unordered_map<string, DFAState *> neighbours;
     vector<NFAState*> generators;
+	string combiningSymbol;
+	DFAState* equivState;
+
+
 public:
+	
     const vector<NFAState *> &getGenerators() const;
+	string getCombiningsymbol();
+	void setCombiningsymbol(string Symbol) ;
+	DFAState* getEquivstate();
+	void setEquivstate(DFAState* state);
+	void updateNeighbours(string symbol, DFAState * state);
 
 };
 
