@@ -3,13 +3,13 @@
 //
 
 #include "regular_expression.h"
-const std::string& regular_expression::getName() const
+const std::string& RegularExpression::getName() const
 {
     return name;
 }
-const std::string& regular_expression::getValue() const
+const std::string& RegularExpression::getValue() const
 {
     return value;
 }
-regular_expression::regular_expression(const std::string& name, const std::string& value)
+RegularExpression::RegularExpression(const std::string& name, const std::string& value)
         :name(name), value(value) { }
