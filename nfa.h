@@ -20,17 +20,16 @@ public:
     NFAState regex_to_nfa();
 
 private:
-    NFAState concat(NFAState first_nfa_state,NFAState second_nfa_state);
-    NFAState or_combiner(NFAState first_nfa_state,NFAState second_nfa_state);
-    NFAState kleene(NFAState nfa_state);
-    NFAState plus(NFAState nfa_state);
-    NFAState construct_one_transition_state(string transition);
+    NFAState* concat(NFAState* first_nfa_state,NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map);
+    NFAState* or_combiner(NFAState* first_nfa_state,NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map);
+    NFAState* kleene(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map);
+    NFAState* plus(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map);
+    NFAState* construct_one_transition_state(string transition, vector < pair<NFAState* , NFAState *>>* start_to_acceptance_map);
     string infix_to_postfix(string regex,vector<string>input_table);
-    NFAState postfix_to_NFA(string postfix,vector<string>input_table);
+    NFAState* postfix_to_NFA(string postfix,vector<string>input_table);
     int precedence_decision(string operator_symbol);
 
-    bool is_operator(char character);
-    bool is_operand(char character);
+
 
 };
 

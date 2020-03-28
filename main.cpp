@@ -1,6 +1,8 @@
 #include <iostream>
-
+#include "nfa.h"
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    NFA x=NFA();
+    x.regex_to_nfa();
+
     return 0;
 }

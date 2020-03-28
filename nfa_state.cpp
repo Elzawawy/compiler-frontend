@@ -10,26 +10,44 @@ NFAState::NFAState() {
 }
 
 void NFAState::add_neighbour(string input, NFAState *neighbour) {
-    this->neighbours.insert(make_pair(input, neighbour));
+    this->neighbours.push_back(pair<string, NFAState*> (input, neighbour));
 }
 
 
 
 int NFAState::getId() const {
-    cout<<id;
     return id;
 }
 
-const unordered_map<string, NFAState *> &NFAState::getNeighbours() const {
-    return neighbours;
+//NFAState *NFAState::get_acceptance_state(NFAState *start_state) {
+//
+//            // Create a map iterator and point to beginning of map
+//            __detail::_Node_const_iterator<pair<const basic_string<char, char_traits<char>, allocator<char>>, NFAState *>, 0, 1> it = start_state->getNeighbours().begin();
+//            // Iterate over the map using c++11 range based for loop
+//            for (std::pair<std::string, NFAState*> element : start_state->getNeighbours()) {
+//                // Accessing KEY from element
+//                std::string word = element.first;
+//                cout<<word;
+//                // Accessing VALUE from element.
+//cout<<"fassa";
+//
+//                cout << (element.second)->getId();
+//            }
+//
+//
+//
+//
+//    return nullptr;
+//}
+
+const vector<pair<string, NFAState *>> &NFAState::getNeighbours() const {
+    return this->neighbours;
 }
 
-
-
-void NFAState::set_state_type(NFAState::state_type type) {
-this->type=type;
+string NFAAcceptanceState::get_token() {
+    return std::__cxx11::string();
 }
 
-NFAState::state_type NFAState::get_state_type() {
-    return this->type;
+void NFAAcceptanceState::set_token() {
+
 }
