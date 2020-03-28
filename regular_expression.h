@@ -7,12 +7,12 @@
 
 #include <string>
 
-class RegularExpression {
+class regular_expression {
 private:
     std::string name;
     std::string value;
 public:
-    RegularExpression(const std::string& name, const std::string& value);
+    regular_expression(const std::string& name, const std::string& value);
     const std::string& getName() const;
     const std::string& getValue() const;
 

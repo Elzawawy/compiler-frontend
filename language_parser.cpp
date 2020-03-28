@@ -16,7 +16,7 @@
 #define REGULAR_EXP_INDICATOR ':'
 typedef unsigned long ul;
 
-const std::vector<RegularExpression>& LanguageParser::getExpressions() const
+const std::vector<regular_expression>& LanguageParser::getExpressions() const
 {
     return expressions_;
 }

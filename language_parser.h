@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 #include <unordered_set>
-#include "RegularExpression.h"
+#include "regular_expression.h"
 
 
 class LanguageParser {
@@ -17,11 +17,11 @@ class LanguageParser {
 public:
     void parseFile(std::string rules_file_path);
     const std::vector<std::string>& getInput_table() const;
-    const std::vector<RegularExpression>& getExpressions() const;
+    const std::vector<regular_expression>& getExpressions() const;
 
 private:
     std::vector<std::string> input_table_;
-    std::vector<RegularExpression> expressions_;
+    std::vector<regular_expression> expressions_;
     std::vector<std::pair<std::string,std::string>> definitions_;
     void parseRule(std::string rule);
 };
