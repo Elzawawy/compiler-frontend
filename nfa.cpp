@@ -137,10 +137,7 @@ start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (start_state, fini
 //    for ( vector < pair<string,NFAState*> >::const_iterator it = x.begin() ; it != x.end(); it++){
 //        cout << it->first;
 //    }
-cout<<"ID";
-cout<<start_state->getId();
-cout<<finish_state->getId();
-    cout<<"ID";
+
     return start_state;
 }
 
@@ -210,11 +207,11 @@ NFAState* NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
            }
        }
    i++;
-       cout<<"IN";
-      cout<<start_to_acceptance_map.size();
-        for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map.begin() ; it != start_to_acceptance_map.end(); it++){
-            cout << (it->first)->getId();
-        }
+//       cout<<"IN";
+//      cout<<start_to_acceptance_map.size();
+//        for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map.begin() ; it != start_to_acceptance_map.end(); it++){
+//            cout << (it->first)->getId();
+//        }
    }while(nfa_state_stack.size()>=1 && i<postfix.size());
     return start_state;
 }
@@ -225,17 +222,18 @@ NFAState* NFA::plus(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>* 
 }
 
 NFAState* NFA::or_combiner(NFAState* first_nfa_state, NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
+    //Initilaizing a start and acceptance node for the union thompson rule
     NFAState *start_state=new NFANormalState();
-//    NFAState *finish_state=new NFANormalState();
-//    start_state->add_neighbour("\\L",first_nfa_state);
-//    start_state->add_neighbour("\\L",second_nfa_state);
-//cout<<start_to_acceptance_map->size();
-////    for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map->begin() ; it != start_to_acceptance_map->end(); it++){
-////        cout << (it->first)->getId();
-////    }
-
-
-
+    NFAState *finish_state=new NFANormalState();
+    //Adding 2 neighbours from the start node with a transition epsilon where the neighbours are the 2 start nodes of the unioned nfa's
+    start_state->add_neighbour("\\L",first_nfa_state);
+    start_state->add_neighbour("\\L",second_nfa_state);
+    //Getting the finish states of the unioned nfa's and adding the finsih state of the resulting nfa as their neigbhours with a transition epsilon
+    for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map->begin() ; it != start_to_acceptance_map->end(); it++){
+        (it->second)->add_neighbour("\\L",finish_state);
+    }
+    //Adding the first and finish states to the map
+    start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (start_state, finish_state));
     return start_state;
 }
 NFAState* NFA::kleene(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
