@@ -1,29 +1,32 @@
 
 #include "dfa_state.h"
+
 #include <utility>
+
+int DFAState::id_counter{0};
 
 /****************************** Constructor of the class. ******************************/
 
-DFAState::DFAState(bool accepting_state, unordered_set<NFAState *> generators) : accepting_state_{accepting_state},
-                                                                                 generators_{std::move(generators)} {
-    static int id_counter = 0;
+DFAState::DFAState() {
     this->id_ = id_counter++;
 }
 
-DFANormalState::DFANormalState(bool acceptingState, const unordered_set<NFAState *> &generators) :
-        DFAState(acceptingState, generators) {}
+DFAState::DFAState(unordered_set<NFAState *> generators) : generators_{std::move(generators)} {
+    this->id_ = id_counter++;
+}
 
-DFAAcceptanceState::DFAAcceptanceState(bool acceptingState, const unordered_set<NFAState *> &generators, string token) :
-        DFAState(acceptingState, generators), token(std::move(token)) {}
+DFANormalState::DFANormalState(const unordered_set<NFAState *> &generators) :
+        DFAState(generators) {}
+
+DFAAcceptanceState::DFAAcceptanceState(const unordered_set<NFAState *> &generators, string token_name) :
+        DFAState(generators), token_name(std::move(token_name)) {}
+
+DFADeadState::DFADeadState() : DFAState() {}
 
 /****************************** Getters for member variables of instance. ******************************/
 
 int DFAState::get_id() const {
     return this->id_;
-}
-
-bool DFAState::is_accepting_state() const {
-    return this->accepting_state_;
 }
 
 const unordered_map<string, DFAState *> &DFAState::get_neighbours() const {
@@ -36,14 +39,14 @@ const unordered_set<NFAState *> &DFAState::get_generators() const {
 
 /****************************** Public functions of instance. ******************************/
 
-void DFAState::AddNeighbour(string input, DFAState *neighbour) {
+void DFAState::AddNeighbour(const string &input, DFAState *neighbour) {
     this->neighbours_.insert(make_pair(input, neighbour));
 }
 
-string DFAAcceptanceState::get_token() {
-    return this->token;
+string DFAAcceptanceState::get_token_name() {
+    return this->token_name;
 }
 
-void DFAAcceptanceState::set_token(string token) {
-    this->token = token;
+void DFAAcceptanceState::set_token_name(string token_name) {
+    this->token_name = std::move(token_name);
 }

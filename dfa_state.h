@@ -14,44 +14,49 @@ using namespace std;
 
 class DFAState {
 private:
+    static int id_counter;
     int id_;
-    bool accepting_state_;
     unordered_map<string, DFAState *> neighbours_;
     unordered_set<NFAState *> generators_;
 
 public:
     // Constructor of the class.
-    explicit DFAState(bool accepting_state, unordered_set<NFAState *> generators);
+    DFAState();
+
+    explicit DFAState(unordered_set<NFAState *> generators);
 
     // Getters for member variables of instance.
     int get_id() const;
-
-    bool is_accepting_state() const;
 
     const unordered_map<string, DFAState *> &get_neighbours() const;
 
     const unordered_set<NFAState *> &get_generators() const;
 
     // Public functions of instance.
-    void AddNeighbour(string input, DFAState *neighbour);
+    void AddNeighbour(const string& input, DFAState *neighbour);
 
 };
 
 class DFANormalState : public DFAState {
 public:
-    DFANormalState(bool acceptingState, const unordered_set<NFAState *> &generators);
+    explicit DFANormalState(const unordered_set<NFAState *> &generators);
 };
 
 class DFAAcceptanceState : public DFAState {
 public:
-    DFAAcceptanceState(bool acceptingState, const unordered_set<NFAState *> &generators, string token);
+    explicit DFAAcceptanceState(const unordered_set<NFAState *> &generators, string token_name);
 
-    string get_token();
+    string get_token_name();
 
-    void set_token(string token);
+    void set_token_name(string token_name);
 
 private:
-    string token;
+    string token_name;
+};
+
+class DFADeadState : public DFAState {
+public:
+    DFADeadState();
 };
 
 

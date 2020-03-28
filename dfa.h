@@ -22,7 +22,7 @@ private:
     unordered_set<NFAState *> EpsilonClosureOnNFAState(NFAState &nfa_state);
 
 public:
-    DFAState GenerateDFA(NFAState &nfa_root_state, unordered_set<string> input_table);
+    DFAState GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>& input_table);
 };
 
 

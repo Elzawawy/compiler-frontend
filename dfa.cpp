@@ -6,9 +6,9 @@
 #include "dfa.h"
 
 // implement subset construction
-DFAState DFA::GenerateDFA(NFAState &nfa_root_state, unordered_set<string> input_table) {
+DFAState DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>& input_table) {
     unordered_set<NFAState *> nfa_start_states = EpsilonClosureOnNFAState(nfa_root_state);
-    DFAState dfa_start_state = DFAState(false, nfa_start_states);
+    DFAState dfa_start_state = DFANormalState(nfa_start_states);
 
     unmarked_dfa_states_.insert(&dfa_start_state);
 
@@ -27,27 +27,30 @@ DFAState DFA::GenerateDFA(NFAState &nfa_root_state, unordered_set<string> input_
         }
     }
 
-    return DFAState(false, unordered_set<NFAState *>());
+    return dfa_start_state;
 }
 
 DFAState DFA::EpsilonClosureOnNFAStates(const vector<NFAState> &nfa_states) {
-    DFAState dfa_state = DFAState(false, unordered_set<NFAState *>());
+    DFAState dfa_state;
 
     if (nfa_states.empty()) {
-        // create an dead state
+        dfa_state = DFADeadState();
     } else {
         unordered_set<NFAState *> dfa_state_generator;
         bool is_accepting_state = false;
-        string token;
+        string token_name;
         for (auto nfa_state: nfa_states) {
-            // check if the nfa state is accepting state to create an accepting dfa state with nfa state token
+            if (auto *acceptance_nfa_state = static_cast<NFAAcceptanceState *>(&nfa_state)) {
+                is_accepting_state = true;
+                token_name = acceptance_nfa_state->get_token();
+            }
             dfa_state_generator.merge(EpsilonClosureOnNFAState(nfa_state));
         }
 
         if (is_accepting_state) {
-            dfa_state = DFAAcceptanceState(true, unordered_set<NFAState *>(), token);
+            dfa_state = DFAAcceptanceState(dfa_state_generator, token_name);
         } else {
-            dfa_state = DFANormalState(false, unordered_set<NFAState *>());
+            dfa_state = DFANormalState(dfa_state_generator);
         }
     }
     return dfa_state;
