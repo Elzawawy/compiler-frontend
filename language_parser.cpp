@@ -34,12 +34,11 @@ void LanguageParser::parseFile(std::string rules_file_path)
 
         file.close();
     }
-
-//    for(auto& expression: expressions_)
-//        std::cout<<expression.getName()<<" "<<expression.getValue()<<std::endl;
+//    for (auto& expression: expressions_)
+//        std::cout << expression.getName() << " " << expression.getValue() << std::endl;
 //
-//    for(auto& expression: definitions_)
-//        std::cout<<expression.first<<" "<<expression.second<<std::endl;
+//    for (auto& expression: definitions_)
+//        std::cout << expression.first << " " << expression.second << std::endl;
 }
 
 void trimBothEnds(std::string& str, const std::string& chars = "\t\n\v\f\r ")
@@ -63,6 +62,11 @@ std::vector<std::string> splitOnDelimiter(const std::string& str, char delimiter
         tokens.push_back(token);
     return tokens;
 }
+bool comparePairsAccordingToFirstLength(const std::pair<std::string, std::string>& a,
+        const std::pair<std::string, std::string>& b)
+{
+    return a.first.length()>b.first.length();
+}
 
 void LanguageParser::parseRule(std::string rule)
 {
@@ -77,16 +81,14 @@ void LanguageParser::parseRule(std::string rule)
     else {
         rule.erase(std::remove(rule.begin(), rule.end(), ' '), rule.end());
         ul found = rule.find_first_of(REGULAR_EXP_SPLITTER);
-        std::reverse(definitions_.begin(), definitions_.end());
+        std::sort(definitions_.begin(), definitions_.end(), comparePairsAccordingToFirstLength);
         for (auto& definition: definitions_) {
             ul definition_pos = rule.find(definition.first, found+1);
             while (definition_pos!=std::string::npos) {
                 rule.replace(definition_pos, definition.first.length(), "("+definition.second+")");
-                std::cout << rule << std::endl;
                 definition_pos = rule.find(definition.first, found+1);
             }
         }
-
         std::string regex_name = rule.substr(0, found);
         std::string regex_value = rule.substr(found+1);
         if (rule[found]==REGULAR_EXP_INDICATOR)
@@ -94,7 +96,4 @@ void LanguageParser::parseRule(std::string rule)
         else
             definitions_.emplace_back(regex_name, regex_value);
     }
-
 }
-
-
