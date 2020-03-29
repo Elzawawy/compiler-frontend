@@ -29,6 +29,7 @@ private:
     std::vector<std::pair<std::string,std::string>> definitions_;
     void keywordAndPunctuationHandler(std::string rule);
     void regularExpressionHandler(std::string rule);
+    void updateExpressionsAndInputTable(std::string regex_name,std::string regex_value);
 };
 
 #endif //LEXGEN_LANGUAGE_PARSER_H

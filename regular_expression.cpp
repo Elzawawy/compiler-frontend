@@ -12,13 +12,18 @@
 #define LEFT_PARENTHESES '('
 #define RIGHT_PARENTHESES ')'
 #define ESCAPE_CHARACTER '\\'
+#define RANGE_EXTRA_OPERATION  '-'
 
+/**
+ * The algberic operators that can be applied on regular expressions while evaluating the regex.
+ * While, concat operator doesn't have a definite indicator, we use '-' for it since this is already reserved for range extra operation as a user extension and not a algberic operator.
+ * The range extra operation indicator is ensured to be replaced early before processing an infix to postfix conversion.
+ * */
 typedef enum RegexOperators {
   UNION_OPERATOR = '|',
-  CONCAT_OPERATOR,
+  CONCAT_OPERATOR = '-',
   KLEENE_CLOSURE_OPERATOR = '*',
   POSITIVE_CLOSURE_OPERATOR = '+',
-  RANGE_OPERATOR = '-'
 
 } RegexOperators;
 typedef unsigned long ul;
@@ -41,7 +46,7 @@ bool RegularExpression::isReservedCharacter(char character)
             || character==KLEENE_CLOSURE_OPERATOR
             || character==POSITIVE_CLOSURE_OPERATOR
             || character==UNION_OPERATOR
-            || character==RANGE_OPERATOR);
+            || character==CONCAT_OPERATOR);
 }
 
 /**
@@ -52,7 +57,7 @@ void RegularExpression::applyRangeOperationIfExists()
 {
     for (ul char_index = 0; char_index<value_.length(); char_index++) {
         // do we got a range operator and it is not escaped using escape character ?
-        if (value_[char_index]==RANGE_OPERATOR and value_[char_index-1]!=ESCAPE_CHARACTER) {
+        if (value_[char_index]==RANGE_EXTRA_OPERATION and value_[char_index-1]!=ESCAPE_CHARACTER) {
             // initialize local variables to clean up code and make more readable.
             std::string replacement_string;
             char begin_range = value_[char_index-1];
@@ -86,7 +91,7 @@ std::vector<std::string> RegularExpression::extractInputSymbols()
             if (value_[char_index]==ESCAPE_CHARACTER)
                 input_symbols.push_back({value_[char_index], value_[++char_index]});
                 // if a range operation, we have to consider characters from the left till the right of the character.
-            else if (value_[char_index]==RANGE_OPERATOR)
+            else if (value_[char_index]==RANGE_EXTRA_OPERATION)
                 for (int range_index = value_[char_index-1]+1; value_[char_index+1]; range_index++)
                     input_symbols.emplace_back(1, range_index);
                 // otherwise, its a operator we don't need to place as symbol.
