@@ -29,6 +29,7 @@ private:
     string resolve_backslash(string transition);
     int precedence_decision(string operator_symbol);
     bool isOperator(char character);
+    void resolve_input_table(unordered_set<string>*input_table);
 
 
 

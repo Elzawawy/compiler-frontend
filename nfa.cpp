@@ -21,6 +21,8 @@ NFAState NFA::regex_to_nfa(){
     postfix=this->infix_to_postfix(regex.value,input_table);
     cout<<postfix;
     this->postfix_to_NFA(postfix,input_table);
+    this->resolve_input_table(&input_table);
+   
 //    }
 
     return NFAState();
@@ -343,4 +345,13 @@ bool NFA::isOperator(char character) {
         return true;
     }
     return false;
+}
+
+//Handling the input table by removing all the backslashes from the input table inorder to sync with the transitioned data between states
+void NFA::resolve_input_table(unordered_set<string>* input_table) {
+    for (const auto& element: *input_table) {
+        input_table->erase(element);
+        input_table->insert(this->resolve_backslash(element));
+    }
+
 }
