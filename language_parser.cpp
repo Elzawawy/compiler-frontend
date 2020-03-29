@@ -115,10 +115,25 @@ void LanguageParser::parseRule(std::string rule)
                 definition_pos = rule.find(definition.first, found+1);
             }
         }
+
+        for (int i = 0; i<rule.length(); i++){
+            if(rule[i] == '-' and rule[i-1] != '\\'){
+                std::string replacement_string;
+                for (char j = rule[i-1]; j<=rule[i+1]; j++) {
+                    if(j == rule[i-1])
+                        replacement_string += {'(',j, '|'};
+                    else if(j == rule[i+1])
+                        replacement_string += {j, ')'};
+                    else
+                        replacement_string += {j, '|'};
+                }
+                rule.replace(static_cast<unsigned long>(i-1),3,replacement_string);
+            }
+        }
+
         std::string regex_name = rule.substr(0, found);
         std::string regex_value = rule.substr(found+1);
         if (rule[found]==REGULAR_EXP_INDICATOR) {
-            expressions_.emplace_back(regex_name, regex_value);
             for (int i = 0; i<regex_value.length(); i++)
                 if (regex_value[i]=='(' || regex_value[i]==')' || regex_value[i]=='*' || regex_value[i]=='+'
                         || regex_value[i]=='|')
@@ -130,6 +145,8 @@ void LanguageParser::parseRule(std::string rule)
                         insertInSetIfNotExists(input_table_, std::string(1, j));
                 else
                     insertInSetIfNotExists(input_table_, std::string(1, regex_value[i]));
+
+            expressions_.emplace_back(regex_name, regex_value);
         }
         else
             definitions_.emplace_back(regex_name, regex_value);
