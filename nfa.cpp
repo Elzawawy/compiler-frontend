@@ -277,8 +277,28 @@ NFAState* NFA::kleene(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>
 }
 
 NFAState* NFA::concat(NFAState* first_nfa_state, NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
-    NFAState *start_state=new NFANormalState();
-    NFAState *finish_state=new NFANormalState();    
-
-    return start_state;
+    NFAState *first_nfa_acceptance_state,*second_nfa_acceptance_state;
+    vector < pair<string , NFAState *>> temp_vector;
+    int iterator=0,second_nfa_state_index;
+    //Find the acceptance state of the first concatinated nfa and the start state of the second concatinated nfa
+    for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map->begin() ; it != start_to_acceptance_map->end(); it++){
+        //Save the address of the acceptance state of the first concatinated inorder to add the neigbhours of the start state of the second concatinated nfa
+        if(first_nfa_state==it->first){
+               first_nfa_acceptance_state=it->second;
+               second_nfa_state_index=iterator;
+       }
+        //Get the neighbours of the start state of the second concatinated nfa inorder to add the neighbours to the acceptance state of the first concatinted nfa
+        else if((it->first)==second_nfa_state){
+               temp_vector=(it->first)->getNeighbours();
+               second_nfa_acceptance_state=it->second;
+        }
+        iterator++;
+    }
+    //Add the neighbours to the acceptance state of the first nfa
+    for ( vector < pair<string,NFAState*> >::const_iterator it = temp_vector.begin() ; it != temp_vector.end(); it++){
+          first_nfa_acceptance_state->add_neighbour(it->first,it->second);
+    }
+    //
+    start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (first_nfa_state, second_nfa_acceptance_state));
+    return first_nfa_state;
 }
