@@ -16,7 +16,7 @@ vector<string>input_table={"a-z","A-Z","B-E","b","o","o","l"};
         string name;
         string value;
     }regex;
-    regex.value="a-z|A-Z";
+    regex.value="a-z|A-Z*";
     string postfix;
      postfix=this->infix_to_postfix(regex.value,input_table);
 cout<<postfix;
@@ -133,7 +133,6 @@ start_state->add_neighbour(transition,finish_state);
 start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (start_state, finish_state));
 //    vector < pair<string , NFAState *>> x;
 //    x=start_state.getNeighbours();
-//start_to_acceptance_map->insert(&start_state,&finish_state);
 //    for ( vector < pair<string,NFAState*> >::const_iterator it = x.begin() ; it != x.end(); it++){
 //        cout << it->first;
 //    }
@@ -213,6 +212,24 @@ NFAState* NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
 //            cout << (it->first)->getId();
 //        }
    }while(nfa_state_stack.size()>=1 && i<postfix.size());
+    for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map.begin() ; it != start_to_acceptance_map.end(); it++){
+          cout<<(it->first)->getId()<<endl;
+            vector < pair<string , NFAState *>> x;
+    x=(it->first)->getNeighbours();
+    for ( vector < pair<string,NFAState*> >::const_iterator it = x.begin() ; it != x.end(); it++){
+        cout<<"transition:";
+        cout << it->first<<endl;
+        cout<<it->second->getId()<<endl;
+        vector < pair<string , NFAState *>> u;
+        u=(it->second)->getNeighbours();
+        for ( vector < pair<string,NFAState*> >::const_iterator it1 = u.begin() ; it1 != u.end(); it1++){
+            cout<<"finish:";
+            cout << it1->first<<endl;
+            cout<<it1->second->getId()<<endl;
+
+        }
+    }
+    }
     return start_state;
 }
 
@@ -230,7 +247,9 @@ NFAState* NFA::or_combiner(NFAState* first_nfa_state, NFAState* second_nfa_state
     start_state->add_neighbour("\\L",second_nfa_state);
     //Getting the finish states of the unioned nfa's and adding the finsih state of the resulting nfa as their neigbhours with a transition epsilon
     for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map->begin() ; it != start_to_acceptance_map->end(); it++){
-        (it->second)->add_neighbour("\\L",finish_state);
+        if(it->first==first_nfa_state || it->first==second_nfa_state) {
+            (it->second)->add_neighbour("\\L", finish_state);
+        }
     }
     //Adding the first and finish states to the map
     start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (start_state, finish_state));
@@ -238,10 +257,28 @@ NFAState* NFA::or_combiner(NFAState* first_nfa_state, NFAState* second_nfa_state
 }
 NFAState* NFA::kleene(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
     NFAState *start_state=new NFANormalState();
+    NFAState *finish_state=new NFANormalState();
+    //Adding an epsilon transition from the new start state to 1-) the start state of the old nfa 2-)the finish state of the new nfa
+    start_state->add_neighbour("\\L",nfa_state);
+    start_state->add_neighbour("\\L",finish_state);
+    //getting the start and finish states of the old nfa and making 2 transitions
+    //1-)epsilon from the finsih state of the old to the start state of the old
+    //2-)epsilon from the finish state of the old to the finish state of the the new
+    for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map->begin() ; it != start_to_acceptance_map->end(); it++){
+        if(it->first==nfa_state) {
+            (it->second)->add_neighbour("\\L", finish_state);
+            (it->second)->add_neighbour("\\L", it->first);
+            break;
+        }
+    }
+    //Adding the first and finish states of the new nfa to the map
+    start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (start_state, finish_state));
     return start_state;
 }
 
 NFAState* NFA::concat(NFAState* first_nfa_state, NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
     NFAState *start_state=new NFANormalState();
+    NFAState *finish_state=new NFANormalState();    
+
     return start_state;
 }
