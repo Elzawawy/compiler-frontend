@@ -16,7 +16,7 @@ vector<string>input_table={"a-z","A-Z","B-E","b","o","o","l"};
         string name;
         string value;
     }regex;
-    regex.value="a-z|A-Z*";
+    regex.value="a-z|A-Z+";
     string postfix;
      postfix=this->infix_to_postfix(regex.value,input_table);
 cout<<postfix;
@@ -178,17 +178,17 @@ NFAState* NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
 
            // If the scanned character is an operator, pop two
            // elements from stack apply the operator
-       else if (postfix[i] == '+' || postfix[i] == '*' || postfix[i] == '|') {
+       else if (postfix[i] == '+' || postfix[i] == '*' || postfix[i] == '|' || postfix[i]=='-') {
 
            switch (postfix[i]) {
                case '+': {
-                   NFAState* plus_nfa_state = this->plus(nfa_state_stack.top(),&start_to_acceptance_map);
+                   NFAState* plus_nfa_state = this->kleene_and_plus(nfa_state_stack.top(),&start_to_acceptance_map,false);
                    nfa_state_stack.pop();
                    nfa_state_stack.push(plus_nfa_state);
                    break;
                }
                case '*': {
-                   NFAState* kleene_nfa_state = this->kleene(nfa_state_stack.top(),&start_to_acceptance_map);
+                   NFAState* kleene_nfa_state = this->kleene_and_plus(nfa_state_stack.top(),&start_to_acceptance_map,true);
                    nfa_state_stack.pop();
                    nfa_state_stack.push(kleene_nfa_state);
                    break;
@@ -203,6 +203,17 @@ NFAState* NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
                    nfa_state_stack.push(this->or_combiner(first_operand_union_state, second_operand_union_state,&start_to_acceptance_map));
                    break;
                }
+               case '-': {
+                   NFAState* second_operand_union_state = nfa_state_stack.top();
+
+                   nfa_state_stack.pop();
+                   NFAState* first_operand_union_state = nfa_state_stack.top();
+
+                   nfa_state_stack.pop();
+                   nfa_state_stack.push(this->concat(first_operand_union_state, second_operand_union_state,&start_to_acceptance_map));
+                   break;
+               }
+
            }
        }
    i++;
@@ -229,14 +240,12 @@ NFAState* NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
 
         }
     }
+    cout<<"Done"<<endl;
     }
     return start_state;
 }
 
-NFAState* NFA::plus(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
-    NFAState *start_state=new NFANormalState();
-    return start_state;
-}
+
 
 NFAState* NFA::or_combiner(NFAState* first_nfa_state, NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
     //Initilaizing a start and acceptance node for the union thompson rule
@@ -255,12 +264,16 @@ NFAState* NFA::or_combiner(NFAState* first_nfa_state, NFAState* second_nfa_state
     start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (start_state, finish_state));
     return start_state;
 }
-NFAState* NFA::kleene(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
+NFAState* NFA::kleene_and_plus(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map,bool kleene) {
     NFAState *start_state=new NFANormalState();
     NFAState *finish_state=new NFANormalState();
     //Adding an epsilon transition from the new start state to 1-) the start state of the old nfa 2-)the finish state of the new nfa
     start_state->add_neighbour("\\L",nfa_state);
-    start_state->add_neighbour("\\L",finish_state);
+    //In case it is a kleene operator add an epsilon transition from the start state to the accept state
+    //In case it is a plus operator do nothing
+    if(kleene==true) {
+        start_state->add_neighbour("\\L", finish_state);
+    }
     //getting the start and finish states of the old nfa and making 2 transitions
     //1-)epsilon from the finsih state of the old to the start state of the old
     //2-)epsilon from the finish state of the old to the finish state of the the new

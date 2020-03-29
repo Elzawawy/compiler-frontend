@@ -30,7 +30,7 @@ class NFANormalState:public NFAState{
 class NFAAcceptanceState:public NFAState{
 public:
     string get_token();
-    void set_token();
+    void set_token(string token);
 private:
     string token;
 };
