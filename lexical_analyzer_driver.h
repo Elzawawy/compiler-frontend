@@ -21,14 +21,18 @@ class LexicalAnalyzerDriver {
   DFAState *root_state_;
   ifstream input_file_;
   const int buffer_size_ = 4096;
-  vector<char> buffer_1_, buffer_2_;
+  const int number_of_buffers_ = 2;
+  vector<vector<char>> buffers_;
   vector<char>::iterator forward_, lexeme_begin_;
   stack<pair<char, DFAState*>> states_;
-  streamsize current_buffer_size_;
+  int active_buffer_;
+  void FillNextBuffer(int buffer_index_);
+
  public:
   LexicalAnalyzerDriver(DFAState *root_state_, const string &input_file_name_);
   Token *GetNextToken();
   bool IsInputOver();
+  Token* GetTokenFromStatesStack();
   virtual ~LexicalAnalyzerDriver();
 };
 
