@@ -11,12 +11,12 @@ NFA::NFA(){
 NFAState NFA::regex_to_nfa(){
 //    for(int i=0;i<regex.size();i++)
 //    {
-vector<string>input_table={"a-z","A-Z","B-E","b","o","o","l"};
+vector<string>input_table={"a-z","A-Z","B-E","b","o","o","l","\\="};
     struct regex{
         string name;
         string value;
     }regex;
-    regex.value="a-z|A-Z+";
+    regex.value="\\=|A-Z+";
     string postfix;
      postfix=this->infix_to_postfix(regex.value,input_table);
 cout<<postfix;
@@ -39,17 +39,16 @@ string NFA::infix_to_postfix(string regex,vector<string>input_table) {
     string input_detector="";
     for(int i = 0; i < regex.size(); i++)
     {
-
         // If the scanned character is an operand, add it to output string.
-        if(isalpha(regex[i])||isalnum(regex[i])) {
-            while(input_acceptor==false) {
+        if(isalpha(regex[i])||isalnum(regex[i]) || regex[i]=='\\') {
+            while(input_acceptor==false)
+            {
                 input_identifier += regex[i];
                 for (int comparison_iterator = 0; comparison_iterator < input_table.size(); comparison_iterator++) {
                     if (input_identifier.compare(input_table[comparison_iterator])==0) {
                         input_acceptor = true;
                         break;
                     }
-
                 }
                 i++;
             }
@@ -129,6 +128,7 @@ int NFA::precedence_decision(string operator_symbol) {
 NFAState* NFA::construct_one_transition_state(string transition, vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
 NFAState *start_state= new NFANormalState();
 NFAState *finish_state=new NFANormalState();
+transition=resolve_backslash(transition);
 start_state->add_neighbour(transition,finish_state);
 start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (start_state, finish_state));
 //    vector < pair<string , NFAState *>> x;
@@ -153,7 +153,7 @@ NFAState* NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
     do {
        // If the scanned character is an operand (number here),
        // push it to the stack.
-       if (isalpha(postfix[i]) || isalnum(postfix[i])) {
+       if (isalpha(postfix[i]) || isalnum(postfix[i])||postfix[i]=='\\') {
            while (input_acceptor == false) {
                input_identifier += postfix[i];
                for (int comparison_iterator = 0; comparison_iterator < input_table.size(); comparison_iterator++) {
@@ -314,4 +314,15 @@ NFAState* NFA::concat(NFAState* first_nfa_state, NFAState* second_nfa_state,vect
     //
     start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (first_nfa_state, second_nfa_acceptance_state));
     return first_nfa_state;
+}
+
+//Check if a transition has a backslash
+//if yes then trancate the backslash from the string
+//else return the string without change
+string NFA::resolve_backslash(string transition) {
+    if(transition.find('\\')!= string::npos){
+        transition.erase(0,1);
+    }
+    return transition;
+
 }

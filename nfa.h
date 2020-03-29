@@ -26,6 +26,7 @@ private:
     NFAState* construct_one_transition_state(string transition, vector < pair<NFAState* , NFAState *>>* start_to_acceptance_map);
     string infix_to_postfix(string regex,vector<string>input_table);
     NFAState* postfix_to_NFA(string postfix,vector<string>input_table);
+    string resolve_backslash(string transition);
     int precedence_decision(string operator_symbol);
 
 
