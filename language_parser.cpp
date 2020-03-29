@@ -34,8 +34,8 @@ void LanguageParser::parseFile(std::string rules_file_path)
 
         file.close();
     }
-//    for (auto& expression: expressions_)
-//        std::cout << expression.getName() << " " << expression.getValue() << std::endl;
+    for (auto& expression: expressions_)
+        std::cout << expression.getName() << " " << expression.getValue() << std::endl;
 
 //    for (auto& expression: definitions_)
 //        std::cout << expression.first << " " << expression.second << std::endl;
@@ -116,21 +116,6 @@ void LanguageParser::parseRule(std::string rule)
             }
         }
 
-        for (int i = 0; i<rule.length(); i++){
-            if(rule[i] == '-' and rule[i-1] != '\\'){
-                std::string replacement_string;
-                for (char j = rule[i-1]; j<=rule[i+1]; j++) {
-                    if(j == rule[i-1])
-                        replacement_string += {'(',j, '|'};
-                    else if(j == rule[i+1])
-                        replacement_string += {j, ')'};
-                    else
-                        replacement_string += {j, '|'};
-                }
-                rule.replace(static_cast<unsigned long>(i-1),3,replacement_string);
-            }
-        }
-
         std::string regex_name = rule.substr(0, found);
         std::string regex_value = rule.substr(found+1);
         if (rule[found]==REGULAR_EXP_INDICATOR) {
@@ -146,7 +131,9 @@ void LanguageParser::parseRule(std::string rule)
                 else
                     insertInSetIfNotExists(input_table_, std::string(1, regex_value[i]));
 
-            expressions_.emplace_back(regex_name, regex_value);
+            RegularExpression regex = RegularExpression(regex_name, regex_value);
+            regex.applyRangeOperationIfExists();
+            expressions_.push_back(regex);
         }
         else
             definitions_.emplace_back(regex_name, regex_value);
