@@ -21,7 +21,8 @@ private:
     std::unordered_set<std::string> input_table_;
     std::vector<RegularExpression> expressions_;
     std::vector<std::pair<std::string,std::string>> definitions_;
-    void parseRule(std::string rule);
+    void keywordAndPunctuationHandler(std::string rule);
+    void regularExpressionHandler(std::string rule);
 };
 
 #endif //LEXGEN_LANGUAGE_PARSER_H
