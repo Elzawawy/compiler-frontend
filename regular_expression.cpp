@@ -82,23 +82,23 @@ void RegularExpression::applyRangeOperationIfExists()
     Extracts the existing input symbols from the RE value contained in this instance being called on.
     @return vector<string> a list of all input symbols found in an RE.
 */
-std::vector<std::string> RegularExpression::extractInputSymbols()
+std::unordered_set<std::string> RegularExpression::extractInputSymbols()
 {
-    std::vector<std::string> input_symbols;
+    std::unordered_set<std::string> input_symbols;
     for (int char_index = 0; char_index<value_.length(); char_index++)
         if (isReservedCharacter(value_[char_index]))
             // if an escape character, we need to take it and the next character as a whole symbol.
             if (value_[char_index]==ESCAPE_CHARACTER)
-                input_symbols.push_back({value_[char_index], value_[++char_index]});
+                input_symbols.insert({value_[char_index], value_[++char_index]});
                 // if a range operation, we have to consider characters from the left till the right of the character.
             else if (value_[char_index]==RANGE_EXTRA_OPERATION)
-                for (int range_index = value_[char_index-1]+1; value_[char_index+1]; range_index++)
-                    input_symbols.emplace_back(1, range_index);
+                for (int range_index = value_[char_index-1]+1; range_index<value_[char_index+1]; range_index++)
+                    input_symbols.emplace(1, range_index);
                 // otherwise, its a operator we don't need to place as symbol.
             else
                 continue;
             // otherwise, its a normal non reserved character that we need to add as symbol.
         else
-            input_symbols.emplace_back(1, value_[char_index]);
+            input_symbols.emplace(1, value_[char_index]);
     return input_symbols;
 }

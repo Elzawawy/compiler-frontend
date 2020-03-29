@@ -64,7 +64,7 @@ void LanguageParser::keywordAndPunctuationHandler(std::string rule)
     util::trimBothEnds(rule);
     // for each keyword/punctuation in the array defined, lets make a regex and populate the input table with new symbols!
     for (auto& regex_value: util::splitOnDelimiter(rule, ' '))
-        updateExpressionsAndInputTable(regex_name,regex_value);
+        updateExpressionsAndInputTable(regex_name, regex_value);
 }
 
 /**
@@ -91,7 +91,7 @@ void LanguageParser::regularExpressionHandler(std::string rule)
     std::string regex_value = rule.substr(assign_pos+1);
     // lets make a regex and populate the input table with new symbols!
     if (rule[assign_pos]==REGULAR_EXP_INDICATOR)
-        updateExpressionsAndInputTable(regex_name,regex_value);
+        updateExpressionsAndInputTable(regex_name, regex_value);
     else {
         definitions_.emplace_back(regex_name, regex_value);
         // sort the definitions according to the length of the name to avoid longer subsets of same names problem (e.g. digits overlap digit).
@@ -102,6 +102,6 @@ void LanguageParser::updateExpressionsAndInputTable(std::string regex_name, std:
 {
     RegularExpression regex = RegularExpression(regex_name, regex_value);
     expressions_.push_back(regex);
-    std::vector<std::string> symbols = regex.extractInputSymbols();
+    std::unordered_set<std::string> symbols = regex.extractInputSymbols();
     std::copy(symbols.begin(), symbols.end(), std::inserter(input_table_, input_table_.end()));
 }

@@ -12,7 +12,7 @@
 #define LEXGEN_REGULAR_EXPRESSION_H
 
 #include <string>
-#include <vector>
+#include <unordered_set>
 
 class RegularExpression {
 private:
@@ -24,7 +24,7 @@ public:
     const std::string& getName() const;
     const std::string& getValue() const;
     void applyRangeOperationIfExists();
-    std::vector<std::string> extractInputSymbols();
+    std::unordered_set<std::string> extractInputSymbols();
 };
 
 #endif //LEXGEN_REGULAR_EXPRESSION_H
