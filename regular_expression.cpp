@@ -1,6 +1,12 @@
-//
-// Created by zawawy on 3/27/20.
-//
+/**
+    Compiler Phase 1: LEXGEN
+    regular_expression.cpp
+    Purpose: Resembles the RE Entity in our codebase and is responsible for all operations performed on REs.
+
+    @author Amr Elzawawy
+    @version 1.0
+    @date 27/3/2020
+*/
 
 #include "regular_expression.h"
 #define LEFT_PARENTHESES '('
@@ -38,6 +44,10 @@ bool RegularExpression::isReservedCharacter(char character)
             || character==RANGE_OPERATOR);
 }
 
+/**
+    Expands the range operator to the full fledged meaning of it in the RE.
+    Operates on the RE value of the instance being called on.
+*/
 void RegularExpression::applyRangeOperationIfExists()
 {
     for (ul char_index = 0; char_index<value_.length(); char_index++) {
@@ -63,6 +73,10 @@ void RegularExpression::applyRangeOperationIfExists()
     }
 }
 
+/**
+    Extracts the existing input symbols from the RE value contained in this instance being called on.
+    @return vector<string> a list of all input symbols found in an RE.
+*/
 std::vector<std::string> RegularExpression::extractInputSymbols()
 {
     std::vector<std::string> input_symbols;

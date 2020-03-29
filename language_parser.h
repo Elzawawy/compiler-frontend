@@ -1,6 +1,12 @@
-//
-// Created by omar_swidan on 23/03/20.
-//
+/**
+    Compiler Phase 1: LEXGEN
+    language_parser.h
+    Purpose: Takes in a file of lexical rules (language definition) and parses into REs and input symbols.
+
+    @author Amr Elzawawy
+    @version 1.0
+    @date 25/3/2020
+*/
 
 #ifndef LEXGEN_LANGUAGE_PARSER_H
 #define LEXGEN_LANGUAGE_PARSER_H

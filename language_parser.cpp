@@ -1,6 +1,12 @@
-//
-// Created by omar_swidan on 23/03/20.
-//
+/**
+    Compiler Phase 1: LEXGEN
+    language_parser.cpp
+    Purpose: Takes in a file of lexical rules (language definition) and parses into REs and input symbols.
+
+    @author Amr Elzawawy
+    @version 1.0
+    @date 25/3/2020
+*/
 
 #include <fstream>
 #include <iostream>
@@ -26,6 +32,11 @@ const std::unordered_set<std::string>& LanguageParser::getInput_table() const
 {
     return input_table_;
 }
+
+/**
+    Reads lexical rules from file path content, and calls appropriate handlers for each rule on the fly.
+    @param rules_file_path The path for your lexical rules file.
+*/
 void LanguageParser::parseFile(std::string rules_file_path)
 {
     std::ifstream file(rules_file_path);
@@ -39,6 +50,11 @@ void LanguageParser::parseFile(std::string rules_file_path)
         file.close();
     }
 }
+
+/**
+    Knows its way through the keywords and punctuations rules that exist in file and parses them into RE and Input Syms.
+    @param rule The rule read from file as string.
+*/
 void LanguageParser::keywordAndPunctuationHandler(std::string rule)
 {
     // set the name of the regex according to one of the two types in this handler.
@@ -54,6 +70,11 @@ void LanguageParser::keywordAndPunctuationHandler(std::string rule)
         std::copy(symbols.begin(), symbols.end(), std::inserter(input_table_, input_table_.end()));
     }
 }
+
+/**
+    Unlike his brother keyword handler, that RE handler knows his way through other types of rules and again parses them into REs and Input Syms.
+    @param rule The rule read from file as string.
+*/
 void LanguageParser::regularExpressionHandler(std::string rule)
 {
     // spaces are neglected and are optional by our definition of rules.
