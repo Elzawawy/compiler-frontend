@@ -4,8 +4,6 @@
 
 #ifndef LEXGEN_LANGUAGE_PARSER_H
 #define LEXGEN_LANGUAGE_PARSER_H
-
-#include <stdio.h>
 #include <string>
 #include <vector>
 #include <unordered_set>

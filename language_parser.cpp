@@ -7,6 +7,7 @@
 #include <sstream>
 #include <algorithm>
 #include "language_parser.h"
+#include "utils.h"
 
 #define KEYWORD_INDICATOR '{'
 #define KEYWORD "Keyword"
@@ -14,6 +15,7 @@
 #define PUNCTUATION "Punctuation"
 #define REGULAR_EXP_SPLITTER ":="
 #define REGULAR_EXP_INDICATOR ':'
+
 typedef unsigned long ul;
 
 const std::vector<RegularExpression>& LanguageParser::getExpressions() const
@@ -53,61 +55,26 @@ void LanguageParser::parseFile(std::string rules_file_path)
 
 }
 
-void trimBothEnds(std::string& str, const std::string& chars = "\t\n\v\f\r ")
-{
-    str.erase(str.find_last_not_of(chars)+1);
-    str.erase(0, str.find_first_not_of(chars));
-}
-
-void stripFirstAndLastChars(std::string& str)
-{
-    str.erase(0, 1);
-    str.erase(str.length()-1, str.length()-1);
-}
-
-std::vector<std::string> splitOnDelimiter(const std::string& str, char delimiter)
-{
-    std::vector<std::string> tokens;
-    std::string token;
-    std::istringstream tokenStream(str);
-    while (std::getline(tokenStream, token, delimiter))
-        tokens.push_back(token);
-    return tokens;
-}
-template<class T>
-bool comparePairsAccordingToFirstLength(const std::pair<T, T>& a,
-        const std::pair<T, T>& b)
-{
-    return a.first.length()>b.first.length();
-}
-
-template<class T>
-void insertInSetIfNotExists(std::unordered_set<T>& set, T element)
-{
-    if (set.count(element)==0)
-        set.insert(element);
-}
-
 void LanguageParser::parseRule(std::string rule)
 {
     if (rule[0]==KEYWORD_INDICATOR or rule[0]==PUNCTUATION_INDICATOR) {
         std::string regex_name = (rule[0]==KEYWORD_INDICATOR) ? KEYWORD : PUNCTUATION;
-        stripFirstAndLastChars(rule);
-        trimBothEnds(rule);
-        std::vector<std::string> tokens = splitOnDelimiter(rule, ' ');
+        util::stripFirstAndLastChars(rule);
+        util::trimBothEnds(rule);
+        std::vector<std::string> tokens = util::splitOnDelimiter(rule, ' ');
         for (auto& regex_value: tokens) {
             expressions_.emplace_back(regex_name, regex_value);
             if (regex_name==KEYWORD)
                 for (auto& character: regex_value)
-                    insertInSetIfNotExists(input_table_, std::string(1, character));
+                    util::insertInSetIfNotExists(input_table_, std::string(1, character));
             else
-                insertInSetIfNotExists(input_table_, regex_value);
+                util::insertInSetIfNotExists(input_table_, regex_value);
         }
     }
     else {
         rule.erase(std::remove(rule.begin(), rule.end(), ' '), rule.end());
         ul found = rule.find_first_of(REGULAR_EXP_SPLITTER);
-        std::sort(definitions_.begin(), definitions_.end(), comparePairsAccordingToFirstLength<std::string>);
+        std::sort(definitions_.begin(), definitions_.end(), util::comparePairsAccordingToFirstLength<std::string>);
         for (auto& definition: definitions_) {
             ul definition_pos = rule.find(definition.first, found+1);
             while (definition_pos!=std::string::npos) {
@@ -124,12 +91,12 @@ void LanguageParser::parseRule(std::string rule)
                         || regex_value[i]=='|')
                     continue;
                 else if (regex_value[i]=='\\')
-                    insertInSetIfNotExists(input_table_, {'\\', regex_value[++i]});
+                    util::insertInSetIfNotExists(input_table_, {'\\', regex_value[++i]});
                 else if (regex_value[i]=='-')
                     for (int j = regex_value[i-1]; j<regex_value[i+1]; j++)
-                        insertInSetIfNotExists(input_table_, std::string(1, j));
+                        util::insertInSetIfNotExists(input_table_, std::string(1, j));
                 else
-                    insertInSetIfNotExists(input_table_, std::string(1, regex_value[i]));
+                    util::insertInSetIfNotExists(input_table_, std::string(1, regex_value[i]));
 
             RegularExpression regex = RegularExpression(regex_name, regex_value);
             regex.applyRangeOperationIfExists();
