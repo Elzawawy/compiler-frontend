@@ -11,7 +11,7 @@ NFA::NFA(){
 NFAState NFA::regex_to_nfa(){
 //    for(int i=0;i<regex.size();i++)
 //    {
-    vector<string>input_table={"a-z","A-Z","B-E","b","o","o","l","\\="};
+    unordered_set<string>input_table={"a-z","A-Z","B-E","b","o","o","l","\\="};
     struct regex{
         string name;
         string value;
@@ -28,7 +28,7 @@ NFAState NFA::regex_to_nfa(){
 
 
 
-string NFA::infix_to_postfix(string regex,vector<string>input_table) {
+string NFA::infix_to_postfix(string regex,unordered_set<string>input_table) {
 
     // Declaring a Stack from Standard template library in C++.
     stack<string> infix_to_postfix_stack;
@@ -44,11 +44,15 @@ string NFA::infix_to_postfix(string regex,vector<string>input_table) {
             while(input_acceptor==false)
             {
                 input_identifier += regex[i];
-                for (int comparison_iterator = 0; comparison_iterator < input_table.size(); comparison_iterator++) {
-                    if (input_identifier.compare(input_table[comparison_iterator])==0) {
+                for (const auto& element: input_table) {
+                    if (input_identifier.compare(element)==0) {
                         input_acceptor = true;
                         break;
                     }
+                    /* ... process elem ... */
+                }
+                for (int comparison_iterator = 0; comparison_iterator < input_table.size(); comparison_iterator++) {
+
                 }
                 i++;
             }
@@ -147,7 +151,7 @@ NFAState* NFA::construct_one_transition_state(string transition, vector < pair<N
     return start_state;
 }
 
-NFAState* NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
+NFAState* NFA::postfix_to_NFA(string postfix,unordered_set<string>input_table) {
     NFAState *start_state=new NFANormalState();
     stack <NFAState*> nfa_state_stack;
     vector < pair<NFAState *, NFAState *>> start_to_acceptance_map;
@@ -163,14 +167,14 @@ NFAState* NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
         if (isalpha(postfix[i]) || isalnum(postfix[i])||postfix[i]=='\\') {
             while (input_acceptor == false) {
                 input_identifier += postfix[i];
-                for (int comparison_iterator = 0; comparison_iterator < input_table.size(); comparison_iterator++) {
-                    if (input_identifier.compare(input_table[comparison_iterator]) == 0) {
+                for (const auto& element: input_table) {
+                    if (input_identifier.compare(element) == 0) {
                         nfa_state_stack.push(this->construct_one_transition_state(input_identifier,&start_to_acceptance_map));
                         input_acceptor = true;
                         break;
                     }
-
                 }
+
                 i++;
             }
             i--;

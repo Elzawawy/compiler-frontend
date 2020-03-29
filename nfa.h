@@ -24,8 +24,8 @@ private:
     NFAState* or_combiner(NFAState* first_nfa_state,NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map);
     NFAState* kleene_and_plus(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map,bool kleene);
     NFAState* construct_one_transition_state(string transition, vector < pair<NFAState* , NFAState *>>* start_to_acceptance_map);
-    string infix_to_postfix(string regex,vector<string>input_table);
-    NFAState* postfix_to_NFA(string postfix,vector<string>input_table);
+    string infix_to_postfix(string regex,unordered_set<string>input_table);
+    NFAState* postfix_to_NFA(string postfix,unordered_set<string>input_table);
     string resolve_backslash(string transition);
     int precedence_decision(string operator_symbol);
     bool isOperator(char character);
