@@ -28,6 +28,7 @@ private:
     NFAState* postfix_to_NFA(string postfix,vector<string>input_table);
     string resolve_backslash(string transition);
     int precedence_decision(string operator_symbol);
+    bool isOperator(char character);
 
 
 

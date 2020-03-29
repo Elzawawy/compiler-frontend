@@ -11,16 +11,16 @@ NFA::NFA(){
 NFAState NFA::regex_to_nfa(){
 //    for(int i=0;i<regex.size();i++)
 //    {
-vector<string>input_table={"a-z","A-Z","B-E","b","o","o","l","\\="};
+    vector<string>input_table={"a-z","A-Z","B-E","b","o","o","l","\\="};
     struct regex{
         string name;
         string value;
     }regex;
-    regex.value="\\=|A-Z+";
+    regex.value="bo|ol";
     string postfix;
-     postfix=this->infix_to_postfix(regex.value,input_table);
-cout<<postfix;
-      this->postfix_to_NFA(postfix,input_table);
+    postfix=this->infix_to_postfix(regex.value,input_table);
+    cout<<postfix;
+    this->postfix_to_NFA(postfix,input_table);
 //    }
 
     return NFAState();
@@ -52,9 +52,13 @@ string NFA::infix_to_postfix(string regex,vector<string>input_table) {
                 }
                 i++;
             }
+            //Check if the next character is an operator or end of string
+            //If no then add a concatintaion operator between the 2 characters
+            //else do nothing
+            if(!this->isOperator(regex[i])&&i+1<=regex.size()){
+                regex.insert(i,"-",1);
+            }
             i--;
-
-
             postfix += input_identifier;
             input_acceptor=false;
             input_identifier="";
@@ -116,6 +120,9 @@ int NFA::precedence_decision(string operator_symbol) {
 
     if(operator_symbol == "*" || operator_symbol=="+")
         return 3;
+    else if(operator_symbol=="-"){
+        return 2;
+    }
     else if(operator_symbol == "|" )
         return 1;
     else
@@ -126,11 +133,11 @@ int NFA::precedence_decision(string operator_symbol) {
 
 
 NFAState* NFA::construct_one_transition_state(string transition, vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
-NFAState *start_state= new NFANormalState();
-NFAState *finish_state=new NFANormalState();
-transition=resolve_backslash(transition);
-start_state->add_neighbour(transition,finish_state);
-start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (start_state, finish_state));
+    NFAState *start_state= new NFANormalState();
+    NFAState *finish_state=new NFANormalState();
+    transition=resolve_backslash(transition);
+    start_state->add_neighbour(transition,finish_state);
+    start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (start_state, finish_state));
 //    vector < pair<string , NFAState *>> x;
 //    x=start_state.getNeighbours();
 //    for ( vector < pair<string,NFAState*> >::const_iterator it = x.begin() ; it != x.end(); it++){
@@ -149,98 +156,98 @@ NFAState* NFA::postfix_to_NFA(string postfix,vector<string>input_table) {
 
 
     // Scan all characters one by one
-   int i=0;
+    int i=0;
     do {
-       // If the scanned character is an operand (number here),
-       // push it to the stack.
-       if (isalpha(postfix[i]) || isalnum(postfix[i])||postfix[i]=='\\') {
-           while (input_acceptor == false) {
-               input_identifier += postfix[i];
-               for (int comparison_iterator = 0; comparison_iterator < input_table.size(); comparison_iterator++) {
-                   if (input_identifier.compare(input_table[comparison_iterator]) == 0) {
-                       nfa_state_stack.push(this->construct_one_transition_state(input_identifier,&start_to_acceptance_map));
-                       input_acceptor = true;
-                       break;
-                   }
+        // If the scanned character is an operand (number here),
+        // push it to the stack.
+        if (isalpha(postfix[i]) || isalnum(postfix[i])||postfix[i]=='\\') {
+            while (input_acceptor == false) {
+                input_identifier += postfix[i];
+                for (int comparison_iterator = 0; comparison_iterator < input_table.size(); comparison_iterator++) {
+                    if (input_identifier.compare(input_table[comparison_iterator]) == 0) {
+                        nfa_state_stack.push(this->construct_one_transition_state(input_identifier,&start_to_acceptance_map));
+                        input_acceptor = true;
+                        break;
+                    }
 
-               }
-               i++;
-           }
-           i--;
-
-
+                }
+                i++;
+            }
+            i--;
 
 
-           input_acceptor = false;
-           input_identifier = "";
 
-       }
 
-           // If the scanned character is an operator, pop two
-           // elements from stack apply the operator
-       else if (postfix[i] == '+' || postfix[i] == '*' || postfix[i] == '|' || postfix[i]=='-') {
+            input_acceptor = false;
+            input_identifier = "";
 
-           switch (postfix[i]) {
-               case '+': {
-                   NFAState* plus_nfa_state = this->kleene_and_plus(nfa_state_stack.top(),&start_to_acceptance_map,false);
-                   nfa_state_stack.pop();
-                   nfa_state_stack.push(plus_nfa_state);
-                   break;
-               }
-               case '*': {
-                   NFAState* kleene_nfa_state = this->kleene_and_plus(nfa_state_stack.top(),&start_to_acceptance_map,true);
-                   nfa_state_stack.pop();
-                   nfa_state_stack.push(kleene_nfa_state);
-                   break;
-               }
-               case '|': {
-                   NFAState* second_operand_union_state = nfa_state_stack.top();
+        }
 
-                   nfa_state_stack.pop();
-                   NFAState* first_operand_union_state = nfa_state_stack.top();
+            // If the scanned character is an operator, pop two
+            // elements from stack apply the operator
+        else if (postfix[i] == '+' || postfix[i] == '*' || postfix[i] == '|' || postfix[i]=='-') {
 
-                   nfa_state_stack.pop();
-                   nfa_state_stack.push(this->or_combiner(first_operand_union_state, second_operand_union_state,&start_to_acceptance_map));
-                   break;
-               }
-               case '-': {
-                   NFAState* second_operand_union_state = nfa_state_stack.top();
+            switch (postfix[i]) {
+                case '+': {
+                    NFAState* plus_nfa_state = this->kleene_and_plus(nfa_state_stack.top(),&start_to_acceptance_map,false);
+                    nfa_state_stack.pop();
+                    nfa_state_stack.push(plus_nfa_state);
+                    break;
+                }
+                case '*': {
+                    NFAState* kleene_nfa_state = this->kleene_and_plus(nfa_state_stack.top(),&start_to_acceptance_map,true);
+                    nfa_state_stack.pop();
+                    nfa_state_stack.push(kleene_nfa_state);
+                    break;
+                }
+                case '|': {
+                    NFAState* second_operand_union_state = nfa_state_stack.top();
 
-                   nfa_state_stack.pop();
-                   NFAState* first_operand_union_state = nfa_state_stack.top();
+                    nfa_state_stack.pop();
+                    NFAState* first_operand_union_state = nfa_state_stack.top();
 
-                   nfa_state_stack.pop();
-                   nfa_state_stack.push(this->concat(first_operand_union_state, second_operand_union_state,&start_to_acceptance_map));
-                   break;
-               }
+                    nfa_state_stack.pop();
+                    nfa_state_stack.push(this->or_combiner(first_operand_union_state, second_operand_union_state,&start_to_acceptance_map));
+                    break;
+                }
+                case '-': {
+                    NFAState* second_operand_union_state = nfa_state_stack.top();
 
-           }
-       }
-   i++;
+                    nfa_state_stack.pop();
+                    NFAState* first_operand_union_state = nfa_state_stack.top();
+
+                    nfa_state_stack.pop();
+                    nfa_state_stack.push(this->concat(first_operand_union_state, second_operand_union_state,&start_to_acceptance_map));
+                    break;
+                }
+
+            }
+        }
+        i++;
 //       cout<<"IN";
 //      cout<<start_to_acceptance_map.size();
 //        for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map.begin() ; it != start_to_acceptance_map.end(); it++){
 //            cout << (it->first)->getId();
 //        }
-   }while(nfa_state_stack.size()>=1 && i<postfix.size());
+    }while(nfa_state_stack.size()>=1 && i<postfix.size());
     for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map.begin() ; it != start_to_acceptance_map.end(); it++){
-          cout<<(it->first)->getId()<<endl;
-            vector < pair<string , NFAState *>> x;
-    x=(it->first)->getNeighbours();
-    for ( vector < pair<string,NFAState*> >::const_iterator it = x.begin() ; it != x.end(); it++){
-        cout<<"transition:";
-        cout << it->first<<endl;
-        cout<<it->second->getId()<<endl;
-        vector < pair<string , NFAState *>> u;
-        u=(it->second)->getNeighbours();
-        for ( vector < pair<string,NFAState*> >::const_iterator it1 = u.begin() ; it1 != u.end(); it1++){
-            cout<<"finish:";
-            cout << it1->first<<endl;
-            cout<<it1->second->getId()<<endl;
+        cout<<(it->first)->getId()<<endl;
+        vector < pair<string , NFAState *>> x;
+        x=(it->first)->getNeighbours();
+        for ( vector < pair<string,NFAState*> >::const_iterator it = x.begin() ; it != x.end(); it++){
+            cout<<"transition:";
+            cout << it->first<<endl;
+            cout<<it->second->getId()<<endl;
+            vector < pair<string , NFAState *>> u;
+            u=(it->second)->getNeighbours();
+            for ( vector < pair<string,NFAState*> >::const_iterator it1 = u.begin() ; it1 != u.end(); it1++){
+                cout<<"finish:";
+                cout << it1->first<<endl;
+                cout<<it1->second->getId()<<endl;
 
+            }
         }
-    }
-    cout<<"Done"<<endl;
+        cout<<"Done"<<endl;
     }
     return start_state;
 }
@@ -297,19 +304,19 @@ NFAState* NFA::concat(NFAState* first_nfa_state, NFAState* second_nfa_state,vect
     for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map->begin() ; it != start_to_acceptance_map->end(); it++){
         //Save the address of the acceptance state of the first concatinated inorder to add the neigbhours of the start state of the second concatinated nfa
         if(first_nfa_state==it->first){
-               first_nfa_acceptance_state=it->second;
-               second_nfa_state_index=iterator;
-       }
-        //Get the neighbours of the start state of the second concatinated nfa inorder to add the neighbours to the acceptance state of the first concatinted nfa
+            first_nfa_acceptance_state=it->second;
+            second_nfa_state_index=iterator;
+        }
+            //Get the neighbours of the start state of the second concatinated nfa inorder to add the neighbours to the acceptance state of the first concatinted nfa
         else if((it->first)==second_nfa_state){
-               temp_vector=(it->first)->getNeighbours();
-               second_nfa_acceptance_state=it->second;
+            temp_vector=(it->first)->getNeighbours();
+            second_nfa_acceptance_state=it->second;
         }
         iterator++;
     }
     //Add the neighbours to the acceptance state of the first nfa
     for ( vector < pair<string,NFAState*> >::const_iterator it = temp_vector.begin() ; it != temp_vector.end(); it++){
-          first_nfa_acceptance_state->add_neighbour(it->first,it->second);
+        first_nfa_acceptance_state->add_neighbour(it->first,it->second);
     }
     //
     start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (first_nfa_state, second_nfa_acceptance_state));
@@ -325,4 +332,11 @@ string NFA::resolve_backslash(string transition) {
     }
     return transition;
 
+}
+
+bool NFA::isOperator(char character) {
+    if(character=='|'||character=='*'||character=='+'){
+        return true;
+    }
+    return false;
 }
