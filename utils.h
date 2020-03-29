@@ -24,7 +24,9 @@ void stripFirstAndLastChars(std::string& str)
     str.erase(0, 1);
     str.erase(str.length()-1, str.length()-1);
 }
-
+void removeAllSpaces(std::string & str){
+    str.erase(std::remove(str.begin(), str.end(), ' '), str.end());
+}
 std::vector<std::string> splitOnDelimiter(const std::string& str, char delimiter)
 {
     std::vector<std::string> tokens;
