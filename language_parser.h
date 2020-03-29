@@ -16,11 +16,11 @@ class LanguageParser {
 
 public:
     void parseFile(std::string rules_file_path);
-    const std::vector<std::string>& getInput_table() const;
+    const std::unordered_set<std::string>& getInput_table() const;
     const std::vector<RegularExpression>& getExpressions() const;
 
 private:
-    std::vector<std::string> input_table_;
+    std::unordered_set<std::string> input_table_;
     std::vector<RegularExpression> expressions_;
     std::vector<std::pair<std::string,std::string>> definitions_;
     void parseRule(std::string rule);

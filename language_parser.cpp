@@ -20,7 +20,7 @@ const std::vector<RegularExpression>& LanguageParser::getExpressions() const
 {
     return expressions_;
 }
-const std::vector<std::string>& LanguageParser::getInput_table() const
+const std::unordered_set<std::string>& LanguageParser::getInput_table() const
 {
     return input_table_;
 }
@@ -36,9 +36,21 @@ void LanguageParser::parseFile(std::string rules_file_path)
     }
 //    for (auto& expression: expressions_)
 //        std::cout << expression.getName() << " " << expression.getValue() << std::endl;
-//
+
 //    for (auto& expression: definitions_)
 //        std::cout << expression.first << " " << expression.second << std::endl;
+
+//    for (auto& input: input_table_)
+//        std::cout << input << std::endl;
+
+//    std::vector<char> chars;
+//    for (char j = '0'; j<'9'; j++)
+//        chars.push_back(j);
+//
+//    for(auto& character: chars)
+//        if(input_table_.count(std::string(1,character)) == 0)
+//            std::cout<< false<<std::endl;
+
 }
 
 void trimBothEnds(std::string& str, const std::string& chars = "\t\n\v\f\r ")
@@ -62,10 +74,18 @@ std::vector<std::string> splitOnDelimiter(const std::string& str, char delimiter
         tokens.push_back(token);
     return tokens;
 }
-bool comparePairsAccordingToFirstLength(const std::pair<std::string, std::string>& a,
-        const std::pair<std::string, std::string>& b)
+template<class T>
+bool comparePairsAccordingToFirstLength(const std::pair<T, T>& a,
+        const std::pair<T, T>& b)
 {
     return a.first.length()>b.first.length();
+}
+
+template<class T>
+void insertInSetIfNotExists(std::unordered_set<T>& set, T element)
+{
+    if (set.count(element)==0)
+        set.insert(element);
 }
 
 void LanguageParser::parseRule(std::string rule)
@@ -75,13 +95,19 @@ void LanguageParser::parseRule(std::string rule)
         stripFirstAndLastChars(rule);
         trimBothEnds(rule);
         std::vector<std::string> tokens = splitOnDelimiter(rule, ' ');
-        for (auto& regex_value: tokens)
+        for (auto& regex_value: tokens) {
             expressions_.emplace_back(regex_name, regex_value);
+            if (regex_name==KEYWORD)
+                for (auto& character: regex_value)
+                    insertInSetIfNotExists(input_table_, std::string(1, character));
+            else
+                insertInSetIfNotExists(input_table_, regex_value);
+        }
     }
     else {
         rule.erase(std::remove(rule.begin(), rule.end(), ' '), rule.end());
         ul found = rule.find_first_of(REGULAR_EXP_SPLITTER);
-        std::sort(definitions_.begin(), definitions_.end(), comparePairsAccordingToFirstLength);
+        std::sort(definitions_.begin(), definitions_.end(), comparePairsAccordingToFirstLength<std::string>);
         for (auto& definition: definitions_) {
             ul definition_pos = rule.find(definition.first, found+1);
             while (definition_pos!=std::string::npos) {
@@ -91,8 +117,20 @@ void LanguageParser::parseRule(std::string rule)
         }
         std::string regex_name = rule.substr(0, found);
         std::string regex_value = rule.substr(found+1);
-        if (rule[found]==REGULAR_EXP_INDICATOR)
+        if (rule[found]==REGULAR_EXP_INDICATOR) {
             expressions_.emplace_back(regex_name, regex_value);
+            for (int i = 0; i<regex_value.length(); i++)
+                if (regex_value[i]=='(' || regex_value[i]==')' || regex_value[i]=='*' || regex_value[i]=='+'
+                        || regex_value[i]=='|')
+                    continue;
+                else if (regex_value[i]=='\\')
+                    insertInSetIfNotExists(input_table_, {'\\', regex_value[++i]});
+                else if (regex_value[i]=='-')
+                    for (int j = regex_value[i-1]; j<regex_value[i+1]; j++)
+                        insertInSetIfNotExists(input_table_, std::string(1, j));
+                else
+                    insertInSetIfNotExists(input_table_, std::string(1, regex_value[i]));
+        }
         else
             definitions_.emplace_back(regex_name, regex_value);
     }
