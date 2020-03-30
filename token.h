@@ -14,7 +14,6 @@ class Token {
  public:
   const string &GetLexeme_() const;
   const string &GetTokenName() const;
- public:
   Token(string lexeme_, string token_name_);
 };
 
