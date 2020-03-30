@@ -22,7 +22,7 @@ NFAState NFA::regex_to_nfa(){
     cout<<postfix;
     this->postfix_to_NFA(postfix,input_table);
     this->resolve_input_table(&input_table);
-   
+
 //    }
 
     return NFAState();
@@ -138,9 +138,9 @@ int NFA::precedence_decision(string operator_symbol) {
 
 
 
-NFAState* NFA::construct_one_transition_state(string transition, vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
+NFAState* NFA::construct_one_transition_state(string transition, vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map, bool final_finish_state) {
     NFAState *start_state= new NFANormalState();
-    NFAState *finish_state=new NFANormalState();
+    NFAState *finish_state=this->acceptance_state_generator(final_finish_state);
     transition=resolve_backslash(transition);
     start_state->add_neighbour(transition,finish_state);
     start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (start_state, finish_state));
@@ -158,6 +158,7 @@ NFAState* NFA::postfix_to_NFA(string postfix,unordered_set<string>input_table) {
     stack <NFAState*> nfa_state_stack;
     vector < pair<NFAState *, NFAState *>> start_to_acceptance_map;
     bool input_acceptor=false;
+    bool final_finish_state=false;
     string input_identifier="";
 
 
@@ -171,7 +172,7 @@ NFAState* NFA::postfix_to_NFA(string postfix,unordered_set<string>input_table) {
                 input_identifier += postfix[i];
                 for (const auto& element: input_table) {
                     if (input_identifier.compare(element) == 0) {
-                        nfa_state_stack.push(this->construct_one_transition_state(input_identifier,&start_to_acceptance_map));
+                        nfa_state_stack.push(this->construct_one_transition_state(input_identifier,&start_to_acceptance_map,final_finish_state));
                         input_acceptor = true;
                         break;
                     }
@@ -182,26 +183,24 @@ NFAState* NFA::postfix_to_NFA(string postfix,unordered_set<string>input_table) {
             i--;
 
 
-
-
             input_acceptor = false;
-            input_identifier = "";
+                input_identifier = "";
 
         }
 
             // If the scanned character is an operator, pop two
             // elements from stack apply the operator
-        else if (postfix[i] == '+' || postfix[i] == '*' || postfix[i] == '|' || postfix[i]=='-') {
+        else if (postfix[i]=='|'||postfix[i]=='-'||postfix[i]=='+'||postfix[i]=='-') {
 
             switch (postfix[i]) {
                 case '+': {
-                    NFAState* plus_nfa_state = this->kleene_and_plus(nfa_state_stack.top(),&start_to_acceptance_map,false);
+                    NFAState* plus_nfa_state = this->kleene_and_plus(nfa_state_stack.top(),&start_to_acceptance_map,false,final_finish_state);
                     nfa_state_stack.pop();
                     nfa_state_stack.push(plus_nfa_state);
                     break;
                 }
                 case '*': {
-                    NFAState* kleene_nfa_state = this->kleene_and_plus(nfa_state_stack.top(),&start_to_acceptance_map,true);
+                    NFAState* kleene_nfa_state = this->kleene_and_plus(nfa_state_stack.top(),&start_to_acceptance_map,true,final_finish_state);
                     nfa_state_stack.pop();
                     nfa_state_stack.push(kleene_nfa_state);
                     break;
@@ -213,28 +212,31 @@ NFAState* NFA::postfix_to_NFA(string postfix,unordered_set<string>input_table) {
                     NFAState* first_operand_union_state = nfa_state_stack.top();
 
                     nfa_state_stack.pop();
-                    nfa_state_stack.push(this->or_combiner(first_operand_union_state, second_operand_union_state,&start_to_acceptance_map));
+                    nfa_state_stack.push(this->or_combiner(first_operand_union_state, second_operand_union_state,&start_to_acceptance_map,final_finish_state));
                     break;
                 }
                 case '-': {
                     NFAState* second_operand_union_state = nfa_state_stack.top();
 
                     nfa_state_stack.pop();
+
                     NFAState* first_operand_union_state = nfa_state_stack.top();
 
                     nfa_state_stack.pop();
-                    nfa_state_stack.push(this->concat(first_operand_union_state, second_operand_union_state,&start_to_acceptance_map));
+                    nfa_state_stack.push(this->concat(first_operand_union_state, second_operand_union_state,&start_to_acceptance_map,final_finish_state));
                     break;
                 }
 
             }
         }
+        cout<<"fasfsa";
+        cout<<postfix[i+1];
+        if(this->acceptance_nfa_identifier(nfa_state_stack.size(),postfix.length(),i,postfix[i+1])){
+            final_finish_state=true;
+        }
+        cout<<this->acceptance_nfa_identifier(nfa_state_stack.size(),postfix.length(),i,postfix[i+1])<<endl;
         i++;
-//       cout<<"IN";
-//      cout<<start_to_acceptance_map.size();
-//        for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map.begin() ; it != start_to_acceptance_map.end(); it++){
-//            cout << (it->first)->getId();
-//        }
+
     }while(nfa_state_stack.size()>=1 && i<postfix.size());
     for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map.begin() ; it != start_to_acceptance_map.end(); it++){
         cout<<(it->first)->getId()<<endl;
@@ -255,15 +257,15 @@ NFAState* NFA::postfix_to_NFA(string postfix,unordered_set<string>input_table) {
         }
         cout<<"Done"<<endl;
     }
-    return start_state;
+    return nfa_state_stack.top();
 }
 
 
 
-NFAState* NFA::or_combiner(NFAState* first_nfa_state, NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
+NFAState* NFA::or_combiner(NFAState* first_nfa_state, NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map, bool final_finish_state) {
     //Initilaizing a start and acceptance node for the union thompson rule
     NFAState *start_state=new NFANormalState();
-    NFAState *finish_state=new NFANormalState();
+    NFAState *finish_state=this->acceptance_state_generator(final_finish_state);
     //Adding 2 neighbours from the start node with a transition epsilon where the neighbours are the 2 start nodes of the unioned nfa's
     start_state->add_neighbour("\\L",first_nfa_state);
     start_state->add_neighbour("\\L",second_nfa_state);
@@ -277,9 +279,9 @@ NFAState* NFA::or_combiner(NFAState* first_nfa_state, NFAState* second_nfa_state
     start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (start_state, finish_state));
     return start_state;
 }
-NFAState* NFA::kleene_and_plus(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map,bool kleene) {
+NFAState* NFA::kleene_and_plus(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map,bool kleene, bool final_finish_state) {
     NFAState *start_state=new NFANormalState();
-    NFAState *finish_state=new NFANormalState();
+    NFAState *finish_state=this->acceptance_state_generator(final_finish_state);
     //Adding an epsilon transition from the new start state to 1-) the start state of the old nfa 2-)the finish state of the new nfa
     start_state->add_neighbour("\\L",nfa_state);
     //In case it is a kleene operator add an epsilon transition from the start state to the accept state
@@ -302,16 +304,15 @@ NFAState* NFA::kleene_and_plus(NFAState* nfa_state,vector < pair<NFAState *, NFA
     return start_state;
 }
 
-NFAState* NFA::concat(NFAState* first_nfa_state, NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map) {
+NFAState* NFA::concat(NFAState* first_nfa_state, NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map, bool final_finish_state) {
     NFAState *first_nfa_acceptance_state,*second_nfa_acceptance_state;
     vector < pair<string , NFAState *>> temp_vector;
-    int iterator=0,second_nfa_state_index;
+    int iterator=0;
     //Find the acceptance state of the first concatinated nfa and the start state of the second concatinated nfa
     for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map->begin() ; it != start_to_acceptance_map->end(); it++){
         //Save the address of the acceptance state of the first concatinated inorder to add the neigbhours of the start state of the second concatinated nfa
         if(first_nfa_state==it->first){
             first_nfa_acceptance_state=it->second;
-            second_nfa_state_index=iterator;
         }
             //Get the neighbours of the start state of the second concatinated nfa inorder to add the neighbours to the acceptance state of the first concatinted nfa
         else if((it->first)==second_nfa_state){
@@ -354,4 +355,33 @@ void NFA::resolve_input_table(unordered_set<string>* input_table) {
         input_table->insert(this->resolve_backslash(element));
     }
 
+}
+
+bool NFA::acceptance_nfa_identifier(int size_of_stack,int postfix_length,int current_iteration, char next_char) {
+
+    if(current_iteration+2==postfix_length) {
+        if (next_char == '-' || next_char == '|') {
+            if (size_of_stack == 2) {
+                return true;
+            }
+        } else if (next_char == '*' || next_char == '+') {
+            if (size_of_stack == 1) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+//Checks if this acceptance state is an acceptance state of the final nfa of a regex or it is one of the building nfa's
+//Incase it is the final nfa of the regex it returns an nfa with the type acceptance state
+//Incase it is a bulding nfa it returns a normal nfa state
+NFAState *NFA::acceptance_state_generator(bool final_finish_state) {
+    static int id=0;
+    if(!final_finish_state){
+        return new NFANormalState();
+    }
+    else{
+        return new NFAAcceptanceState();
+    }
 }
