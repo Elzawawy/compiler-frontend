@@ -3,7 +3,7 @@
 //
 
 #include "nfa.h"
-unordered_map<NFAState*, NFAState *> combiined_nfa_states;
+unordered_map<NFAState*, NFAState *> combined_nfa_states;
 
 NFA::NFA(){
 
@@ -238,6 +238,13 @@ NFAState* NFA::postfix_to_NFA(string postfix,unordered_set<string>input_table) {
         i++;
 
     }while(nfa_state_stack.size()>=1 && i<postfix.size());
+    for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map.end() ; it != start_to_acceptance_map.begin(); it--){
+                      if(it->first==nfa_state_stack.top()){
+                          combined_nfa_states.insert({it->first,it->second});
+                          break;
+                      }
+    }
+
     for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map.begin() ; it != start_to_acceptance_map.end(); it++){
         cout<<(it->first)->getId()<<endl;
         vector < pair<string , NFAState *>> x;
