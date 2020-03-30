@@ -19,6 +19,7 @@ public:
     const vector < pair<string , NFAState *>> &getNeighbours() const;
 
 
+
 private:
     int id;
     vector < pair<string , NFAState *> > neighbours;

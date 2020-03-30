@@ -140,9 +140,11 @@ int NFA::precedence_decision(string operator_symbol) {
 
 NFAState* NFA::construct_one_transition_state(string transition, vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map, bool final_finish_state) {
     NFAState *start_state= new NFANormalState();
+
     NFAState *finish_state=this->acceptance_state_generator(final_finish_state);
+
     transition=resolve_backslash(transition);
-    start_state->add_neighbour(transition,finish_state);
+    start_state->add_neighbour(transition, finish_state);
     start_to_acceptance_map->push_back(pair<NFAState*, NFAState*> (start_state, finish_state));
 //    vector < pair<string , NFAState *>> x;
 //    x=start_state.getNeighbours();
@@ -238,11 +240,18 @@ NFAState* NFA::postfix_to_NFA(string postfix,unordered_set<string>input_table) {
         i++;
 
     }while(nfa_state_stack.size()>=1 && i<postfix.size());
+    //Adding the start and acceptance states of the final nfa to the global combined nfa map
     for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map.end() ; it != start_to_acceptance_map.begin(); it--){
                       if(it->first==nfa_state_stack.top()){
-                          combined_nfa_states.insert({it->first,it->second});
+                          if(it->second  = dynamic_cast<NFAAcceptanceState*>(it->second)) {
+
+                              (it->second)->set_token();
+                              combined_nfa_states.insert({it->first,it->second});
+                          }
+
                           break;
                       }
+
     }
 
     for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = start_to_acceptance_map.begin() ; it != start_to_acceptance_map.end(); it++){
@@ -380,15 +389,20 @@ bool NFA::acceptance_nfa_identifier(int size_of_stack,int postfix_length,int cur
     return false;
 }
 
+
+
 //Checks if this acceptance state is an acceptance state of the final nfa of a regex or it is one of the building nfa's
 //Incase it is the final nfa of the regex it returns an nfa with the type acceptance state
 //Incase it is a bulding nfa it returns a normal nfa state
 NFAState *NFA::acceptance_state_generator(bool final_finish_state) {
     static int id=0;
     if(!final_finish_state){
+
         return new NFANormalState();
     }
     else{
+
         return new NFAAcceptanceState();
     }
 }
+

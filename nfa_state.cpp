@@ -23,6 +23,8 @@ const vector<pair<string, NFAState *>> &NFAState::getNeighbours() const {
     return this->neighbours;
 }
 
+
+
 string NFAAcceptanceState::get_token() {
     return std::__cxx11::string();
 }

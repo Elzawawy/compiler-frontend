@@ -31,8 +31,7 @@ private:
     bool isOperator(char character);
     void resolve_input_table(unordered_set<string>*input_table);
     bool acceptance_nfa_identifier(int size_of_stack,int postfix_length,int current_iteration,char next_character);
-    NFAState* acceptance_state_generator(bool final_finish_state);
-
+    NFAState *acceptance_state_generator(bool final_finish_state);
 };
 
 
