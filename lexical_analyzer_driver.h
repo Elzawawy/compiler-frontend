@@ -24,9 +24,12 @@ class LexicalAnalyzerDriver {
   const int number_of_buffers_ = 2;
   vector<vector<char>> buffers_;
   vector<char>::iterator forward_, lexeme_begin_;
-  stack<pair<char, DFAState*>> states_;
+  stack<pair<char, DFAState*>> characters_states_;
   int active_buffer_;
-  void FillNextBuffer(int buffer_index_);
+  streamsize active_buffer_size_;
+  bool DecreaseForwardPointer();
+  void IncreaseForwardPointer();
+  bool IsSkippableCharacter(char c) const;
 
  public:
   LexicalAnalyzerDriver(DFAState *root_state_, const string &input_file_name_);
