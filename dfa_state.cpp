@@ -37,16 +37,30 @@ const unordered_set<NFAState *> &DFAState::get_generators() const {
     return this->generators_;
 }
 
-/****************************** Public functions of instance. ******************************/
-
-void DFAState::AddNeighbour(const string &input, DFAState *neighbour) {
-    this->neighbours_.insert(make_pair(input, neighbour));
-}
-
 string DFAAcceptanceState::get_token_name() {
     return this->token_name;
 }
 
 void DFAAcceptanceState::set_token_name(string token_name) {
     this->token_name = std::move(token_name);
+}
+
+/****************************** Public functions of instance. ******************************/
+
+void DFAState::AddNeighbour(const string &input, DFAState *neighbour) {
+    this->neighbours_.insert(make_pair(input, neighbour));
+}
+
+bool DFAState::operator==(DFAState &other) const {
+    if(this->generators_.size() != other.generators_.size()){
+        return false;
+    }
+
+    for(auto generator : this->generators_){
+        if(other.generators_.find(generator) == other.generators_.end()){
+            return false;
+        }
+    }
+
+    return true;
 }

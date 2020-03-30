@@ -33,7 +33,9 @@ public:
     const unordered_set<NFAState *> &get_generators() const;
 
     // Public functions of instance.
-    void AddNeighbour(const string& input, DFAState *neighbour);
+    void AddNeighbour(const string &input, DFAState *neighbour);
+
+    bool operator==(DFAState &other) const;
 
 };
 
