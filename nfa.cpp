@@ -1,31 +1,28 @@
 
 // Created by omar_swidan on 23/03/20.
 //
-
 #include "nfa.h"
+vector < pair<NFAState *, NFAState *>> combined_nfa_states;
 NFA::NFA(){
 
 }
-NFAState NFA::regex_to_nfa( std::unordered_set<std::string>input_table,std::vector<RegularExpression>regex){
+NFAState* NFA::regex_to_nfa( std::unordered_set<std::string>input_table,std::vector<RegularExpression>regex){
     string postfix;
     unordered_set<string>resolved_input_table;
 
 for(int i=0;i<regex.size();i++){
     postfix=regex[i].infix_to_postfix(input_table);
-    this->postfix_to_NFA(postfix,input_table,regex[0].getName());
+    this->postfix_to_NFA(postfix,input_table,regex[i].getName());
 }
     cout<<postfix;
 NFAState* start_state=new NFANormalState();
 
     this->set_input_table(this->resolve_input_table(input_table));
-int i=0;
-    for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = this->combined_nfa_states.begin() ; it != this->combined_nfa_states.end(); it++){
+    for ( vector < pair<NFAState*,NFAState*> >::const_iterator it = combined_nfa_states.begin() ; it !=combined_nfa_states.end(); it++){
 start_state->add_neighbour("\\L",it->first);
-cout<<i;
-i++;
     }
 
-    return NFAState();
+    return start_state;
 }
 
 
@@ -128,8 +125,7 @@ NFAState* NFA::postfix_to_NFA(string postfix,unordered_set<string>input_table,st
     start_to_acceptance_map[start_to_acceptance_map.size()-1].second->add_neighbour("\\L",acceptance_state);
     cout<<acceptance_state->getId();
     acceptance_state->set_token(regex_name);
-    this->combined_nfa_states.push_back(pair<NFAState*, NFAState*> (nfa_state_stack.top(),acceptance_state));
-    cout<<"IDDDDDDDDDDDDDDDDDDDDDD";
+    combined_nfa_states.push_back(pair<NFAState*, NFAState*> (nfa_state_stack.top(),acceptance_state));
 
 
 
@@ -303,7 +299,4 @@ void NFA::set_input_table(unordered_set<string> input_table) {
 this->input_table=input_table;
 }
 
-vector<pair<NFAState *, NFAState *>> *NFA::get_combined_nfa() {
-    return &combined_nfa_states;
-}
 

@@ -17,9 +17,8 @@ class NFA {
 public:
 
     NFA();
-    NFAState regex_to_nfa( std::unordered_set<std::string>input_table,std::vector<RegularExpression>regex);
+    NFAState* regex_to_nfa( std::unordered_set<std::string>input_table,std::vector<RegularExpression>regex);
     unordered_set<string> get_input_table();
-    vector < pair<NFAState *, NFAState *>>* get_combined_nfa();
 
 
 private:
@@ -35,8 +34,6 @@ private:
     bool isOperator(char character);
     void set_input_table(unordered_set<string>input_table);
     unordered_set<string>input_table;
-    vector < pair<NFAState *, NFAState *>> combined_nfa_states;
-
 };
 
 

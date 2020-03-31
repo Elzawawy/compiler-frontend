@@ -107,7 +107,7 @@ std::unordered_set<std::string> RegularExpression::extractInputSymbols()
 
 std::string RegularExpression::infix_to_postfix(std::unordered_set<std::string>input_table) {
     this->applyRangeOperationIfExists();
-    std::string regex="a|b";
+    std::string regex=this->getValue();
     // Declaring a Stack from Standard template library in C++.
     std::stack<std::string> infix_to_postfix_stack;
     std::string postfix = ""; // Initialize postfix as empty string.
