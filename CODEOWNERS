@@ -1,0 +1,12 @@
+# Format of file copied form "https://docs.datree.io/docs/include-a-codeowners-file-in-your-projects"
+# Lines starting with '#' are comments.
+# Each line is a file pattern followed by one or more owners.
+
+# These owners will be the default owners for everything in the repo.
+*       @Elzawawy @oswidan97 @AbdoD97 @MostafaYousry @abdallahmaradny
+
+# Order is important. The last matching pattern has the most precedence.
+# So if a pull request only touches C++ files, only these owners
+# will be requested to review.
+
+# You can also use email addresses if you prefer.
