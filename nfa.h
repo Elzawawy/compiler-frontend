@@ -17,21 +17,26 @@ class NFA {
 public:
 
     NFA();
-    NFAState regex_to_nfa();
+    NFAState regex_to_nfa( std::unordered_set<std::string>input_table,std::vector<RegularExpression>regex);
+    unordered_set<string> get_input_table();
+    vector < pair<NFAState *, NFAState *>>* get_combined_nfa();
+
 
 private:
     NFAState* concat(NFAState* first_nfa_state,NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map, bool final_finish_state);
     NFAState* or_combiner(NFAState* first_nfa_state,NFAState* second_nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map, bool final_finish_state);
     NFAState* kleene_and_plus(NFAState* nfa_state,vector < pair<NFAState *, NFAState *>>* start_to_acceptance_map,bool kleene, bool final_finish_state);
     NFAState* construct_one_transition_state(string transition, vector < pair<NFAState* , NFAState *>>* start_to_acceptance_map, bool final_finish_state);
-    string infix_to_postfix(string regex,unordered_set<string>input_table);
-    NFAState* postfix_to_NFA(string postfix,unordered_set<string>input_table);
+    NFAState* postfix_to_NFA(string postfix,unordered_set<string>input_table,string regex_name);
     string resolve_backslash(string transition);
-    int precedence_decision(string operator_symbol);
-    bool isOperator(char character);
-    void resolve_input_table(unordered_set<string>*input_table);
+    unordered_set<string>resolve_input_table(unordered_set<string>input_table);
     bool acceptance_nfa_identifier(int size_of_stack,int postfix_length,int current_iteration,char next_character);
     NFAState *acceptance_state_generator(bool final_finish_state);
+    bool isOperator(char character);
+    void set_input_table(unordered_set<string>input_table);
+    unordered_set<string>input_table;
+    vector < pair<NFAState *, NFAState *>> combined_nfa_states;
+
 };
 
 

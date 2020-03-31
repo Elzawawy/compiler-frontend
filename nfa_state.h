@@ -5,13 +5,15 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include "regular_expression.h"
+#include "nfa_state.h"
 
 using namespace std;
 
 class NFAState {
 
 public:
-
+    virtual ~NFAState()=default;
     explicit NFAState();
     void add_neighbour(string input, NFAState* neighbour);
     // Getters for member variables of instance.

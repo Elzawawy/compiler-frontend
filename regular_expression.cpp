@@ -102,3 +102,126 @@ std::unordered_set<std::string> RegularExpression::extractInputSymbols()
             input_symbols.emplace(1, value_[char_index]);
     return input_symbols;
 }
+
+
+
+std::string RegularExpression::infix_to_postfix(std::unordered_set<std::string>input_table) {
+    this->applyRangeOperationIfExists();
+    std::string regex="a|b";
+    // Declaring a Stack from Standard template library in C++.
+    std::stack<std::string> infix_to_postfix_stack;
+    std::string postfix = ""; // Initialize postfix as empty string.
+    std::string input_identifier="";
+    bool input_acceptor=false;
+    infix_to_postfix_stack.push("N");
+    std::string input_detector="";
+    std::cout<<regex<<std::endl;
+    for(int i = 0; i < regex.size(); i++)
+    {
+        // If the scanned character is an operand, add it to output string.
+        if(isNotOperator(regex[i])) {
+            while(input_acceptor==false)
+            {
+                input_identifier += regex[i];
+                for (const auto& element: input_table) {
+                    if (input_identifier.compare(element)==0) {
+                        input_acceptor = true;
+                        break;
+                    }
+                }
+
+                i++;
+            }
+            //Check if the next character is an operator or end of string
+            //If no then add a concatintaion operator between the 2 characters
+            //else do nothing
+            if(!this->isConcated(regex[i])&&i+1<=regex.size()){
+                regex.insert(i,"-",1);
+            }
+            i--;
+            postfix += input_identifier;
+            input_acceptor=false;
+            input_identifier="";
+
+        }
+            // If the scanned character is an ‘(‘, push it to the stack.
+        else if(regex[i] == '(')
+
+            infix_to_postfix_stack.push("(");
+
+            // If the scanned character is an ‘)’, pop and to output string from the stack
+            // until an ‘(‘ is encountered.
+        else if(regex[i] == ')')
+        {
+
+            std::string popped_character;
+            while(infix_to_postfix_stack.top() != "N" && infix_to_postfix_stack.top() != "(")
+            {
+                popped_character = infix_to_postfix_stack.top();
+                infix_to_postfix_stack.pop();
+                postfix += popped_character;
+            }
+            if(infix_to_postfix_stack.top() == "(")
+            {
+                popped_character = infix_to_postfix_stack.top();
+                infix_to_postfix_stack.pop();
+            }
+            if(regex[i+1]=='('&&i+1<=regex.size()){
+                regex.insert(i+1,"-",1);
+            }
+        }
+
+            //If an operator is scanned
+        else{
+            std::string popped_character;
+            while(infix_to_postfix_stack.top() != "N" && precedence_decision(std::string (1, regex[i])) <= precedence_decision(infix_to_postfix_stack.top()))
+            {
+                popped_character = infix_to_postfix_stack.top();
+                infix_to_postfix_stack.pop();
+                postfix += popped_character;
+            }
+
+            infix_to_postfix_stack.push(std::string (1, regex[i]));
+        }
+
+    }
+    std::string popped_character;
+    //Pop all the remaining elements from the stack
+    while(infix_to_postfix_stack.top() != "N")
+    {
+        popped_character= infix_to_postfix_stack.top();
+        infix_to_postfix_stack.pop();
+        postfix += popped_character;
+    }
+
+
+    return postfix;
+}
+
+int RegularExpression::precedence_decision(std::string operator_symbol) {
+
+
+    if(operator_symbol == "*" || operator_symbol=="+")
+        return 3;
+    else if(operator_symbol=="-"){
+        return 2;
+    }
+    else if(operator_symbol == "|" )
+        return 1;
+    else
+        return -1;
+
+}
+
+bool RegularExpression::isConcated(char character) {
+    if(character=='|'||character=='*'||character=='+'||character==')'){
+        return true;
+    }
+    return false;
+}
+bool RegularExpression::isNotOperator(char character) {
+    if(character=='|'||character=='*'||character=='+'||character=='-'||character=='('|| character==')'){
+        return false;
+    }
+    return true;
+}
