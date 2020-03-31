@@ -12,21 +12,9 @@
 
 #define LEFT_PARENTHESES '('
 #define RIGHT_PARENTHESES ')'
-#define ESCAPE_CHARACTER '\\'
 #define RANGE_EXTRA_OPERATION  '-'
 
-/**
- * The algberic operators that can be applied on regular expressions while evaluating the regex.
- * While, concat operator doesn't have a definite indicator, we use '-' for it since this is already reserved for range extra operation as a user extension and not a algberic operator.
- * The range extra operation indicator is ensured to be replaced early before processing an infix to postfix conversion.
- * */
-typedef enum RegexOperators {
-    UNION_OPERATOR = '|',
-    CONCAT_OPERATOR = '-',
-    KLEENE_CLOSURE_OPERATOR = '*',
-    POSITIVE_CLOSURE_OPERATOR = '+',
 
-} RegexOperators;
 typedef unsigned long ul;
 
 const std::string &RegularExpression::getName() const {
@@ -115,13 +103,12 @@ std::string RegularExpression::infix_to_postfix(std::unordered_set<std::string> 
     std::string postfix = "";
     std::string input_identifier = "";
     bool input_acceptor = false;
-    infix_to_postfix_stack.push("N");
     std::string input_detector = "";
 
     //iterating till the end of the regex
     for (int i = 0; i < regex.size(); i++) {
         // If the scanned character is an operand, add it to output string.
-        if (isNotOperator(regex[i])) {
+        if (!isReservedCharacter(regex[i])||regex[i]==ESCAPE_CHARACTER) {
             while (input_acceptor == false) {
                 input_identifier += regex[i];
                 for (const auto &element: input_table) {
@@ -146,25 +133,25 @@ std::string RegularExpression::infix_to_postfix(std::unordered_set<std::string> 
 
         }
             // If the scanned character is an ‘(‘, push it to the stack.
-        else if (regex[i] == '(')
+        else if (regex[i] == LEFT_PARENTHESES)
 
-            infix_to_postfix_stack.push("(");
+            infix_to_postfix_stack.push(std::string(1,LEFT_PARENTHESES));
 
             // If the scanned character is an ‘)’, pop and to output string from the stack
             // until an ‘(‘ is encountered.
-        else if (regex[i] == ')') {
+        else if (regex[i] == RIGHT_PARENTHESES) {
 
             std::string popped_character;
-            while (infix_to_postfix_stack.top() != "N" && infix_to_postfix_stack.top() != "(") {
+            while (!infix_to_postfix_stack.empty() && infix_to_postfix_stack.top()[0] != LEFT_PARENTHESES) {
                 popped_character = infix_to_postfix_stack.top();
                 infix_to_postfix_stack.pop();
                 postfix += popped_character;
             }
-            if (infix_to_postfix_stack.top() == "(") {
+            if (infix_to_postfix_stack.top()[0] == LEFT_PARENTHESES) {
                 popped_character = infix_to_postfix_stack.top();
                 infix_to_postfix_stack.pop();
             }
-            if (regex[i + 1] == '(' && i + 1 <= regex.size()) {
+            if (regex[i + 1] == LEFT_PARENTHESES && i + 1 <= regex.size()) {
                 regex.insert(i + 1, "-", 1);
             }
         }
@@ -172,7 +159,7 @@ std::string RegularExpression::infix_to_postfix(std::unordered_set<std::string> 
             //If an operator is scanned
         else {
             std::string popped_character;
-            while (infix_to_postfix_stack.top() != "N" &&
+            while (!infix_to_postfix_stack.empty() &&
                    precedence_decision(std::string(1, regex[i])) <= precedence_decision(infix_to_postfix_stack.top())) {
                 popped_character = infix_to_postfix_stack.top();
                 infix_to_postfix_stack.pop();
@@ -185,7 +172,7 @@ std::string RegularExpression::infix_to_postfix(std::unordered_set<std::string> 
     }
     std::string popped_character;
     //Pop all the remaining elements from the stack
-    while (infix_to_postfix_stack.top() != "N") {
+    while (!infix_to_postfix_stack.empty()) {
         popped_character = infix_to_postfix_stack.top();
         infix_to_postfix_stack.pop();
         postfix += popped_character;
@@ -202,11 +189,11 @@ std::string RegularExpression::infix_to_postfix(std::unordered_set<std::string> 
 */
 int RegularExpression::precedence_decision(std::string operator_symbol) {
 
-    if (operator_symbol == "*" || operator_symbol == "+")
+    if (operator_symbol[0] == KLEENE_CLOSURE_OPERATOR || operator_symbol[0] == POSITIVE_CLOSURE_OPERATOR)
         return 3;
-    else if (operator_symbol == "-") {
+    else if (operator_symbol[0] == CONCAT_OPERATOR) {
         return 2;
-    } else if (operator_symbol == "|")
+    } else if (operator_symbol[0] == UNION_OPERATOR)
         return 1;
     else
         return -1;
@@ -219,7 +206,7 @@ int RegularExpression::precedence_decision(std::string operator_symbol) {
 */
 bool RegularExpression::isConcated(char character) {
     if (character == UNION_OPERATOR || character == KLEENE_CLOSURE_OPERATOR || character == POSITIVE_CLOSURE_OPERATOR ||
-        character == ')') {
+        character == RIGHT_PARENTHESES) {
         return true;
     }
     return false;
@@ -231,7 +218,7 @@ bool RegularExpression::isConcated(char character) {
 */
 bool RegularExpression::isNotOperator(char character) {
     if (character == UNION_OPERATOR || character == KLEENE_CLOSURE_OPERATOR || character == POSITIVE_CLOSURE_OPERATOR ||
-        character == CONCAT_OPERATOR || character == '(' || character == ')') {
+        character == CONCAT_OPERATOR || character == LEFT_PARENTHESES || character == RIGHT_PARENTHESES) {
         return false;
     }
     return true;

@@ -1,16 +1,13 @@
 
 // Created by omar_swidan on 23/03/20.
 //
+#define EPSILON "\\L"
+
 #include "nfa.h"
+#include "regular_expression.h"
 
 vector<pair<NFAState *, NFAState *>> combined_nfa_states;
-typedef enum Operators {
-    UNION_OPERATOR = '|',
-    CONCAT_OPERATOR = '-',
-    KLEENE_CLOSURE_OPERATOR = '*',
-    POSITIVE_CLOSURE_OPERATOR = '+',
 
-} RegexOperators;
 
 NFA::NFA() {
 
@@ -40,7 +37,7 @@ NFAState *NFA::regex_to_nfa(std::unordered_set<std::string> input_table, std::ve
     //Combining the nfastates
     for (vector<pair<NFAState *, NFAState *> >::const_iterator it = combined_nfa_states.begin();
          it != combined_nfa_states.end(); it++) {
-        start_state->add_neighbour("\\L", it->first);
+        start_state->add_neighbour(EPSILON, it->first);
     }
 
     return start_state;
@@ -104,24 +101,24 @@ NFAState *NFA::postfix_to_NFA(string postfix, unordered_set<string> input_table,
 
             // If the scanned character is an operator, pop two
             // elements from stack apply the operator
-        else if (postfix[i] == '|' || postfix[i] == '-' || postfix[i] == '+' || postfix[i] == '-') {
+        else if (isOperator(postfix[i])) {
 
             switch (postfix[i]) {
-                case '+': {
+                case POSITIVE_CLOSURE_OPERATOR: {
                     NFAState *plus_nfa_state = this->kleene_and_plus(nfa_state_stack.top(), &start_to_acceptance_map,
                                                                      false, final_finish_state);
                     nfa_state_stack.pop();
                     nfa_state_stack.push(plus_nfa_state);
                     break;
                 }
-                case '*': {
+                case KLEENE_CLOSURE_OPERATOR: {
                     NFAState *kleene_nfa_state = this->kleene_and_plus(nfa_state_stack.top(), &start_to_acceptance_map,
                                                                        true, final_finish_state);
                     nfa_state_stack.pop();
                     nfa_state_stack.push(kleene_nfa_state);
                     break;
                 }
-                case '|': {
+                case UNION_OPERATOR: {
                     NFAState *second_operand_union_state = nfa_state_stack.top();
 
                     nfa_state_stack.pop();
@@ -132,7 +129,7 @@ NFAState *NFA::postfix_to_NFA(string postfix, unordered_set<string> input_table,
                                                            &start_to_acceptance_map, final_finish_state));
                     break;
                 }
-                case '-': {
+                case CONCAT_OPERATOR: {
                     NFAState *second_operand_union_state = nfa_state_stack.top();
 
                     nfa_state_stack.pop();
@@ -154,10 +151,30 @@ NFAState *NFA::postfix_to_NFA(string postfix, unordered_set<string> input_table,
     //Adding the start and acceptance states of the final nfa to the global combined nfa map
     NFAState *acceptance = new NFAAcceptanceState();
     NFAAcceptanceState *acceptance_state = dynamic_cast<NFAAcceptanceState *>(acceptance);
-    start_to_acceptance_map[start_to_acceptance_map.size() - 1].second->add_neighbour("\\L", acceptance_state);
+    start_to_acceptance_map[start_to_acceptance_map.size() - 1].second->add_neighbour(EPSILON, acceptance_state);
     acceptance_state->set_token(regex_name);
     combined_nfa_states.push_back(pair<NFAState *, NFAState *>(nfa_state_stack.top(), acceptance_state));
 
+    for (vector<pair<NFAState *, NFAState *> >::const_iterator it = start_to_acceptance_map.begin();
+         it != start_to_acceptance_map.end(); it++) {
+        cout << (it->first)->getId() << endl;
+        vector<pair<string, NFAState *>> x;
+        x = (it->first)->getNeighbours();
+        for (vector<pair<string, NFAState *> >::const_iterator it = x.begin(); it != x.end(); it++) {
+            cout << "transition:";
+            cout << it->first << endl;
+            cout << it->second->getId() << endl;
+            vector<pair<string, NFAState *>> u;
+            u = (it->second)->getNeighbours();
+            for (vector<pair<string, NFAState *> >::const_iterator it1 = u.begin(); it1 != u.end(); it1++) {
+                cout << "finish:";
+                cout << it1->first << endl;
+                cout << it1->second->getId() << endl;
+
+            }
+        }
+        cout << "Done" << endl;
+    }
     return nfa_state_stack.top();
 }
 
@@ -171,13 +188,13 @@ NFAState *NFA::or_combiner(NFAState *first_nfa_state, NFAState *second_nfa_state
     NFAState *start_state = new NFANormalState();
     NFAState *finish_state = this->acceptance_state_generator(final_finish_state);
     //Adding 2 neighbours from the start node with a transition epsilon where the neighbours are the 2 start nodes of the unioned nfa's
-    start_state->add_neighbour("\\L", first_nfa_state);
-    start_state->add_neighbour("\\L", second_nfa_state);
+    start_state->add_neighbour(EPSILON, first_nfa_state);
+    start_state->add_neighbour(EPSILON, second_nfa_state);
     //Getting the finish states of the unioned nfa's and adding the finsih state of the resulting nfa as their neigbhours with a transition epsilon
     for (vector<pair<NFAState *, NFAState *> >::const_iterator it = start_to_acceptance_map->begin();
          it != start_to_acceptance_map->end(); it++) {
         if (it->first == first_nfa_state || it->first == second_nfa_state) {
-            (it->second)->add_neighbour("\\L", finish_state);
+            (it->second)->add_neighbour(EPSILON, finish_state);
         }
     }
     //Adding the first and finish states to the map
@@ -195,11 +212,11 @@ NFA::kleene_and_plus(NFAState *nfa_state, vector<pair<NFAState *, NFAState *>> *
     NFAState *start_state = new NFANormalState();
     NFAState *finish_state = this->acceptance_state_generator(final_finish_state);
     //Adding an epsilon transition from the new start state to 1-) the start state of the old nfa 2-)the finish state of the new nfa
-    start_state->add_neighbour("\\L", nfa_state);
+    start_state->add_neighbour(EPSILON, nfa_state);
     //In case it is a kleene operator add an epsilon transition from the start state to the accept state
     //In case it is a plus operator do nothing
     if (kleene == true) {
-        start_state->add_neighbour("\\L", finish_state);
+        start_state->add_neighbour(EPSILON, finish_state);
     }
     //getting the start and finish states of the old nfa and making 2 transitions
     //1-)epsilon from the finsih state of the old to the start state of the old
@@ -207,8 +224,8 @@ NFA::kleene_and_plus(NFAState *nfa_state, vector<pair<NFAState *, NFAState *>> *
     for (vector<pair<NFAState *, NFAState *> >::const_iterator it = start_to_acceptance_map->begin();
          it != start_to_acceptance_map->end(); it++) {
         if (it->first == nfa_state) {
-            (it->second)->add_neighbour("\\L", finish_state);
-            (it->second)->add_neighbour("\\L", it->first);
+            (it->second)->add_neighbour(EPSILON, finish_state);
+            (it->second)->add_neighbour(EPSILON, it->first);
             break;
         }
     }
@@ -251,8 +268,6 @@ NFAState *NFA::concat(NFAState *first_nfa_state, NFAState *second_nfa_state,
 
     }
 
-
-    //
     return first_nfa_state;
 }
 
@@ -261,7 +276,7 @@ Check if a transition has a backslash,if yes then trancate the backslash from th
 @return string with no backslash
 */
 std::string NFA::resolve_backslash(std::string transition) {
-    if (transition.find('\\') != string::npos) {
+    if (transition.find(ESCAPE_CHARACTER) != string::npos) {
         transition.erase(0, 1);
     }
     return transition;

@@ -10,13 +10,25 @@
 
 #ifndef LEXGEN_REGULAR_EXPRESSION_H
 #define LEXGEN_REGULAR_EXPRESSION_H
+#define ESCAPE_CHARACTER '\\'
 
 #include <iostream>
 
 #include <string>
 #include <unordered_set>
 #include <stack>
+/**
+ * The algberic operators that can be applied on regular expressions while evaluating the regex.
+ * While, concat operator doesn't have a definite indicator, we use '-' for it since this is already reserved for range extra operation as a user extension and not a algberic operator.
+ * The range extra operation indicator is ensured to be replaced early before processing an infix to postfix conversion.
+ * */
+typedef enum RegexOperators {
+    UNION_OPERATOR = '|',
+    CONCAT_OPERATOR = '-',
+    KLEENE_CLOSURE_OPERATOR = '*',
+    POSITIVE_CLOSURE_OPERATOR = '+',
 
+} RegexOperators;
 class RegularExpression {
 private:
     std::string name_;
