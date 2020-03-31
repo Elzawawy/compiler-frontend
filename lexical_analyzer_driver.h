@@ -27,6 +27,8 @@ class LexicalAnalyzerDriver {
   stack<pair<char, DFAState*>> characters_states_;
   int active_buffer_;
   streamsize active_buffer_size_;
+  const char dummy_initial_transition_char_ = 'L';
+  bool forward_iterator_fills_buffer_; // It's false if we went backwards after a dead state to the previous buffer to reach an accepting state
   bool DecreaseForwardPointer();
   void IncreaseForwardPointer();
   bool IsSkippableCharacter(char c) const;
