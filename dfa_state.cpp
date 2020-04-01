@@ -1,6 +1,4 @@
-
 #include "dfa_state.h"
-
 #include <utility>
 
 int DFAState::id_counter{0};
@@ -9,12 +7,12 @@ int DFAState::id_counter{0};
 
 DFAState::DFAState() : id_(id_counter++) {}
 
-DFAState::DFAState(unordered_set<NFAState *> generators) : id_(id_counter++), generators_(std::move(generators)) {}
+DFAState::DFAState(std::unordered_set<NFAState *> generators) : id_(id_counter++), generators_(std::move(generators)) {}
 
-DFANormalState::DFANormalState(const unordered_set<NFAState *> &generators) :
+DFANormalState::DFANormalState(const std::unordered_set<NFAState *> &generators) :
         DFAState(generators) {}
 
-DFAAcceptanceState::DFAAcceptanceState(const unordered_set<NFAState *> &generators, string token_name) :
+DFAAcceptanceState::DFAAcceptanceState(const std::unordered_set<NFAState *> &generators, string token_name) :
         DFAState(generators), token_name(std::move(token_name)) {}
 
 DFADeadState::DFADeadState() : DFAState() {}

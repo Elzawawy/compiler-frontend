@@ -12,6 +12,7 @@ vector<pair<NFAState *, NFAState *>> combined_nfa_states;
 NFA::NFA() {
 
 }
+
 /**
  Takes a a vector of Regular Expressions and an unordered set of strings representing the input_table
  Converts the input regex to nfa in 4 steps;
@@ -57,6 +58,7 @@ NFA::construct_one_transition_state(string transition, vector<pair<NFAState *, N
     start_to_acceptance_map->push_back(pair<NFAState *, NFAState *>(start_state, finish_state));
     return start_state;
 }
+
 /**
  Converts the postfix to NFA by iterating over the chracters of the postfix and distinguishing whether
  it is an operand or an operator and based on that it constructs the nfa state for each operator using thompson rules
@@ -152,6 +154,7 @@ NFAState *NFA::postfix_to_NFA(string postfix, unordered_set<string> input_table,
     NFAState *acceptance = new NFAAcceptanceState();
     NFAAcceptanceState *acceptance_state = dynamic_cast<NFAAcceptanceState *>(acceptance);
     start_to_acceptance_map[start_to_acceptance_map.size() - 1].second->add_neighbour(EPSILON, acceptance_state);
+
     acceptance_state->set_token(regex_name);
     combined_nfa_states.push_back(pair<NFAState *, NFAState *>(nfa_state_stack.top(), acceptance_state));
 
@@ -201,6 +204,7 @@ NFAState *NFA::or_combiner(NFAState *first_nfa_state, NFAState *second_nfa_state
     start_to_acceptance_map->push_back(pair<NFAState *, NFAState *>(start_state, finish_state));
     return start_state;
 }
+
 /**
  Takes a transition and 2 NFAStates representing the start of each state and constructs an nfa state with a start and ending states using thompson rule
  Based on the kleene boolean it constucts a different state in case it is a plus opeartor
@@ -233,6 +237,7 @@ NFA::kleene_and_plus(NFAState *nfa_state, vector<pair<NFAState *, NFAState *>> *
     start_to_acceptance_map->push_back(pair<NFAState *, NFAState *>(start_state, finish_state));
     return start_state;
 }
+
 /**
  Takes a transition and 2 NFAStates representing the start of each state and constructs an nfa state with a start and ending states using thompson rule
  @return an NFAState ponter representing the start state the concated operation
@@ -277,7 +282,8 @@ Check if a transition has a backslash,if yes then trancate the backslash from th
 */
 std::string NFA::resolve_backslash(std::string transition) {
     if (transition.find(ESCAPE_CHARACTER) != string::npos) {
-        transition.erase(0, 1);
+        if (transition[1] != 'L')
+            transition.erase(0, 1);
     }
     return transition;
 
@@ -307,6 +313,7 @@ NFAState *NFA::acceptance_state_generator(bool final_finish_state) {
         return new NFAAcceptanceState();
     }
 }
+
 /**
  Checks if the character is an operator or not
  @return a boolean indicating if it is a character or not
@@ -318,6 +325,7 @@ bool NFA::isOperator(char character) {
     }
     return false;
 }
+
 /**
  Getter for the input_table
  @return unordered_set of type string
@@ -325,6 +333,7 @@ bool NFA::isOperator(char character) {
 unordered_set<string> NFA::get_input_table() {
     return this->input_table;
 }
+
 /**
  Sets the input table
  @return void
