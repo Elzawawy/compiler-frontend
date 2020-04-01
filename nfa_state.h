@@ -5,21 +5,21 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include "regular_expression.h"
+#include "nfa_state.h"
 
 using namespace std;
 
 class NFAState {
 
 public:
-
+    virtual ~NFAState()=default;
     explicit NFAState();
     void add_neighbour(string input, NFAState* neighbour);
     // Getters for member variables of instance.
     int getId() const;
     const vector < pair<string , NFAState *>> &getNeighbours() const;
-    virtual bool isAcceptingState(){
-        return false;
-    }
+
 
 
 private:
@@ -28,18 +28,12 @@ private:
 
 };
 class NFANormalState:public NFAState{
-public:
-    bool isAcceptingState() override{
-        return false;
-    }
+
 };
 class NFAAcceptanceState:public NFAState{
 public:
     string get_token();
     void set_token(string token);
-    bool isAcceptingState() override{
-        return true;
-    }
 private:
     string token;
 };
