@@ -33,17 +33,22 @@ public:
     // Public functions of instance.
     void AddNeighbour(const string &input, DFAState *neighbour);
 
+    DFAState* GetNeighbour(const string& input);
+
     bool operator==(const DFAState &other) const;
 
     virtual bool isAcceptingState() {
         return false;
     }
 
+    virtual bool IsDeadState();
 };
 
 class DFANormalState : public DFAState {
 public:
     explicit DFANormalState(const unordered_set<NFAState *> &generators);
+
+    DFANormalState();
 
     bool isAcceptingState() override {
         return false;
@@ -53,6 +58,8 @@ public:
 class DFAAcceptanceState : public DFAState {
 public:
     explicit DFAAcceptanceState(const unordered_set<NFAState *> &generators, string token_name);
+
+    DFAAcceptanceState();
 
     string get_token_name();
 
@@ -73,6 +80,8 @@ public:
     bool isAcceptingState() override {
         return false;
     }
+
+    bool IsDeadState() override;
 };
 
 
