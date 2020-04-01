@@ -17,7 +17,9 @@ int main() {
     NFAState seven = NFANormalState();
     NFAState eight = NFANormalState();
     NFAState nine = NFANormalState();
-    NFAState ten = NFAAcceptanceState();
+    NFAAcceptanceState ten{ NFAAcceptanceState()};
+
+    ten.set_token("(a|b)*abb");
 
     zero.add_neighbour("\\L", &one);
     zero.add_neighbour("\\L", &seven);
@@ -58,7 +60,12 @@ int main() {
             cout << g->getId() << " ";
         }
         cout << endl;
-        cout << d.get_neighbours().size()<< endl;
+        if(dynamic_cast<DFAAcceptanceState *>(&d)){
+            cout << "accepting: true"<< endl;
+        }
+        else{
+            cout << "accepting: false"<< endl;
+        }
         unordered_map<string, DFAState *> ns = d.get_neighbours();
         for (auto n : ns) {
             DFAState temp = *n.second;

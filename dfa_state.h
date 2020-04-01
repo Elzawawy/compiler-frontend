@@ -44,6 +44,10 @@ public:
 class DFANormalState : public DFAState {
 public:
     explicit DFANormalState(const unordered_set<NFAState *> &generators);
+
+    bool isAcceptingState() override {
+        return false;
+    }
 };
 
 class DFAAcceptanceState : public DFAState {
@@ -65,6 +69,10 @@ private:
 class DFADeadState : public DFAState {
 public:
     DFADeadState();
+
+    bool isAcceptingState() override {
+        return false;
+    }
 };
 
 

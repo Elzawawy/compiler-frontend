@@ -24,6 +24,8 @@ private:
 
     unordered_set<NFAState *> *EpsilonClosureOnNFAState(NFAState &nfa_state);
 
+    string IsGeneratorsContainAcceptance(const unordered_set<NFAState *>& generators_);
+
 public:
     DFAState *GenerateDFA(NFAState &nfa_root_state, const unordered_set<string> &input_table);
 };

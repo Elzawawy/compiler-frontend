@@ -29,6 +29,9 @@ private:
 };
 class NFANormalState:public NFAState{
 public:
+    bool isAcceptingState() override{
+        return false;
+    }
 };
 class NFAAcceptanceState:public NFAState{
 public:

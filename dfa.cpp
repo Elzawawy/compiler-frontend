@@ -19,29 +19,37 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
         for (auto &&input : input_table) {
             auto *nfa_states_generators = Move(*current_dfa_state, input);
             auto *dfa_state_generators = EpsilonClosureOnNFAStates(*nfa_states_generators);
-            new_dfa_state = new DFANormalState(*dfa_state_generators);
+            if (dfa_state_generators->empty()) {
+                new_dfa_state = new DFADeadState();
+            } else {
+                string token_name = IsGeneratorsContainAcceptance(*dfa_state_generators);
+                if (token_name.empty()) {
+                    new_dfa_state = new DFANormalState(*dfa_state_generators);
+                } else {
+                    new_dfa_state = new DFAAcceptanceState(*dfa_state_generators, token_name);
+                }
 
-            bool is_unmarked = false, is_marked = false;
+                bool is_unmarked = false, is_marked = false;
 
-            for(auto&& state : unmarked_dfa_states_set_){
-                if(*new_dfa_state == state){
-                    *new_dfa_state = state;
-                    is_unmarked = true;
-                    break;
+                for (auto &&state : unmarked_dfa_states_set_) {
+                    if (*new_dfa_state == state) {
+                        *new_dfa_state = state;
+                        is_unmarked = true;
+                        break;
+                    }
+                }
+                for (auto &&state : marked_dfa_states_) {
+                    if (*new_dfa_state == state) {
+                        *new_dfa_state = state;
+                        is_marked = true;
+                        break;
+                    }
+                }
+                if (!is_marked && !is_unmarked) {
+                    unmarked_dfa_states_queue_.push(new_dfa_state);
+                    unmarked_dfa_states_set_.insert(*new_dfa_state);
                 }
             }
-            for(auto&& state : marked_dfa_states_){
-                if(*new_dfa_state == state){
-                    *new_dfa_state = state;
-                    is_marked = true;
-                    break;
-                }
-            }
-            if(!is_marked && !is_unmarked){
-                unmarked_dfa_states_queue_.push(new_dfa_state);
-                unmarked_dfa_states_set_.insert(*new_dfa_state);
-            }
-
             current_dfa_state->AddNeighbour(input, new_dfa_state);
         }
         unmarked_dfa_states_queue_.pop();
@@ -95,4 +103,13 @@ unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAState(NFAState &nfa_state) {
         }
     }
     return nfa_states_neighbours;
+}
+
+string DFA::IsGeneratorsContainAcceptance(const unordered_set<NFAState *> &generators_) {
+    for (auto generator : generators_) {
+        if ((*generator).isAcceptingState()) {
+            return ((NFAAcceptanceState *) generator)->get_token();
+        }
+    }
+    return "";
 }
