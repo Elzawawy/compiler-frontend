@@ -14,6 +14,8 @@ DFAState::DFAState(unordered_set<NFAState *> generators) : id_(id_counter++), ge
 DFANormalState::DFANormalState(const unordered_set<NFAState *> &generators) :
         DFAState(generators) {}
 
+DFANormalState::DFANormalState() {}
+
 DFAAcceptanceState::DFAAcceptanceState(const unordered_set<NFAState *> &generators, string token_name) :
         DFAState(generators), token_name(std::move(token_name)) {}
 
@@ -41,6 +43,8 @@ void DFAAcceptanceState::set_token_name(string token_name) {
     this->token_name = std::move(token_name);
 }
 
+DFAAcceptanceState::DFAAcceptanceState() {}
+
 /****************************** Public functions of instance. ******************************/
 
 void DFAState::AddNeighbour(const string &input, DFAState *neighbour) {
@@ -62,5 +66,16 @@ bool DFAState::operator==(const DFAState &other) const {
             return false;
         }
     }
+    return true;
+}
+DFAState* DFAState::GetNeighbour(const string &input) {
+  return this->neighbours_[input];
+}
+
+bool DFAState::IsDeadState() {
+  return false;
+}
+
+bool DFADeadState::IsDeadState() {
     return true;
 }
