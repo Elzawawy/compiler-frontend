@@ -4,27 +4,26 @@
 //TODO Use the Catch2 h file instead of the downloaded one
 
 TEST_CASE("Lexical Analyzer Driver") {
-  auto *root_state = new DFAState(false);
-  auto *state_1 = new DFAState(true);
-  auto *state_2 = new DFAState(false);
-  auto *state_3 = new DFAState(true);
-  auto *state_4 = new DFAState(true);
-  auto *state_5 = new DFAState(true);
-  auto *state_6 = new DFAState(false);
+  auto *root_state = new DFANormalState();
+  auto *state_1 = new DFAAcceptanceState();
+  auto *state_2 = new DFANormalState();
+  auto *state_3 = new DFAAcceptanceState();
+  auto *state_4 = new DFAAcceptanceState();
+  auto *state_5 = new DFAAcceptanceState();
+  auto *state_6 = new DFADeadState();
 
-  root_state->add_neighbour("a", state_1);
-  root_state->add_neighbour("b", state_5);
-  state_1->add_neighbour("a", state_2);
-  state_1->add_neighbour("b", state_3);
-  state_2->add_neighbour("a", state_2);
-  state_2->add_neighbour("b", state_5);
-  state_3->add_neighbour("b", state_4);
-  state_3->add_neighbour("a", state_6); //Go to dead state
-  state_4->add_neighbour("b", state_5);
-  state_4->add_neighbour("a", state_6); //Go to dead state
-  state_5->add_neighbour("b", state_5);
-  state_5->add_neighbour("a", state_6); //Go to dead state
-  state_6->SetDeadState(true);
+  root_state->AddNeighbour("a", state_1);
+  root_state->AddNeighbour("b", state_5);
+  state_1->AddNeighbour("a", state_2);
+  state_1->AddNeighbour("b", state_3);
+  state_2->AddNeighbour("a", state_2);
+  state_2->AddNeighbour("b", state_5);
+  state_3->AddNeighbour("b", state_4);
+  state_3->AddNeighbour("a", state_6); //Go to dead state
+  state_4->AddNeighbour("b", state_5);
+  state_4->AddNeighbour("a", state_6); //Go to dead state
+  state_5->AddNeighbour("b", state_5);
+  state_5->AddNeighbour("a", state_6); //Go to dead state
 
   SECTION("Reaching a dead State One Get Token Only") {
     ofstream output_file("../input", ios::out);
