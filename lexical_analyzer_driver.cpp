@@ -35,11 +35,11 @@ Token *LexicalAnalyzerDriver::GetNextToken() {
       this->IncreaseForwardPointer();
     }
 
-//if dead state then pop until finding an accepting state else return error
+    //if dead state then pop until finding an accepting state else return error
     //if the char now is 0 then the buffer isn't fully filled and that means the input is finished not at the end of the buffer
     if (characters_states_.top().second->IsDeadState() || *this->forward_ == 0) {
       for (int i = 0; i < this->characters_states_.size(); ++i) {
-        if (this->characters_states_.top().second->isAccepting_state()) {
+        if (this->characters_states_.top().second->isAcceptingState()) {
           Token *token = this->GetTokenFromStatesStack();
           //Push the state after the root state onto the stack in order to be used in the next call of GetNextToken
           this->characters_states_.push(make_pair(this->dummy_initial_transition_char_, this->root_state_));
@@ -54,7 +54,7 @@ Token *LexicalAnalyzerDriver::GetNextToken() {
 
     //Push the neighbour onto the stack transitioned wth the current character forward points to
     this->characters_states_.push(make_pair(*this->forward_,
-                                            this->characters_states_.top().second->GetNeighbour(*this->forward_)));
+                                            this->characters_states_.top().second->GetNeighbour(string{*this->forward_})));
 
     this->IncreaseForwardPointer();
   }
@@ -64,7 +64,7 @@ Token *LexicalAnalyzerDriver::GetNextToken() {
 Token *LexicalAnalyzerDriver::GetTokenFromStatesStack() {
   //Here the strings are created on the stack as they're copied into the  constructor of token
   string lexeme;
-  string token_name = this->characters_states_.top().second->GetTokenName();
+  string token_name = dynamic_cast<DFAAcceptanceState*>(this->characters_states_.top().second)->get_token_name();
   int charcaters_states_size_ = static_cast<int>(this->characters_states_.size());
   for (int i = 0; i < charcaters_states_size_; ++i) {
     if (this->characters_states_.top().second == this->root_state_) continue;
@@ -125,4 +125,3 @@ LexicalAnalyzerDriver::~LexicalAnalyzerDriver() {
 bool LexicalAnalyzerDriver::IsSkippableCharacter(char c) const {
   return c == '\n' || c == ' ' || c == '\t';
 }
-
