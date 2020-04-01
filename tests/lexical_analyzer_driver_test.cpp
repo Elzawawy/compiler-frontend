@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include "catch.h"
 #include "../dfa_state.h"
 #include "../lexical_analyzer_driver.h"
 //TODO Use the Catch2 h file instead of the downloaded one
