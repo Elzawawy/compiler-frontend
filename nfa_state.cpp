@@ -3,25 +3,32 @@
 //
 
 #include "nfa_state.h"
-
-NFAState::NFAState(bool accepting_state) : accepting_state(accepting_state){
+NFAState::NFAState() {
     static int id_counter = 0;
     id=id_counter++;
 
 }
 
 void NFAState::add_neighbour(string input, NFAState *neighbour) {
-    this->neighbours.insert(make_pair(input, neighbour));
+    this->neighbours.push_back(pair<string, NFAState*> (input, neighbour));
 }
 
-bool NFAState::isAccepting_state() const {
-    return accepting_state;
-}
+
 
 int NFAState::getId() const {
     return id;
 }
 
-const unordered_map<string, NFAState *> &NFAState::getNeighbours() const {
-    return neighbours;
+const vector<pair<string, NFAState *>> &NFAState::getNeighbours() const {
+    return this->neighbours;
+}
+
+
+
+string NFAAcceptanceState::get_token() {
+    return std::__cxx11::string();
+}
+
+void NFAAcceptanceState::set_token(string token) {
+this->token=token;
 }
