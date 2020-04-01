@@ -15,6 +15,10 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
     DFAState *current_dfa_state = nullptr, *new_dfa_state = nullptr;
     while (!unmarked_dfa_states_queue_.empty()) {
         current_dfa_state = unmarked_dfa_states_queue_.front();
+        for(auto s: current_dfa_state->get_generators()){
+            cout<< s->getId() << " ";
+        }
+        cout << endl;
         marked_dfa_states_.insert(*current_dfa_state);
         for (auto &&input : input_table) {
             auto *nfa_states_generators = Move(*current_dfa_state, input);
@@ -95,7 +99,7 @@ unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAState(NFAState &nfa_state) {
         nfa_states_stack.pop();
         vector<pair<string, NFAState *>> current_nfa_state_neighbours = current_nfa_state.getNeighbours();
         for (auto &&neighbour: current_nfa_state_neighbours) {
-            if (neighbour.first == "\\L" and
+            if (neighbour.first == "\L" and
                 nfa_states_neighbours->find(neighbour.second) == nfa_states_neighbours->end()) {
                 nfa_states_stack.push(*neighbour.second);
                 nfa_states_neighbours->insert(neighbour.second);
@@ -107,7 +111,7 @@ unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAState(NFAState &nfa_state) {
 
 string DFA::IsGeneratorsContainAcceptance(const unordered_set<NFAState *> &generators_) {
     for (auto generator : generators_) {
-        if ((*generator).isAcceptingState()) {
+        if (dynamic_cast<NFAAcceptanceState *> (generator)) {
             return ((NFAAcceptanceState *) generator)->get_token();
         }
     }
