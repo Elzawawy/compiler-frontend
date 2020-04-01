@@ -7,13 +7,9 @@ int DFAState::id_counter{0};
 
 /****************************** Constructor of the class. ******************************/
 
-DFAState::DFAState() {
-    this->id_ = id_counter++;
-}
+DFAState::DFAState() : id_(id_counter++) {}
 
-DFAState::DFAState(unordered_set<NFAState *> generators) : generators_{std::move(generators)} {
-    this->id_ = id_counter++;
-}
+DFAState::DFAState(unordered_set<NFAState *> generators) : id_(id_counter++), generators_(std::move(generators)) {}
 
 DFANormalState::DFANormalState(const unordered_set<NFAState *> &generators) :
         DFAState(generators) {}
@@ -48,19 +44,23 @@ void DFAAcceptanceState::set_token_name(string token_name) {
 /****************************** Public functions of instance. ******************************/
 
 void DFAState::AddNeighbour(const string &input, DFAState *neighbour) {
-    this->neighbours_.insert(make_pair(input, neighbour));
+    this->neighbours_.insert({input, neighbour});
 }
 
-bool DFAState::operator==(DFAState &other) const {
+bool DFAState::operator==(const DFAState &other) const {
     if(this->generators_.size() != other.generators_.size()){
         return false;
     }
-
-    for(auto generator : this->generators_){
-        if(other.generators_.find(generator) == other.generators_.end()){
+    for (auto generator : this->generators_) {
+        bool is_equal = false;
+        for(auto other_generator: other.generators_ ){
+            if(generator->getId() == other_generator->getId()){
+                is_equal= true;
+            }
+        }
+        if(!is_equal){
             return false;
         }
     }
-
     return true;
 }

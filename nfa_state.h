@@ -17,6 +17,9 @@ public:
     // Getters for member variables of instance.
     int getId() const;
     const vector < pair<string , NFAState *>> &getNeighbours() const;
+    virtual bool isAcceptingState(){
+        return false;
+    }
 
 
 private:
@@ -25,12 +28,15 @@ private:
 
 };
 class NFANormalState:public NFAState{
-
+public:
 };
 class NFAAcceptanceState:public NFAState{
 public:
     string get_token();
-    void set_token();
+    void set_token(string token);
+    bool isAcceptingState() override{
+        return true;
+    }
 private:
     string token;
 };

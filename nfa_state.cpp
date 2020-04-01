@@ -3,6 +3,8 @@
 //
 
 #include "nfa_state.h"
+
+#include <utility>
 NFAState::NFAState() {
     static int id_counter = 0;
     id=id_counter++;
@@ -45,9 +47,9 @@ const vector<pair<string, NFAState *>> &NFAState::getNeighbours() const {
 }
 
 string NFAAcceptanceState::get_token() {
-    return std::__cxx11::string();
+    return token;
 }
 
-void NFAAcceptanceState::set_token() {
-
+void NFAAcceptanceState::set_token(string token) {
+    this->token = std::move(token);
 }

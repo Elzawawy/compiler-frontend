@@ -10,14 +10,12 @@
 #include <unordered_set>
 #include "nfa_state.h"
 
-using namespace std;
-
 class DFAState {
 private:
     static int id_counter;
     int id_;
-    unordered_map<string, DFAState *> neighbours_;
-    unordered_set<NFAState *> generators_;
+    std::unordered_map<string, DFAState *> neighbours_;
+    std::unordered_set<NFAState *> generators_;
 
 public:
     // Constructor of the class.
@@ -35,7 +33,11 @@ public:
     // Public functions of instance.
     void AddNeighbour(const string &input, DFAState *neighbour);
 
-    bool operator==(DFAState &other) const;
+    bool operator==(const DFAState &other) const;
+
+    virtual bool isAcceptingState() {
+        return false;
+    }
 
 };
 
@@ -51,6 +53,10 @@ public:
     string get_token_name();
 
     void set_token_name(string token_name);
+
+    bool isAcceptingState() override {
+        return true;
+    }
 
 private:
     string token_name;

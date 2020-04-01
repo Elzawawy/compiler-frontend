@@ -6,23 +6,26 @@
 #define LEXGEN_DFA_H
 
 #include "dfa_state.h"
+#include "utils.cpp"
 #include <unordered_set>
+#include <queue>
 #include <string>
-
-using namespace std;
 
 class DFA {
 private:
-    unordered_set<DFAState *> unmarked_dfa_states_, marked_dfa_states_;
+    std::unordered_set<DFAState, DFAStateHashingFunction> marked_dfa_states_;
 
-    DFAState EpsilonClosureOnNFAStates(const vector<NFAState>& nfa_states);
+    std::queue<DFAState *> unmarked_dfa_states_queue_;
+    std::unordered_set<DFAState, DFAStateHashingFunction> unmarked_dfa_states_set_;
 
-    vector<NFAState> Move(const DFAState& dfa_state, const string& input);
+    unordered_set<NFAState *> *EpsilonClosureOnNFAStates(const vector<NFAState> &nfa_states);
 
-    unordered_set<NFAState *> EpsilonClosureOnNFAState(NFAState &nfa_state);
+    vector<NFAState> *Move(const DFAState &dfa_state, const string &input);
+
+    unordered_set<NFAState *> *EpsilonClosureOnNFAState(NFAState &nfa_state);
 
 public:
-    DFAState GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>& input_table);
+    DFAState *GenerateDFA(NFAState &nfa_root_state, const unordered_set<string> &input_table);
 };
 
 
