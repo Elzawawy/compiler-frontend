@@ -98,7 +98,7 @@ std::string RegularExpression::infix_to_postfix(std::unordered_set<std::string> 
     //Applying the range operation inorder to remove the range and replace it with repititve unions before converting to postfix
     this->applyRangeOperationIfExists();
 
-    std::string regex = this->getValue();
+    std::string regex =this->getValue();
     std::stack<std::string> infix_to_postfix_stack;
     std::string postfix = "";
     std::string input_identifier = "";
