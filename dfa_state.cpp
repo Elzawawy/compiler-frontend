@@ -1,6 +1,4 @@
-
 #include "dfa_state.h"
-
 #include <utility>
 
 int DFAState::id_counter{0};
@@ -9,9 +7,9 @@ int DFAState::id_counter{0};
 
 DFAState::DFAState() : id_(id_counter++) {}
 
-DFAState::DFAState(unordered_set<NFAState *> generators) : id_(id_counter++), generators_(std::move(generators)) {}
+DFAState::DFAState(std::unordered_set<NFAState *> generators) : id_(id_counter++), generators_(std::move(generators)) {}
 
-DFANormalState::DFANormalState(const unordered_set<NFAState *> &generators) :
+DFANormalState::DFANormalState(const std::unordered_set<NFAState *> &generators) :
         DFAState(generators) {}
 
 DFANormalState::DFANormalState() {}
@@ -21,7 +19,7 @@ DFAAcceptanceState::DFAAcceptanceState(const unordered_set<NFAState *> &generato
 
 DFADeadState::DFADeadState() : DFAState() {}
 
-/****************************** Getters for member variables of instance. ******************************/
+/****************************** Getters & Setters for member variables of instance. ******************************/
 
 int DFAState::get_id() const {
     return this->id_;
@@ -50,6 +48,10 @@ DFAAcceptanceState::DFAAcceptanceState() {}
 void DFAState::AddNeighbour(const string &input, DFAState *neighbour) {
     this->neighbours_.insert({input, neighbour});
 }
+void DFAState::UpdateNeighbours(string symbol, DFAState * state)
+{
+    neighbours_[symbol] = state;
+}
 
 bool DFAState::operator==(const DFAState &other) const {
     if(this->generators_.size() != other.generators_.size()){
@@ -68,6 +70,7 @@ bool DFAState::operator==(const DFAState &other) const {
     }
     return true;
 }
+
 DFAState* DFAState::GetNeighbour(const string &input) {
   return this->neighbours_[input];
 }
@@ -79,3 +82,24 @@ bool DFAState::IsDeadState() {
 bool DFADeadState::IsDeadState() {
     return true;
 }
+
+string DFAState::getCombiningsymbol()
+{
+	return combiningSymbol;
+}
+
+void DFAState::setCombiningsymbol(string& Symbol)
+{
+	this->combiningSymbol = Symbol;
+}
+
+DFAState * DFAState::getEquivstate()
+{
+	return equivState;
+}
+
+void DFAState::setEquivstate(DFAState * state)
+{
+	equivState = state;
+}
+

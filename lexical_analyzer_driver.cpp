@@ -39,7 +39,7 @@ Token *LexicalAnalyzerDriver::GetNextToken() {
     //if the char now is 0 then the buffer isn't fully filled and that means the input is finished not at the end of the buffer
     if (characters_states_.top().second->IsDeadState() || *this->forward_ == 0) {
       for (int i = 0; i < this->characters_states_.size(); ++i) {
-        if (this->characters_states_.top().second->isAcceptingState()) {
+        if (this->characters_states_.top().second->IsAcceptingState()) {
           Token *token = this->GetTokenFromStatesStack();
           //Push the state after the root state onto the stack in order to be used in the next call of GetNextToken
           this->characters_states_.push(make_pair(this->dummy_initial_transition_char_, this->root_state_));

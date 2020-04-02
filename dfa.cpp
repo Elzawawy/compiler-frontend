@@ -1,32 +1,34 @@
-//
-// Created by omar_swidan on 23/03/20.
-//
-
 #include <stack>
 #include <memory>
 #include "dfa.h"
 
-// implement subset construction
+#define EPSILON "\\L"
+
 DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string> &input_table) {
+    DFAState *current_dfa_state = nullptr, *new_dfa_state = nullptr;
+    DFAState *dead_dfa_state = new DFADeadState();
+
+    // Create the start state of DFA
     auto *dfa_start_state_generators = EpsilonClosureOnNFAState(nfa_root_state);
     auto *dfa_start_state = new DFANormalState(*dfa_start_state_generators);
+
     unmarked_dfa_states_queue_.push(dfa_start_state);
     unmarked_dfa_states_set_.insert(*dfa_start_state);
-    DFAState *current_dfa_state = nullptr, *new_dfa_state = nullptr;
+
     while (!unmarked_dfa_states_queue_.empty()) {
         current_dfa_state = unmarked_dfa_states_queue_.front();
-        for(auto s: current_dfa_state->get_generators()){
-            cout<< s->getId() << " ";
-        }
-        cout << endl;
         marked_dfa_states_.insert(*current_dfa_state);
         for (auto &&input : input_table) {
-            auto *nfa_states_generators = Move(*current_dfa_state, input);
-            auto *dfa_state_generators = EpsilonClosureOnNFAStates(*nfa_states_generators);
+            // Create the generators (set of NFA states) of the new DFA state
+            auto *nfa_states_base_generators = Move(*current_dfa_state, input);
+            auto *dfa_state_generators = EpsilonClosureOnNFAStates(*nfa_states_base_generators);
+            delete nfa_states_base_generators;
+
             if (dfa_state_generators->empty()) {
-                new_dfa_state = new DFADeadState();
+                new_dfa_state = dead_dfa_state;
             } else {
-                string token_name = IsGeneratorsContainAcceptance(*dfa_state_generators);
+                // Check if the generators contains an acceptance state to make the new dfa state of type acceptance state ot normal state
+                string token_name = GetTokenNameIfAcceptanceExist(*dfa_state_generators);
                 if (token_name.empty()) {
                     new_dfa_state = new DFANormalState(*dfa_state_generators);
                 } else {
@@ -35,6 +37,7 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
 
                 bool is_unmarked = false, is_marked = false;
 
+                // Check if the new dfa state is in the unmarked set to not add it.
                 for (auto &&state : unmarked_dfa_states_set_) {
                     if (*new_dfa_state == state) {
                         *new_dfa_state = state;
@@ -42,6 +45,7 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
                         break;
                     }
                 }
+                // Check if the new dfa state is in the marked set to not add it.
                 for (auto &&state : marked_dfa_states_) {
                     if (*new_dfa_state == state) {
                         *new_dfa_state = state;
@@ -62,21 +66,26 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
     return dfa_start_state;
 }
 
-unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAStates(const vector<NFAState> &nfa_states) {
-    auto *dfa_state_generator = new unordered_set<NFAState *>();
+std::unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAStates(const std::vector<NFAState> &nfa_states) {
+    auto *dfa_state_generators = new std::unordered_set<NFAState *>();
+    std::unordered_set<NFAState *> *generators = nullptr;
     if (!nfa_states.empty()) {
+        // Get the neighbours of each nfa state generator (base) on epsilon transition
         for (auto nfa_state: nfa_states) {
-            std::unordered_set<NFAState *> *generators = EpsilonClosureOnNFAState(nfa_state);
-            dfa_state_generator->merge(*generators);
+            generators = EpsilonClosureOnNFAState(nfa_state);
+            dfa_state_generators->merge(*generators);
         }
     }
-    return dfa_state_generator;
+    delete generators;
+    return dfa_state_generators;
 }
 
-vector<NFAState> *DFA::Move(const DFAState &dfa_state, const string &input) {
+std::vector<NFAState> *DFA::Move(const DFAState &dfa_state, const string &input) {
     auto *nfa_states_neighbours = new vector<NFAState>;
-    for (const auto &generator : dfa_state.get_generators()) {
-        vector<pair<string, NFAState *>> generator_neighbours = generator->getNeighbours();
+
+    // Search in the generators if there are neighbours based on the given input transition
+    for (auto &&generator : dfa_state.get_generators()) {
+        std::vector<std::pair<string, NFAState *>> generator_neighbours = generator->getNeighbours();
         for (auto &&generator_neighbour: generator_neighbours) {
             if (generator_neighbour.first == input) {
                 nfa_states_neighbours->push_back(*generator_neighbour.second);
@@ -86,9 +95,9 @@ vector<NFAState> *DFA::Move(const DFAState &dfa_state, const string &input) {
     return nfa_states_neighbours;
 }
 
-unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAState(NFAState &nfa_state) {
+std::unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAState(NFAState &nfa_state) {
     std::stack<NFAState> nfa_states_stack;
-    auto *nfa_states_neighbours = new unordered_set<NFAState *>();
+    auto *nfa_states_neighbours = new std::unordered_set<NFAState *>();
     auto *copy = new NFAState(nfa_state);
 
     nfa_states_stack.push(nfa_state);
@@ -97,10 +106,12 @@ unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAState(NFAState &nfa_state) {
     while (!nfa_states_stack.empty()) {
         NFAState current_nfa_state = nfa_states_stack.top();
         nfa_states_stack.pop();
-        vector<pair<string, NFAState *>> current_nfa_state_neighbours = current_nfa_state.getNeighbours();
+        std::vector<std::pair<string, NFAState *>> current_nfa_state_neighbours = current_nfa_state.getNeighbours();
+
+        // Search in the generators if there are neighbours based on epsilon transition
         for (auto &&neighbour: current_nfa_state_neighbours) {
-            if (neighbour.first == "\L" and
-                nfa_states_neighbours->find(neighbour.second) == nfa_states_neighbours->end()) {
+            if (neighbour.first == EPSILON and nfa_states_neighbours->find(neighbour.second) == nfa_states_neighbours->end()) {
+                // Add the neighbour to the stack so it maybe has a neighbour on epsilon transition
                 nfa_states_stack.push(*neighbour.second);
                 nfa_states_neighbours->insert(neighbour.second);
             }
@@ -109,7 +120,7 @@ unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAState(NFAState &nfa_state) {
     return nfa_states_neighbours;
 }
 
-string DFA::IsGeneratorsContainAcceptance(const unordered_set<NFAState *> &generators_) {
+string DFA::GetTokenNameIfAcceptanceExist(const std::unordered_set<NFAState *> &generators_) {
     for (auto generator : generators_) {
         if (dynamic_cast<NFAAcceptanceState *> (generator)) {
             return ((NFAAcceptanceState *) generator)->get_token();

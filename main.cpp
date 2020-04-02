@@ -1,13 +1,11 @@
-#include <iostream>
-#include "nfa_state.h"
-#include "dfa.h"
 #include <queue>
 #include <unordered_set>
+#include "nfa.h"
+#include "dfa.h"
+#include "language_parser.h"
+#include "nfa_state.h"
 
 using namespace std;
-
-#include "nfa.h"
-#include "language_parser.h"
 
 int main() {
 
