@@ -25,17 +25,20 @@ public:
 
 private:
     NFAState *concat(NFAState *first_nfa_state, NFAState *second_nfa_state,
-                     vector<pair<NFAState *, NFAState *>> *start_to_acceptance_map, bool final_finish_state);
+                     unordered_map<NFAState *, NFAState *> *start_to_acceptance_map
+    , bool final_finish_state);
 
     NFAState *or_combiner(NFAState *first_nfa_state, NFAState *second_nfa_state,
-                          vector<pair<NFAState *, NFAState *>> *start_to_acceptance_map, bool final_finish_state);
+                          unordered_map<NFAState *, NFAState *> *start_to_acceptance_map
+    , bool final_finish_state);
 
     NFAState *
-    kleene_and_plus(NFAState *nfa_state, vector<pair<NFAState *, NFAState *>> *start_to_acceptance_map, bool kleene,
+    kleene_and_plus(NFAState *nfa_state,     unordered_map<NFAState *, NFAState *> *start_to_acceptance_map
+    , bool kleene,
                     bool final_finish_state);
 
     NFAState *
-    construct_one_transition_state(string transition, vector<pair<NFAState *, NFAState *>> *start_to_acceptance_map,
+    construct_one_transition_state(string transition,     unordered_map<NFAState *, NFAState *> *start_to_acceptance_map,
                                    bool final_finish_state);
 
     NFAState *postfix_to_NFA(string postfix, unordered_set<string> input_table, string regex_name);
