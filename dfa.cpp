@@ -6,6 +6,7 @@
 
 DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string> &input_table) {
     DFAState *current_dfa_state = nullptr, *new_dfa_state = nullptr;
+    DFAState *dead_dfa_state = new DFADeadState();
 
     // Create the start state of DFA
     auto *dfa_start_state_generators = EpsilonClosureOnNFAState(nfa_root_state);
@@ -24,7 +25,7 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
             delete nfa_states_base_generators;
 
             if (dfa_state_generators->empty()) {
-                new_dfa_state = new DFADeadState();
+                new_dfa_state = dead_dfa_state;
             } else {
                 // Check if the generators contains an acceptance state to make the new dfa state of type acceptance state ot normal state
                 string token_name = GetTokenNameIfAcceptanceExist(*dfa_state_generators);
