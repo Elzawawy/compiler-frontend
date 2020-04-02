@@ -34,7 +34,7 @@ vector<DFAState*> Partition::getMembers()
 void Partition::displayStates()
 {
 	for (std::size_t i = 0; i<members.size(); ++i)
-		std::cout << members[i]->getId() << ' ';
+		std::cout << members[i]->get_id() << ' ';
 
 	cout << endl;
 

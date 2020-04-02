@@ -1,38 +1,70 @@
-
 #include "dfa_state.h"
+#include <utility>
 
-bool DFAState::isAccepting_state() const {
-    return accepting_state;
+int DFAState::id_counter{0};
+
+/****************************** Constructor of the class. ******************************/
+
+DFAState::DFAState() : id_(id_counter++) {}
+
+DFAState::DFAState(std::unordered_set<NFAState *> generators) : id_(id_counter++), generators_(std::move(generators)) {}
+
+DFANormalState::DFANormalState(const std::unordered_set<NFAState *> &generators) :
+        DFAState(generators) {}
+
+DFAAcceptanceState::DFAAcceptanceState(const std::unordered_set<NFAState *> &generators, string token_name) :
+        DFAState(generators), token_name(std::move(token_name)) {}
+
+DFADeadState::DFADeadState() : DFAState() {}
+
+/****************************** Getters & Setters for member variables of instance. ******************************/
+
+int DFAState::get_id() const {
+    return this->id_;
 }
 
-const unordered_map<string, DFAState *> &DFAState::getNeighbours() const {
-    return this->neighbours;
+const unordered_map<string, DFAState *> &DFAState::get_neighbours() const {
+    return this->neighbours_;
 }
 
-int DFAState::getId() const {
-    return id;
+const unordered_set<NFAState *> &DFAState::get_generators() const {
+    return this->generators_;
 }
 
-void DFAState::add_neighbour(string input, DFAState *neighbour) {
-    this->neighbours.insert(make_pair(input, neighbour));
-	
+string DFAAcceptanceState::get_token_name() {
+    return this->token_name;
 }
 
-DFAState::DFAState(bool accepting_state): accepting_state(accepting_state) {
-	
-	static int id_counter = 0;
-	id = id_counter++;
-	
+void DFAAcceptanceState::set_token_name(string token_name) {
+    this->token_name = std::move(token_name);
 }
 
-void DFAState::updateNeighbours(string symbol, DFAState * state)
+/****************************** Public functions of instance. ******************************/
+
+void DFAState::AddNeighbour(const string &input, DFAState *neighbour) {
+    this->neighbours_.insert({input, neighbour});
+}
+void DFAState::UpdateNeighbours(string symbol, DFAState * state)
 {
-
-	neighbours[symbol] = state;
+    neighbours_[symbol] = state;
 }
 
-const vector<NFAState *> &DFAState::getGenerators() const {
-    return generators;
+bool DFAState::operator==(const DFAState &other) const {
+    if(this->generators_.size() != other.generators_.size()){
+        return false;
+    }
+    for (auto generator : this->generators_) {
+        bool is_equal = false;
+        for(auto other_generator: other.generators_ ){
+            if(generator->getId() == other_generator->getId()){
+                is_equal= true;
+            }
+        }
+        if(!is_equal){
+            return false;
+        }
+    }
+    return true;
 }
 
 string DFAState::getCombiningsymbol()
@@ -40,7 +72,7 @@ string DFAState::getCombiningsymbol()
 	return combiningSymbol;
 }
 
-void DFAState::setCombiningsymbol(string Symbol)
+void DFAState::setCombiningsymbol(string& Symbol)
 {
 	this->combiningSymbol = Symbol;
 }
@@ -54,3 +86,4 @@ void DFAState::setEquivstate(DFAState * state)
 {
 	equivState = state;
 }
+
