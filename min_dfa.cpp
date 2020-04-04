@@ -12,12 +12,13 @@
 
 
 
+
 vector<Partition *> partitions;
 vector<string> symbolList;
 std::vector<string> transitionsEnumerator(DFAState* root)
 {
 
-	unordered_map<string, DFAState *> neighbours = root->getNeighbours();
+	unordered_map<string, DFAState *> neighbours = root->get_neighbours();
 	unordered_map<string, DFAState *>::iterator neighboursIterator = neighbours.begin();
 
 	//enumerate all possible transitions
@@ -75,7 +76,7 @@ void setMark(unordered_set<DFAState *> listofstates)
 		vector<DFAState *>::iterator membersIterator = members.begin();
 		for (membersIterator = members.begin(); membersIterator < members.end(); membersIterator++)
 		{
-			unordered_map<string, DFAState *> neigbours = (*membersIterator)->getNeighbours();
+			unordered_map<string, DFAState *> neigbours = (*membersIterator)->get_neighbours();
 			unordered_map<string, DFAState *>::iterator neighboursItr = neigbours.begin();
 			string symbol = "";
 
@@ -101,7 +102,7 @@ void setMark(unordered_set<DFAState *> listofstates)
  DFAState ***   constructTransitiontable( DFAState* root , unordered_set<DFAState *> listofstates)
 {
 
-	unordered_map<string, DFAState *> neighbours = root->getNeighbours();
+	unordered_map<string, DFAState *> neighbours = root->get_neighbours();
 	unordered_map<string, DFAState *>::iterator neighboursIterator = neighbours.begin();
 	std::vector<string> transitions = transitionsEnumerator(root);
 /*
@@ -125,13 +126,13 @@ void setMark(unordered_set<DFAState *> listofstates)
 	//cout	<< listofstates.size()<<endl;
 	for (size_t stateIndex = 0; stateIndex < listofstates.size(); stateIndex++)
 	{
-		cout << (*statesIterator)->getId() << ' ';
+		cout << (*statesIterator)->get_id() << ' ';
 		for (size_t transitionIndex = 0; transitionIndex < transitions.size(); transitionIndex++)
 		{
-			unordered_map<string, DFAState *> currentNeighbour = (*statesIterator)->getNeighbours();
+			unordered_map<string, DFAState *> currentNeighbour = (*statesIterator)->get_neighbours();
 			matrix[stateIndex][transitionIndex] = currentNeighbour [transitions[transitionIndex]];
 			
-			cout << currentNeighbour[transitions[transitionIndex]]->getId(); 
+			cout << currentNeighbour[transitions[transitionIndex]]->get_id();
 			
 		}
 		cout << endl;
@@ -248,10 +249,10 @@ unordered_set<DFAState *>  partitioning(DFAState *** transitionTable , unordered
 	Partition * normal = new Partition("y");
 	partitions.push_back(normal);
 	partitions.push_back(accept);
-	//first step is to classify states to 2 partitions
+	//first step is to classify states to 2 states_partitions
 	for (unordered_set<DFAState *>::iterator itr = listofstates.begin(); itr != listofstates.end(); itr++) {
 		
-		if ((*itr)->isAccepting_state())
+		if ((*itr)->IsAcceptingState())
 			accept->add((*itr));
 		else
 			normal->add((*itr));
@@ -267,13 +268,13 @@ unordered_set<DFAState *>  partitioning(DFAState *** transitionTable , unordered
 		oldParitionsize = partitions.size();
 		//mark all states with combining symbols
 		setMark(listofstates);
-		//create new partitions equal to # of symbols and link them to partitions list
+		//create new states_partitions equal to # of symbols and link them to states_partitions list
 		for (size_t i = 0; i < symbolList.size(); i++)
 		{
 			partitions.push_back(new Partition((*(symbolList.begin() + i)) ));
 
 		}
-		//iterate through old partitions and put every state in the proper partition
+		//iterate through old states_partitions and put every state in the proper partition
 		vector<Partition *>::iterator partitionsIterator = partitions.begin();
 
 		for (size_t i = 0; i < partitions.size()-  symbolList.size(); i++)
@@ -328,11 +329,11 @@ unordered_set<DFAState *>  partitioning(DFAState *** transitionTable , unordered
 		//iterate through neighbours
 		for (statesIterator = newDFA.begin(); statesIterator != newDFA.end(); statesIterator++)
 		{
-			unordered_map<string, DFAState *> neighbours = (*statesIterator)->getNeighbours();
+			unordered_map<string, DFAState *> neighbours = (*statesIterator)->get_neighbours();
 			unordered_map<string, DFAState *>::iterator neighboursIterator = neighbours.begin();
 			for (neighboursIterator = neighbours.begin(); neighboursIterator != neighbours.end(); neighboursIterator++)
 			{
-				(*statesIterator)->updateNeighbours((neighboursIterator)->first, (neighboursIterator)->second->getEquivstate());
+				(*statesIterator)->UpdateNeighbours((neighboursIterator)->first, (neighboursIterator)->second->getEquivstate());
 
 			}
 
