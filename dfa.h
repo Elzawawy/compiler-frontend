@@ -8,7 +8,7 @@
 
 class DFA {
 private:
-    std::unordered_set<DFAState, DFAStateHashingFunction> marked_dfa_states_;
+    std::unordered_set<DFAState*> marked_dfa_states_;
     std::queue<DFAState*> unmarked_dfa_states_queue_;
     std::unordered_set<DFAState, DFAStateHashingFunction> unmarked_dfa_states_set_;
 
@@ -47,6 +47,8 @@ public:
      * @return A DFAState pointer that point to the first state in DFA.
      */
     DFAState* GenerateDFA(NFAState& nfa_root_state, const std::unordered_set<std::string>& input_table);
+
+    const unordered_set<DFAState *> &getMarked_dfa_states_() const;
 };
 
 #endif //LEXGEN_DFA_H
