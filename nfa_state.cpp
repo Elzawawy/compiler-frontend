@@ -26,7 +26,7 @@ const vector<pair<string, NFAState *>> &NFAState::getNeighbours() const {
 
 
 string NFAAcceptanceState::get_token() {
-    return std::__cxx11::string();
+    return this->token;
 }
 
 void NFAAcceptanceState::set_token(string token) {
