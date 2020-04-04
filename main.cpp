@@ -17,6 +17,6 @@ int main() {
     NFAState *nfa_start_state = x.regex_to_nfa(language_parser->getInput_table(), language_parser->getExpressions());
     DFA dfa_gen = DFA();
     DFAState *dfa_start_state = dfa_gen.GenerateDFA(*nfa_start_state, language_parser->getInput_table());
-
+    cout<< "lol";
     return 0;
 }

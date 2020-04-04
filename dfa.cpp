@@ -17,12 +17,11 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
 
     while (!unmarked_dfa_states_queue_.empty()) {
         current_dfa_state = unmarked_dfa_states_queue_.front();
-        marked_dfa_states_.insert(*current_dfa_state);
+        marked_dfa_states_.insert(current_dfa_state);
         for (auto &&input : input_table) {
             // Create the generators (set of NFA states) of the new DFA state
             auto *nfa_states_base_generators = Move(*current_dfa_state, input);
             auto *dfa_state_generators = EpsilonClosureOnNFAStates(*nfa_states_base_generators);
-            delete nfa_states_base_generators;
 
             if (dfa_state_generators->empty()) {
                 new_dfa_state = dead_dfa_state;
@@ -48,8 +47,8 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
             }
             // Check if the new dfa state is in the marked set to not add it.
             for (auto &&state : marked_dfa_states_) {
-                if (*new_dfa_state == state) {
-                    *new_dfa_state = state;
+                if (*new_dfa_state == *state) {
+                    new_dfa_state = state;
                     is_marked = true;
                     break;
                 }
@@ -77,7 +76,6 @@ std::unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAStates(const std::vector
             dfa_state_generators->merge(*generators);
         }
     }
-    delete generators;
     return dfa_state_generators;
 }
 

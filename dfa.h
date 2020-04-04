@@ -9,7 +9,7 @@
 
 class DFA {
 private:
-    std::unordered_set<DFAState, DFAStateHashingFunction> marked_dfa_states_;
+    std::unordered_set<DFAState*> marked_dfa_states_;
     std::queue<DFAState *> unmarked_dfa_states_queue_;
     std::unordered_set<DFAState, DFAStateHashingFunction> unmarked_dfa_states_set_;
 
