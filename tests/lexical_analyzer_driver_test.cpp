@@ -1,7 +1,6 @@
 #include "catch.h"
 #include "../dfa_state.h"
 #include "../lexical_analyzer_driver.h"
-//TODO Use the Catch2 h file instead of the downloaded one
 
 TEST_CASE("Lexical Analyzer Driver") {
   auto *root_state = new DFANormalState();

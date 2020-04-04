@@ -30,13 +30,14 @@ Token *LexicalAnalyzerDriver::GetNextToken() {
   //start with setting lexeme_begin with forward in order to satrt a new lexeme
   this->lexeme_begin_ = this->forward_;
   while (true) {
-    //Skippable characters are handled in the forward pointer transition functions but this check is for the first ever character
-    if (this->IsSkippableCharacter(*this->forward_)) {
-      this->IncreaseForwardPointer();
-    }
+//    //Skippable characters are handled in the forward pointer transition functions but this check is for the first ever character
+//    if (this->IsSkippableCharacter(*this->forward_)) {
+//      this->IncreaseForwardPointer();
+//    }
 
     //if dead state then pop until finding an accepting state else return error
     //if the char now is 0 then the buffer isn't fully filled and that means the input is finished not at the end of the buffer
+    //forward is pointing to the next character
     if (characters_states_.top().second->IsDeadState() || *this->forward_ == 0) {
       for (int i = 0; i < this->characters_states_.size(); ++i) {
         if (this->characters_states_.top().second->IsAcceptingState()) {
@@ -77,7 +78,6 @@ Token *LexicalAnalyzerDriver::GetTokenFromStatesStack() {
 }
 
 void LexicalAnalyzerDriver::IncreaseForwardPointer() {
-  static int i=0;
   //Reading the buffers. Fill next buffer if reached the end of the current buffer
   //Take care that end points to the element one past the last element and the last element is the \0
   if (this->forward_ == this->buffers_[this->active_buffer_].end() - 2) {
@@ -103,7 +103,7 @@ void LexicalAnalyzerDriver::IncreaseForwardPointer() {
   }
 
   //recursively forward pointer untill reaching a non skippable character
-  if (this->IsSkippableCharacter(*this->forward_)) return this->IncreaseForwardPointer();
+//  if (this->IsSkippableCharacter(*this->forward_)) return this->IncreaseForwardPointer();
 }
 bool LexicalAnalyzerDriver::DecreaseForwardPointer() {
   if (this->forward_ == this->lexeme_begin_) return false;
@@ -115,7 +115,7 @@ bool LexicalAnalyzerDriver::DecreaseForwardPointer() {
     this->forward_ = this->buffers_[this->active_buffer_].end() - 2;
     this->forward_iterator_fills_buffer_ = false;
   } else this->forward_--;
-  if (IsSkippableCharacter(*this->forward_)) return this->DecreaseForwardPointer();
+//  if (IsSkippableCharacter(*this->forward_)) return this->DecreaseForwardPointer();
   return true;
 }
 
