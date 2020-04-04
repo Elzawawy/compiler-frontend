@@ -34,8 +34,9 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
                 } else {
                     new_dfa_state = new DFAAcceptanceState(*dfa_state_generators, token_name);
                 }
+            }
 
-                bool is_unmarked = false, is_marked = false;
+            bool is_unmarked = false, is_marked = false;
 
                 // Check if the new dfa state is in the unmarked set to not add it.
                 for (auto &&state : unmarked_dfa_states_set_) {
@@ -52,12 +53,12 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
                         is_marked = true;
                         break;
                     }
-                }
-                if (!is_marked && !is_unmarked) {
-                    unmarked_dfa_states_queue_.push(new_dfa_state);
-                    unmarked_dfa_states_set_.insert(*new_dfa_state);
-                }
+
+            if (!is_marked && !is_unmarked) {
+                unmarked_dfa_states_queue_.push(new_dfa_state);
+                unmarked_dfa_states_set_.insert(*new_dfa_state);
             }
+
             current_dfa_state->AddNeighbour(input, new_dfa_state);
         }
         unmarked_dfa_states_queue_.pop();
@@ -110,7 +111,8 @@ std::unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAState(NFAState &nfa_stat
 
         // Search in the generators if there are neighbours based on epsilon transition
         for (auto &&neighbour: current_nfa_state_neighbours) {
-            if (neighbour.first == EPSILON and nfa_states_neighbours->find(neighbour.second) == nfa_states_neighbours->end()) {
+            if (neighbour.first == EPSILON and
+                nfa_states_neighbours->find(neighbour.second) == nfa_states_neighbours->end()) {
                 // Add the neighbour to the stack so it maybe has a neighbour on epsilon transition
                 nfa_states_stack.push(*neighbour.second);
                 nfa_states_neighbours->insert(neighbour.second);
