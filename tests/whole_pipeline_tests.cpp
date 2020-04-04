@@ -16,9 +16,13 @@ TEST_CASE("PDF's inputs"){
     DFAState *dfa_start_state = dfa_gen.GenerateDFA(*nfa_start_state, language_parser->getInput_table());
 
 
-    constructTransitiontable(dfa_start_state, dfa_gen.getMarked_dfa_states_()), dfa_gen.getMarked_dfa_states_();
+//    constructTransitiontable(dfa_start_state, dfa_gen.getMarked_dfa_states_()), dfa_gen.getMarked_dfa_states_();
 //    unordered_set<DFAState *>  newDFA = partitioning(constructTransitiontable(dfa_start_state, dfa_gen.getMarked_dfa_states_()), dfa_gen.getMarked_dfa_states_());
-//    constructTransitiontable(*(newDFA.begin()), newDFA);
+
+//        constructTransitiontable(*(newDFA.begin()), newDFA);
+
+    LexicalAnalyzerDriver lexicalAnalyzerDriver(dfa_start_state, "../test_cases/a_test_program1.txt");
+    Token *token1 = lexicalAnalyzerDriver.GetNextToken();
 
 
 }

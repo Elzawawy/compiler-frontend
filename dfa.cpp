@@ -38,35 +38,35 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
 
             bool is_unmarked = false, is_marked = false;
 
-                // Check if the new dfa state is in the unmarked set to not add it.
-                for (auto &&state : unmarked_dfa_states_set_) {
-                    if (*new_dfa_state == state) {
-                        *new_dfa_state = state;
-                        is_unmarked = true;
-                        break;
-                    }
+            // Check if the new dfa state is in the unmarked set to not add it.
+            for (auto &&state : unmarked_dfa_states_set_) {
+                if (*new_dfa_state == state) {
+                    *new_dfa_state = state;
+                    is_unmarked = true;
+                    break;
                 }
-                // Check if the new dfa state is in the marked set to not add it.
-                for (auto &&state : marked_dfa_states_) {
-                    if (*new_dfa_state == *state) {
-                        *new_dfa_state = *state;
-                        is_marked = true;
-                        break;
-                    }
-
-            if (!is_marked && !is_unmarked) {
-                unmarked_dfa_states_queue_.push(new_dfa_state);
-                unmarked_dfa_states_set_.insert(*new_dfa_state);
             }
+            // Check if the new dfa state is in the marked set to not add it.
+            for (auto &&state : marked_dfa_states_) {
+                if (*new_dfa_state == *state) {
+                    *new_dfa_state = *state;
+                    is_marked = true;
+                    break;
+                }
 
-            current_dfa_state->AddNeighbour(input, new_dfa_state);
+                if (!is_marked && !is_unmarked) {
+                    unmarked_dfa_states_queue_.push(new_dfa_state);
+                    unmarked_dfa_states_set_.insert(*new_dfa_state);
+                }
+
+                current_dfa_state->AddNeighbour(input, new_dfa_state);
+            }
+            unmarked_dfa_states_queue_.pop();
+            unmarked_dfa_states_set_.erase(*current_dfa_state);
         }
-        unmarked_dfa_states_queue_.pop();
-        unmarked_dfa_states_set_.erase(*current_dfa_state);
+        return dfa_start_state;
     }
-    return dfa_start_state;
 }
-
 std::unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAStates(const std::vector<NFAState> &nfa_states) {
     auto *dfa_state_generators = new std::unordered_set<NFAState *>();
     std::unordered_set<NFAState *> *generators = nullptr;
