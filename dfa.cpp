@@ -19,9 +19,6 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
         current_dfa_state = unmarked_dfa_states_queue_.front();
         marked_dfa_states_.insert(current_dfa_state);
         for (auto &&input : input_table) {
-            if (input == "p") {
-                cout << "p" << endl;
-            }
             // Create the generators (set of NFA states) of the new DFA state
             auto *nfa_states_base_generators = Move(*current_dfa_state, input);
             auto *dfa_state_generators = EpsilonClosureOnNFAStates(*nfa_states_base_generators);
