@@ -31,7 +31,7 @@ NFAState *NFA::regex_to_nfa(std::unordered_set<std::string> input_table, std::ve
         //Convert each infix to postfix
         postfix = regex[i].infix_to_postfix(input_table);
         //Convert each postfix to an NFA
-        this->postfix_to_NFA(postfix, input_table, regex[i].getName());
+        this->postfix_to_NFA(postfix, input_table, regex[i].getName(),i);
     }
     NFAState *start_state = new NFANormalState();
     //Resolves the input table by removing all backslashes
@@ -41,7 +41,34 @@ NFAState *NFA::regex_to_nfa(std::unordered_set<std::string> input_table, std::ve
          it != combined_nfa_states.end(); it++) {
         start_state->add_neighbour(EPSILON, it->first);
     }
-
+//    for (vector<pair<NFAState *, NFAState *> >::const_iterator it = global_states.begin();
+//         it != global_states.end(); it++) {
+//        vector<pair<string, NFAState *>> x;
+//        vector<pair<string, NFAState *>> u;
+//        x = (it->first)->getNeighbours();
+//        u = (it->second)->getNeighbours();
+//        for (vector<pair<string, NFAState *> >::const_iterator it1 = x.begin(); it1 != x.end(); it1++) {
+//            cout << it->first->getId();
+//            cout << " ";
+//            cout << it1->second->getId();
+//            cout << " ";
+//            cout << it1->first << endl;
+//        }
+//        for (vector<pair<string, NFAState *> >::const_iterator it2 = u.begin(); it2 != u.end(); it2++) {
+//            cout << it->second->getId();
+//            cout << " ";
+//            cout << it2->second->getId();
+//            cout << " ";
+//
+//            cout << it2->first << endl;
+//
+//        }
+//        cout<<"DONE"<<endl;
+//    }
+//    cout<<"botato"<<endl;
+//    for (const auto &element: this->get_input_table()) {
+//        cout<<element<<endl;
+//    }
     global_states.clear();
     return start_state;
 }
@@ -67,7 +94,7 @@ NFA::construct_one_transition_state(string transition, unordered_map<NFAState *,
  it is an operand or an operator and based on that it constructs the nfa state for each operator using thompson rules
  @return an NFAState ponter representing the start state an NFA of a regex
 */
-NFAState *NFA::postfix_to_NFA(string postfix, unordered_set<string> input_table, string regex_name) {
+NFAState *NFA::postfix_to_NFA(string postfix, unordered_set<string> input_table, string regex_name,int priority) {
     stack<NFAState *> nfa_state_stack;
     unordered_map<NFAState *, NFAState *> start_to_acceptance_map;
     bool input_acceptor = false;
@@ -158,6 +185,7 @@ NFAState *NFA::postfix_to_NFA(string postfix, unordered_set<string> input_table,
 
     global_states[global_states.size() - 1].second->add_neighbour(EPSILON, acceptance_state);
     acceptance_state->set_token(regex_name);
+    acceptance_state->set_priority(priority);
     combined_nfa_states.push_back(pair<NFAState *, NFAState *>(nfa_state_stack.top(), acceptance_state));
 
 

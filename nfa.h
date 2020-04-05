@@ -41,7 +41,7 @@ private:
     construct_one_transition_state(string transition,     unordered_map<NFAState *, NFAState *> *start_to_acceptance_map,
                                    bool final_finish_state);
 
-    NFAState *postfix_to_NFA(string postfix, unordered_set<string> input_table, string regex_name);
+    NFAState *postfix_to_NFA(string postfix, unordered_set<string> input_table, string regex_name,int priority);
 
     string resolve_backslash(string transition);
 
