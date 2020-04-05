@@ -31,7 +31,7 @@ TEST_CASE("Lexical Analyzer Driver") {
 
     LexicalAnalyzerDriver lexicalAnalyzerDriver(root_state, "../input");
     Token *token1 = lexicalAnalyzerDriver.GetNextToken();
-    REQUIRE(token1->GetLexeme_() == "abb");
+    REQUIRE(token1->GetLexeme() == "abb");
   }SECTION("Input Over One Get Token Only") {
     ofstream output_file("../input", ios::out);
     output_file << "abb";
@@ -39,7 +39,7 @@ TEST_CASE("Lexical Analyzer Driver") {
 
     LexicalAnalyzerDriver lexicalAnalyzerDriver(root_state, "../input");
     Token *token1 = lexicalAnalyzerDriver.GetNextToken();
-    REQUIRE(token1->GetLexeme_() == "abb");
+    REQUIRE(token1->GetLexeme() == "abb");
   }SECTION("2 Get Tokens With 2 Dead States At The End") {
     ofstream output_file("../input", ios::out);
     output_file << "abbaab";
@@ -48,8 +48,8 @@ TEST_CASE("Lexical Analyzer Driver") {
     LexicalAnalyzerDriver lexicalAnalyzerDriver(root_state, "../input");
     Token *token1 = lexicalAnalyzerDriver.GetNextToken();
     Token *token2 = lexicalAnalyzerDriver.GetNextToken();
-    REQUIRE(token1->GetLexeme_() == "abb");
-    REQUIRE(token2->GetLexeme_() == "aab");
+    REQUIRE(token1->GetLexeme() == "abb");
+    REQUIRE(token2->GetLexeme() == "aab");
   }SECTION("2 Get Tokens With 1 Dead State and 1 Input Over At The End") {
     ofstream output_file("../input", ios::out);
     output_file << "abbaab";
@@ -58,8 +58,8 @@ TEST_CASE("Lexical Analyzer Driver") {
     LexicalAnalyzerDriver lexicalAnalyzerDriver(root_state, "../input");
     Token *token1 = lexicalAnalyzerDriver.GetNextToken();
     Token *token2 = lexicalAnalyzerDriver.GetNextToken();
-    REQUIRE(token1->GetLexeme_() == "abb");
-    REQUIRE(token2->GetLexeme_() == "aab");
+    REQUIRE(token1->GetLexeme() == "abb");
+    REQUIRE(token2->GetLexeme() == "aab");
   }SECTION("2 Get Tokens With 2 Dead State At The End") {
     ofstream output_file("../input", ios::out);
     output_file << "abbaaba";
@@ -68,8 +68,8 @@ TEST_CASE("Lexical Analyzer Driver") {
     LexicalAnalyzerDriver lexicalAnalyzerDriver(root_state, "../input");
     Token *token1 = lexicalAnalyzerDriver.GetNextToken();
     Token *token2 = lexicalAnalyzerDriver.GetNextToken();
-    REQUIRE(token1->GetLexeme_() == "abb");
-    REQUIRE(token2->GetLexeme_() == "aab");
+    REQUIRE(token1->GetLexeme() == "abb");
+    REQUIRE(token2->GetLexeme() == "aab");
   }SECTION("Simulating 2 full buffers with 1 token") {
     ofstream output_file("../input", ios::out);
     string out1, out2;
@@ -81,7 +81,7 @@ TEST_CASE("Lexical Analyzer Driver") {
     output_file.close();
     LexicalAnalyzerDriver lexicalAnalyzerDriver(root_state, "../input");
     Token *token1 = lexicalAnalyzerDriver.GetNextToken();
-    REQUIRE(token1->GetLexeme_() == out1);
+    REQUIRE(token1->GetLexeme() == out1);
 
   }SECTION(
       "Simulating 2 full buffers with 2 tokens, the second token has its first element as the ast element in the first buffer") {
@@ -102,8 +102,8 @@ TEST_CASE("Lexical Analyzer Driver") {
     LexicalAnalyzerDriver lexicalAnalyzerDriver(root_state, "../input");
     Token *token1 = lexicalAnalyzerDriver.GetNextToken();
     Token *token2 = lexicalAnalyzerDriver.GetNextToken();
-    REQUIRE(token1->GetLexeme_() == out1.substr(0, 4095));
-    REQUIRE(token2->GetLexeme_() == (out1[4095] + out2));
+    REQUIRE(token1->GetLexeme() == out1.substr(0, 4095));
+    REQUIRE(token2->GetLexeme() == (out1[4095] + out2));
 
   }SECTION("1 full buffer no dead state") {
     ofstream output_file("../input", ios::out);
@@ -117,7 +117,7 @@ TEST_CASE("Lexical Analyzer Driver") {
     LexicalAnalyzerDriver lexicalAnalyzerDriver(root_state, "../input");
     Token *token1 = lexicalAnalyzerDriver.GetNextToken();
 
-    REQUIRE(token1->GetLexeme_() == out1);
+    REQUIRE(token1->GetLexeme() == out1);
   }
 
 }
