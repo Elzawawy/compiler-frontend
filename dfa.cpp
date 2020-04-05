@@ -19,6 +19,9 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
         current_dfa_state = unmarked_dfa_states_queue_.front();
         marked_dfa_states_.insert(current_dfa_state);
         for (auto &&input : input_table) {
+            if (input == "p") {
+                cout << "p" << endl;
+            }
             // Create the generators (set of NFA states) of the new DFA state
             auto *nfa_states_base_generators = Move(*current_dfa_state, input);
             auto *dfa_state_generators = EpsilonClosureOnNFAStates(*nfa_states_base_generators);
@@ -121,10 +124,15 @@ std::unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAState(NFAState &nfa_stat
 }
 
 string DFA::GetTokenNameIfAcceptanceExist(const std::unordered_set<NFAState *> &generators_) {
+    int priority = -1;
+    std::string token_name = "";
     for (auto generator : generators_) {
         if (dynamic_cast<NFAAcceptanceState *> (generator)) {
-            return ((NFAAcceptanceState *) generator)->get_token();
+            if (((NFAAcceptanceState *) generator)->get_priority() > priority) {
+                priority = ((NFAAcceptanceState *) generator)->get_priority();
+                token_name = ((NFAAcceptanceState *) generator)->get_token();
+            }
         }
     }
-    return "";
+    return token_name;
 }
