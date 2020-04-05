@@ -10,7 +10,7 @@ LexicalAnalyzerDriver::LexicalAnalyzerDriver(DFAState *root_state_, const string
     input_over_(false),
     forward_iterator_fills_buffer_(true),
     input_file_name_(input_file_name_),
-    buffers_((unsigned long) this->number_of_buffers_, vector<char>(this->buffer_size_ + 1, 0)) {
+    buffers_((unsigned long) this->number_of_buffers_, vector<char>(this->buffer_size_ + 1, EOF)) {
 
   input_file_.open(input_file_name_, ifstream::binary);
   this->forward_ = this->buffers_[0].begin();
@@ -38,12 +38,13 @@ Token *LexicalAnalyzerDriver::GetNextToken() {
     //if dead state then pop until finding an accepting state else return error
     //if the char now is 0 then the buffer isn't fully filled and that means the input is finished not at the end of the buffer
     //forward is pointing to the next character
-    if (characters_states_.top().second->IsDeadState() || *this->forward_ == 0) {
+    if (characters_states_.top().second->IsDeadState() || *this->forward_ == EOF || this->IsSkippableCharacter(*this->forward_)) {
       for (int i = 0; i < this->characters_states_.size(); ++i) {
         if (this->characters_states_.top().second->IsAcceptingState()) {
           Token *token = this->GetTokenFromStatesStack();
-          //Push the state after the root state onto the stack in order to be used in the next call of GetNextToken
+          //Push the s  tate after the root state onto the stack in order to be used in the next call of GetNextToken
           this->characters_states_.push(make_pair(this->dummy_initial_transition_char_, this->root_state_));
+          if(this->IsSkippableCharacter(*this->forward_)) this->IncreaseForwardPointer();
           return token;
         }
 
@@ -68,7 +69,10 @@ Token *LexicalAnalyzerDriver::GetTokenFromStatesStack() {
   string token_name = dynamic_cast<DFAAcceptanceState*>(this->characters_states_.top().second)->get_token_name();
   int charcaters_states_size_ = static_cast<int>(this->characters_states_.size());
   for (int i = 0; i < charcaters_states_size_; ++i) {
-    if (this->characters_states_.top().second == this->root_state_) continue;
+    if (this->characters_states_.top().second == this->root_state_) {
+        this->characters_states_.pop();
+        break;
+    }
     //Append the character that transited the current DFAState
     lexeme += this->characters_states_.top().first;
     this->characters_states_.pop();
@@ -97,7 +101,7 @@ void LexicalAnalyzerDriver::IncreaseForwardPointer() {
     //Set the last character in the buffer to \0 in order to indicate the end of the input
     //Take care that this is needed asa this is a  circular buffer.
     //Each buffer is filled with initialized with buffer size + 1 that's why we add the \0 index active buffer size
-    this->buffers_[this->active_buffer_][this->active_buffer_size_] = 0;
+    this->buffers_[this->active_buffer_][this->active_buffer_size_] = static_cast<char>('EOF');
   } else {
     this->forward_++;
   }
