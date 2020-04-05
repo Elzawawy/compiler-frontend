@@ -13,7 +13,7 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
     auto *dfa_start_state = new DFANormalState(*dfa_start_state_generators);
 
     unmarked_dfa_states_queue_.push(dfa_start_state);
-    unmarked_dfa_states_set_.insert(*dfa_start_state);
+    unmarked_dfa_states_set_.insert(dfa_start_state);
 
     while (!unmarked_dfa_states_queue_.empty()) {
         current_dfa_state = unmarked_dfa_states_queue_.front();
@@ -39,8 +39,8 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
 
             // Check if the new dfa state is in the unmarked set to not add it.
             for (auto &&state : unmarked_dfa_states_set_) {
-                if (*new_dfa_state == state) {
-                    *new_dfa_state = state;
+                if (*new_dfa_state == *state) {
+                    new_dfa_state = state;
                     is_unmarked = true;
                     break;
                 }
@@ -55,13 +55,13 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
             }
             if (!is_marked && !is_unmarked) {
                 unmarked_dfa_states_queue_.push(new_dfa_state);
-                unmarked_dfa_states_set_.insert(*new_dfa_state);
+                unmarked_dfa_states_set_.insert(new_dfa_state);
             }
 
             current_dfa_state->AddNeighbour(input, new_dfa_state);
         }
         unmarked_dfa_states_queue_.pop();
-        unmarked_dfa_states_set_.erase(*current_dfa_state);
+        unmarked_dfa_states_set_.erase(current_dfa_state);
     }
     return dfa_start_state;
 }
