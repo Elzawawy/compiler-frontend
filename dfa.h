@@ -9,8 +9,8 @@
 class DFA {
 private:
     std::unordered_set<DFAState*> marked_dfa_states_;
-    std::queue<DFAState*> unmarked_dfa_states_queue_;
-    std::unordered_set<DFAState, DFAStateHashingFunction> unmarked_dfa_states_set_;
+    std::queue<DFAState *> unmarked_dfa_states_queue_;
+    std::unordered_set<DFAState*> unmarked_dfa_states_set_;
 
     /**
      * Used to get the set of NFA states reachable from some other NFA states on epsilon-transitions alone.

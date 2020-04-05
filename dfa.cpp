@@ -4,6 +4,7 @@
 
 #define EPSILON "\\L"
 
+
 DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string> &input_table) {
     DFAState *current_dfa_state = nullptr, *new_dfa_state = nullptr;
     DFAState *dead_dfa_state = new DFADeadState();
@@ -13,7 +14,7 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
     auto *dfa_start_state = new DFANormalState(*dfa_start_state_generators);
 
     unmarked_dfa_states_queue_.push(dfa_start_state);
-    unmarked_dfa_states_set_.insert(*dfa_start_state);
+    unmarked_dfa_states_set_.insert(dfa_start_state);
 
     while (!unmarked_dfa_states_queue_.empty()) {
         current_dfa_state = unmarked_dfa_states_queue_.front();
@@ -22,7 +23,6 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
             // Create the generators (set of NFA states) of the new DFA state
             auto *nfa_states_base_generators = Move(*current_dfa_state, input);
             auto *dfa_state_generators = EpsilonClosureOnNFAStates(*nfa_states_base_generators);
-            delete nfa_states_base_generators;
 
             if (dfa_state_generators->empty()) {
                 new_dfa_state = dead_dfa_state;
@@ -40,8 +40,8 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
 
             // Check if the new dfa state is in the unmarked set to not add it.
             for (auto &&state : unmarked_dfa_states_set_) {
-                if (*new_dfa_state == state) {
-                    *new_dfa_state = state;
+                if (*new_dfa_state == *state) {
+                    new_dfa_state = state;
                     is_unmarked = true;
                     break;
                 }
@@ -49,23 +49,22 @@ DFAState *DFA::GenerateDFA(NFAState &nfa_root_state, const unordered_set<string>
             // Check if the new dfa state is in the marked set to not add it.
             for (auto &&state : marked_dfa_states_) {
                 if (*new_dfa_state == *state) {
-                    *new_dfa_state = *state;
+                    new_dfa_state = state;
                     is_marked = true;
                     break;
                 }
-
-                if (!is_marked && !is_unmarked) {
-                    unmarked_dfa_states_queue_.push(new_dfa_state);
-                    unmarked_dfa_states_set_.insert(*new_dfa_state);
-                }
-
-                current_dfa_state->AddNeighbour(input, new_dfa_state);
             }
-            unmarked_dfa_states_queue_.pop();
-            unmarked_dfa_states_set_.erase(*current_dfa_state);
+            if (!is_marked && !is_unmarked) {
+                unmarked_dfa_states_queue_.push(new_dfa_state);
+                unmarked_dfa_states_set_.insert(new_dfa_state);
+            }
+
+            current_dfa_state->AddNeighbour(input, new_dfa_state);
         }
-        return dfa_start_state;
+        unmarked_dfa_states_queue_.pop();
+        unmarked_dfa_states_set_.erase(current_dfa_state);
     }
+    return dfa_start_state;
 }
 std::unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAStates(const std::vector<NFAState> &nfa_states) {
     auto *dfa_state_generators = new std::unordered_set<NFAState *>();
@@ -77,7 +76,6 @@ std::unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAStates(const std::vector
             dfa_state_generators->merge(*generators);
         }
     }
-    delete generators;
     return dfa_state_generators;
 }
 

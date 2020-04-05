@@ -42,7 +42,7 @@ NFAState *NFA::regex_to_nfa(std::unordered_set<std::string> input_table, std::ve
     }
 
 
-global_states.clear();
+    global_states.clear();
     return start_state;
 }
 
@@ -160,6 +160,9 @@ NFAState *NFA::postfix_to_NFA(string postfix, unordered_set<string> input_table,
     global_states[global_states.size() - 1].second->add_neighbour(EPSILON, acceptance_state);
     acceptance_state->set_token(regex_name);
     combined_nfa_states.push_back(pair<NFAState *, NFAState *>(nfa_state_stack.top(), acceptance_state));
+
+
+
     return nfa_state_stack.top();
 }
 
@@ -190,6 +193,7 @@ NFAState *NFA::or_combiner(NFAState *first_nfa_state, NFAState *second_nfa_state
 //    }
     //Adding the first and finish states to the map
     start_to_acceptance_map->insert(pair<NFAState *, NFAState *>(start_state, finish_state));
+    global_states.push_back(pair<NFAState *, NFAState *>(start_state, finish_state));
 
     return start_state;
 }
@@ -225,6 +229,7 @@ NFA::kleene_and_plus(NFAState *nfa_state, unordered_map<NFAState *, NFAState *> 
 
     //Adding the first and finish states of the new nfa to the map
     start_to_acceptance_map->insert(pair<NFAState *, NFAState *>(start_state, finish_state));
+    global_states.push_back(pair<NFAState *, NFAState *>(start_state, finish_state));
 
     return start_state;
 }
@@ -249,6 +254,8 @@ NFAState *NFA::concat(NFAState *first_nfa_state, NFAState *second_nfa_state,
                     start_to_acceptance_map->erase(first_nfa_state);
                     start_to_acceptance_map->insert(pair<NFAState *, NFAState *>(first_nfa_state, element1.second));
                     element.second->add_neighbour(EPSILON, second_nfa_state);
+                    global_states.push_back(pair<NFAState *, NFAState *>(first_nfa_state, element1.second));
+
                     iterator++;
                 }
             }
@@ -260,7 +267,6 @@ NFAState *NFA::concat(NFAState *first_nfa_state, NFAState *second_nfa_state,
             break;
         }
     }
-
 
     return first_nfa_state;
 }
