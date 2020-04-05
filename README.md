@@ -25,7 +25,9 @@ We lastly explain the last component of our LAG which is a **driver**, that is, 
 
 - Emits an output with (Table of Inputs & List of Regular Expressions).
 
-### RE (Regular Expressions)
+### Background: RE (Regular Expressions)
+
+<p align='center'><img src="./images/3.png"/></p>
 
 - A convenient notation for specifying lexeme patterns.
 - While they cannot express all possible patterns, they are very effective in specifying those types of patterns that we actually need for tokens.
@@ -40,7 +42,7 @@ We lastly explain the last component of our LAG which is a **driver**, that is, 
 
 - A language that can be defined by a regular expression is called a **regular set**. If two regular expressions r and s denote the same regular set, we say they are equivalent and write r = s.
 
-### RD (Regular Definitions)
+### Background: RD (Regular Definitions)
 
 - We may wish to give names to certain regular expressions and use those names in subsequent expressions, as if the names were themselves symbols.
 
@@ -90,3 +92,45 @@ Two classes resembles this component work.
 - Use `parser.getInput_table()` to retrieve the input table as above data structure.
 
 - Use `parser.getExpressions()` to retrieve the list of expressions as above data structure.
+
+## Component 2: NFA-GEN
+
+This component is required to construct a
+**non-deterministic finite automata (NFA)** for the given regular expressions, combine these
+NFAs together with a new starting state to produce one final NFA.
+
+### Background: Finite Automata
+
+These are essentially graphs, like transition diagrams, with a few differences:
+
+- Finite automata are recognizers ; they simply say &*"yes"* or *"no"* about each possible input string.
+
+- Finite automata come in two flavors:
+
+    1. **Nondeterministic nite automata (NFA)** have no restrictions on the labels of their edges. A symbol can label several edges out of the same state, and the empty string (Epsilon), is a possible label.
+
+    2. **Deterministic nite automata (DFA)** have, for each state, and for each symbol of its in
+
+We can represent either an NFA or DFA by a **transition graph**, where the nodes are states and the labeled edges represent the transition function. There is an edge labeled `a` from state `s` to state `t` if and only if `t` is one of the next states for state `s` and input `a`.
+
+<p align='center'><img src="./images/4.png"/></p>
+
+### Implementation Details
+
+We have a `NFAState` class that represents a single node in the NFA. There are two types of these states, it is either:
+
+- An accepting state `NFAAcceptanceState` or,
+- Non-accepting state `NFANormalState`.
+
+The accepting state type has an extra attribute to hold the `token_name` it matches.
+In general, each `NFAState` has an `id` attribute and a list that contains all the neighbours for this node.
+The data structure used for the later is `vector < pair<string , NFAState *>> neighbours`. The pair is to hold both the transition input symbol and a pointer to the next node this node is connected to.
+
+The main class of this component though is  the `NFAGen` class, that is the class responsible for generating the NFAs from each regex and then combining them all into one final NFA or transition graph.
+
+- Use `NFAGen nfa_gen();` to generate a new instance of this class.
+- Use `nfa_gen.regex_to_nfa(input_table, regex_list)` to parse both input table and the regex list that is the output of the previous component the language parser
+  - They must be of the same data structure type of course.
+  - At the end, a pointer to a `NFAState` is retrieved which resembles the root node of the whole final NFA generated from the regex.
+
+This way of implementation will allow us later to introduce and implement **LAG** in a **Pipes and Filters architecture** fashion but we will get back into that part in much detail later on. However, if you are familiar with this architecture already you can quite anticipate what we mean here.
