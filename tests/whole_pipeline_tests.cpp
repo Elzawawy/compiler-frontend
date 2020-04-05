@@ -16,10 +16,9 @@ TEST_CASE("PDF's inputs") {
     DFAState *dfa_start_state = dfa_gen.GenerateDFA(*nfa_start_state, x.get_input_table());
 
 
-//    constructTransitiontable(dfa_start_state, dfa_gen.getMarked_dfa_states_()), dfa_gen.getMarked_dfa_states_();
-//    unordered_set<DFAState *>  newDFA = partitioning(constructTransitiontable(dfa_start_state, dfa_gen.getMarked_dfa_states_()), dfa_gen.getMarked_dfa_states_());
-//
-//    constructTransitiontable(*(newDFA.begin()), newDFA);
+    unordered_set<DFAState *>  newDFA = partitioning(nullptr, dfa_gen.getMarked_dfa_states_());
+
+    constructTransitiontable(*(newDFA.begin()), newDFA);
 
     LexicalAnalyzerDriver lexicalAnalyzerDriver(dfa_start_state, "../test_cases/a_test_program1.txt");
 
@@ -64,7 +63,7 @@ TEST_CASE("PDF's inputs") {
     REQUIRE(token->GetLexeme() == "!=");
     delete token;
     token = (lexicalAnalyzerDriver.GetNextToken());
-    REQUIRE(token->GetLexeme() == "10");
+    REQUIRE(token->GetLexeme() == "10.2E2000");
     delete token;
     token = (lexicalAnalyzerDriver.GetNextToken());
     REQUIRE(token->GetLexeme() == ")");

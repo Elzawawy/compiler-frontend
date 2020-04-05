@@ -124,15 +124,20 @@ void setMark(unordered_set<DFAState *> listofstates)
 	for (size_t i = 0; i < listofstates.size() ; ++i)
 		matrix[i] = new DFAState * [transitions.size()]; // build rows
 	//cout	<< listofstates.size()<<endl;
+	cout<<"\t\t\t";
+	for ( auto &&input: transitions) {
+  		cout<<input<<"\t\t";
+	}
+	cout<<endl;
 	for (size_t stateIndex = 0; stateIndex < listofstates.size(); stateIndex++)
 	{
-		cout << (*statesIterator)->get_id() << ' ';
+		cout << (*statesIterator)->get_id() << "\t\t";
 		for (size_t transitionIndex = 0; transitionIndex < transitions.size(); transitionIndex++)
 		{
 			unordered_map<string, DFAState *> currentNeighbour = (*statesIterator)->get_neighbours();
 			matrix[stateIndex][transitionIndex] = currentNeighbour [transitions[transitionIndex]];
 			
-			cout << currentNeighbour[transitions[transitionIndex]]->get_id();
+			cout << currentNeighbour[transitions[transitionIndex]]->get_id()<<"\t\t";
 			
 		}
 		cout << endl;
