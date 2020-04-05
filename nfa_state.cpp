@@ -32,3 +32,11 @@ string NFAAcceptanceState::get_token() {
 void NFAAcceptanceState::set_token(string token) {
 this->token=token;
 }
+
+int NFAAcceptanceState::get_priority() {
+    return this->priority;
+}
+
+void NFAAcceptanceState::set_priority(int priority) {
+this->priority=priority;
+}
