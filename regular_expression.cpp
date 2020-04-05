@@ -104,7 +104,6 @@ std::string RegularExpression::infix_to_postfix(std::unordered_set<std::string> 
     std::string input_identifier = "";
     bool input_acceptor = false;
     std::string input_detector = "";
-
     //iterating till the end of the regex
     for (int i = 0; i < regex.size(); i++) {
         // If the scanned character is an operand, add it to output string.
@@ -126,6 +125,7 @@ std::string RegularExpression::infix_to_postfix(std::unordered_set<std::string> 
             if (!this->isConcated(regex[i]) && i + 1 <= regex.size()) {
                 regex.insert(i, "-", 1);
             }
+
             i--;
             postfix += input_identifier;
             input_acceptor = false;
@@ -165,8 +165,15 @@ std::string RegularExpression::infix_to_postfix(std::unordered_set<std::string> 
                 infix_to_postfix_stack.pop();
                 postfix += popped_character;
             }
+            if(regex[i]==POSITIVE_CLOSURE_OPERATOR&&regex[i+1]=='.'){
+                postfix+=POSITIVE_CLOSURE_OPERATOR;
+                regex.insert(i+1, "-", 1);
+            }
 
-            infix_to_postfix_stack.push(std::string(1, regex[i]));
+            else{
+                infix_to_postfix_stack.push(std::string(1, regex[i]));
+
+            }
         }
 
     }

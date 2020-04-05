@@ -73,7 +73,6 @@ NFAState *NFA::postfix_to_NFA(string postfix, unordered_set<string> input_table,
     bool input_acceptor = false;
     bool final_finish_state = false;
     string input_identifier = "";
-
     // Scan all characters one by one
     int i = 0;
     do {
