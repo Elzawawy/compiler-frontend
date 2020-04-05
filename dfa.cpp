@@ -121,12 +121,18 @@ std::unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAState(NFAState &nfa_stat
 }
 
 string DFA::GetTokenNameIfAcceptanceExist(const std::unordered_set<NFAState *> &generators_) {
+    int priority = -1;
+    std::string token_name = "";
     for (auto generator : generators_) {
         if (dynamic_cast<NFAAcceptanceState *> (generator)) {
-            return ((NFAAcceptanceState *) generator)->get_token();
+            if (((NFAAcceptanceState *) generator)->get_priority() > priority) {
+                priority = ((NFAAcceptanceState *) generator)->get_priority();
+                token_name = ((NFAAcceptanceState *) generator)->get_token();
+            }
         }
     }
-    return "";
+
+    return token_name;
 }
 
 const unordered_set<DFAState *> &DFA::getMarked_dfa_states_() const {
