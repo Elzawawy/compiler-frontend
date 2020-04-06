@@ -30,7 +30,7 @@ class LexicalAnalyzerDriver {
   const char dummy_initial_transition_char_ = 'L';
   bool forward_iterator_fills_buffer_; // It's false if we went backwards after a dead state to the previous buffer to reach an accepting state
   bool DecreaseForwardPointer();
-  void IncreaseForwardPointer();
+  void IncreaseForwardPointer(bool skip_skippable_chars_recursively = false);
   bool IsSkippableCharacter(char c) const;
 
  public:

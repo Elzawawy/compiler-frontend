@@ -27,6 +27,7 @@ LexicalAnalyzerDriver::LexicalAnalyzerDriver(DFAState *root_state_, const string
 //The caller is the parser.
 //TAKE CARE this function assumes that a lexeme is strictly smaller than the size of a single buffer so make sure the buffer size is large enough
 Token *LexicalAnalyzerDriver::GetNextToken() {
+  if(this->IsSkippableCharacter(*this->forward_)) this->IncreaseForwardPointer(true);
   //start with setting lexeme_begin with forward in order to satrt a new lexeme
   this->lexeme_begin_ = this->forward_;
   while (true) {
@@ -42,9 +43,9 @@ Token *LexicalAnalyzerDriver::GetNextToken() {
       for (int i = 0; i < this->characters_states_.size(); ++i) {
         if (this->characters_states_.top().second->IsAcceptingState()) {
           Token *token = this->GetTokenFromStatesStack();
+          if(*this->forward_ == EOF) this->input_over_ = true;
           //Push the s  tate after the root state onto the stack in order to be used in the next call of GetNextToken
           this->characters_states_.push(make_pair(this->dummy_initial_transition_char_, this->root_state_));
-          if(this->IsSkippableCharacter(*this->forward_)) this->IncreaseForwardPointer();
           return token;
         }
 
@@ -81,7 +82,7 @@ Token *LexicalAnalyzerDriver::GetTokenFromStatesStack() {
   return new Token(lexeme, token_name);
 }
 
-void LexicalAnalyzerDriver::IncreaseForwardPointer() {
+void LexicalAnalyzerDriver::IncreaseForwardPointer(bool skip_skippable_chars_recursively) {
   //Reading the buffers. Fill next buffer if reached the end of the current buffer
   //Take care that end points to the element one past the last element and the last element is the \0
   if (this->forward_ == this->buffers_[this->active_buffer_].end() - 2) {
@@ -107,7 +108,11 @@ void LexicalAnalyzerDriver::IncreaseForwardPointer() {
   }
 
   //recursively forward pointer untill reaching a non skippable character
-//  if (this->IsSkippableCharacter(*this->forward_)) return this->IncreaseForwardPointer();
+  if (skip_skippable_chars_recursively) {
+    while (IsSkippableCharacter(*this->forward_)) {
+       this->IncreaseForwardPointer();
+    }
+  }
 }
 bool LexicalAnalyzerDriver::DecreaseForwardPointer() {
   if (this->forward_ == this->lexeme_begin_) return false;
@@ -119,7 +124,7 @@ bool LexicalAnalyzerDriver::DecreaseForwardPointer() {
     this->forward_ = this->buffers_[this->active_buffer_].end() - 2;
     this->forward_iterator_fills_buffer_ = false;
   } else this->forward_--;
-//  if (IsSkippableCharacter(*this->forward_)) return this->DecreaseForwardPointer();
+  if (IsSkippableCharacter(*this->forward_)) return false;
   return true;
 }
 
