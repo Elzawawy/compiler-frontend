@@ -17,6 +17,8 @@ and then into *deterministic automata* using **DFA** component to feed into anot
 
 We lastly explain the last component of our LAG which is a **driver**, that is, code which simulates these automata and uses them as a guide to determining the next token. This driver and the specification of the automaton form the nucleus of the lexical analyzer.
 
+---
+
 ## Component 1: Language Parser
 
 - In other words, it is the lexical rules file reader, that parses lexemes specification.
@@ -93,6 +95,8 @@ Two classes resembles this component work.
 
 - Use `parser.getExpressions()` to retrieve the list of expressions as above data structure.
 
+---
+
 ## Component 2: NFA-GEN
 
 This component is required to construct a
@@ -133,4 +137,97 @@ The main class of this component though is  the `NFAGen` class, that is the clas
   - They must be of the same data structure type of course.
   - At the end, a pointer to a `NFAState` is retrieved which resembles the root node of the whole final NFA generated from the regex.
 
+The NFA-GEN takes advantage of the **McNaughton-Yamada-Thompson algorithm** to convert
+a single regular expression to an NFA.
+The algorithm is *syntax-directed*, in the sense that it works **recursively** up the parse tree for the regular expression. For each subexpression the algorithm constructs an NFA with a single accepting state.
+
+    Method:
+    -------
+    - Begin by parsing r into its constituent subexpressions. 
+    The rules for constructing an NFA consist of: 
+
+    - basis rules for handling subexpressions with no operators and, 
+    - inductive rules for constructing larger NFA's from the NFA's for the immediate subexpressions of a given expression.
+
+More about the algorithm and rules of it can be found from section 3.7.4 in [1].
+
 This way of implementation will allow us later to introduce and implement **LAG** in a **Pipes and Filters architecture** fashion but we will get back into that part in much detail later on. However, if you are familiar with this architecture already you can quite anticipate what we mean here.
+
+---
+
+## Component 3: DFA-GEN
+
+That component convert the resultingNFA to a DFA, minimize it and emit the transition table for the reducedDFA.
+But, first let's mention the DFA in more depth.
+
+### Background: Deterministic Finite Automata
+
+<p align='center'><img src="./images/5.png"/></p>
+
+A deterministic finite automaton (DFA) is a special case of an NFA where:
+
+1. There are no moves on input (Epislon), and
+2. For each state `s` and input symbol `a`, there is exactly one edge out of `s` labeled `a`.
+
+While the NFA is an **abstract representation** of an algorithm to recognize the strings of a certain language, the DFA is a simple, concrete algorithm for recognizing strings.
+It is fortunate indeed that every regular expression and every NFA can be converted to a DFA accepting the same language, because it is the DFA that we really implement or simulate when building lexical analyzers.
+
+### Implementation Details
+
+We represent DFA by the `DFAState` class and again by symmetry as the case with `NFAState`, there is two types of states:
+
+- An accepting state `DFAAcceptanceState` or,
+- Non-accepting state `DFANormalState`.
+
+We use the **Subset Construction algorithm** to convert NFA's to DFA's.
+
+    Method: 
+    -------
+    - The algorithm constructs a transition table D-tran for DFA.
+
+    - Each state of DFA is a set of NFA states, and we construct D-tran so DFA will simulate "in parallel" all possible moves N can make on a given input string. 
+
+    - A problem is to deal with Epsilon-transitions of NFA properly.
+
+More about the algorithm and rules of it can be found from section 3.7.1 in [1].
+
+The main class here is the `DFAGen`, again with symmetry with the idea of component 2.
+
+- Use `DFAGen dfa_gen();` to generate a new instance of this class.
+
+- Use `def_gen.GenerateDFA(NFAState &nfa_root_state, const std::unordered_set<std::string> &input_table)`
+
+Again, we notice here how the `DFAGen` and `NFAGen` will be interleaved and connected together again with pipes and filters concept easily.  
+Notice the need of `DFAGen` of not only the NFA state root node but also a version of the input table that is modified by `NFAGen`.
+
+### Minimization of DFA
+
+There can be many DFA's that recognize the same language. If we implement a lexical analyzer as a DFA, we would generally prefer a DFA with as few states as possible, since each state requires entries in the table that describes the lexical analyzer.
+
+It turns out that **there is always a unique (up to state names) minimum
+state DFA** for any regular language. Moreover, this minimum-state DFA can be
+constructed from any DFA, for the same language by grouping sets of equivalent states.
+
+#### State Minimization Algorithm
+
+<p align='center'><img src="./images/6.png"/></p>
+
+The general idea of the **state-minimization algorithm** works by partitioning the states of a DFA
+into groups of states that cannot be distinguished. Each group of states is then merged into a single state of the minimum-state DFA.
+
+The algorithm works by maintaining a partition, whose groups are sets of states that have not yet been distinguished, while any two states from different groups are known to be
+distinguishable. When the partition cannot be re ned further by breaking any
+group into smaller groups, we have the minimum-state DFA.
+
+More about the algorithm and rules of it can be found from section 3.9.6 in [1].
+
+#### Dead State
+
+The minimization algorithm produces a DFA with one dead state. This state is technically needed, because a DFA must have a transition from every state on every symbol. **We represent the dead state with ID of 0.**
+
+#### Transition Table
+
+For the minimal DFA produced, we construct a transition table that maps the state to each input symbol and what state does it go to eventually.
+
+Columns are the input symbols + a column for source states.
+Each row is a map between the source state and destination states under certain input symbols specified in header above. This table is output formatted as a **CSV (Spreadsheet) file**.
