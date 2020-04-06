@@ -231,3 +231,45 @@ For the minimal DFA produced, we construct a transition table that maps the stat
 
 Columns are the input symbols + a column for source states.
 Each row is a map between the source state and destination states under certain input symbols specified in header above. This table is output formatted as a **CSV (Spreadsheet) file**.
+
+## Component 4: LexDriver
+
+It is the lexical analyzer program that simulates the resulting DFA machine.
+that simulates the resulting DFA machine.
+
+### How it works
+
+The generated lexical analyzer read its input one character at a time, until it finds the longest prefix of the input, which matches one of the given regular expressions.
+
+- **If more than one regular expression matches some longest prefix of the input,** the driver break the tie in favor of the regular expression listed first in the regular specifications. (Priority-based)
+
+- **If a match exists,** the lexical analyzer should produce the token class and the attribute value.
+
+- **If none of the regular expressions matches any input prefix,** an error recovery routine is to be called to print an error message and to continue looking for tokens.
+
+### Implementation Details
+
+There are three implementation strategies:
+
+- **Table driven.
+- Direct coded,
+- Hand coded.
+
+They differ in the details of their runtime costs. However, they all have
+the same asymptotic complexity—constant cost per character, plus the cost
+of roll back. The differences in the efficiency of well-implemented strategies change the constant costs per character but not the asymptotic complexity of scanning.
+
+Our LexDriver follows the third strategy: **Hand-coded Strategy**.
+Many compilers use hand-coded scanners. In an informal survey of commercial compiler groups, we found that a surprisingly large fraction used hand-coded scanners.
+Similarly, many of the popular open-source compilers rely on hand-coded
+scanners.
+
+Hand-coded scanner can reduce the *overhead of the interfaces* between the
+scanner and the rest of the system.
+A careful implementation of this strategy can **improve the mechanisms** used to read and manipulate characters on input and the operations needed to produce a copy of the actual lexeme on
+output.
+
+More about the strategies and the implementation of such scanners from section 2.5 in [2].
+Also section 3.2 about input buffering in [1] discusses some ways that the simple but important task of reading the source program can be speeded which we indeed follow and take into consideration in ou implementation.
+
+---
