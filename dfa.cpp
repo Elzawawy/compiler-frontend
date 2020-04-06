@@ -125,7 +125,7 @@ string DFA::GetTokenNameIfAcceptanceExist(const std::unordered_set<NFAState *> &
     std::string token_name = "";
     for (auto generator : generators_) {
         if (dynamic_cast<NFAAcceptanceState *> (generator)) {
-            if (((NFAAcceptanceState *) generator)->get_priority() > priority) {
+            if (((NFAAcceptanceState *) generator)->get_priority() < priority) {
                 priority = ((NFAAcceptanceState *) generator)->get_priority();
                 token_name = ((NFAAcceptanceState *) generator)->get_token();
             }
