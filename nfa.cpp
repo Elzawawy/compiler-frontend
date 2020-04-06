@@ -41,34 +41,7 @@ NFAState *NFA::regex_to_nfa(std::unordered_set<std::string> input_table, std::ve
          it != combined_nfa_states.end(); it++) {
         start_state->add_neighbour(EPSILON, it->first);
     }
-//    for (vector<pair<NFAState *, NFAState *> >::const_iterator it = global_states.begin();
-//         it != global_states.end(); it++) {
-//        vector<pair<string, NFAState *>> x;
-//        vector<pair<string, NFAState *>> u;
-//        x = (it->first)->getNeighbours();
-//        u = (it->second)->getNeighbours();
-//        for (vector<pair<string, NFAState *> >::const_iterator it1 = x.begin(); it1 != x.end(); it1++) {
-//            cout << it->first->getId();
-//            cout << " ";
-//            cout << it1->second->getId();
-//            cout << " ";
-//            cout << it1->first << endl;
-//        }
-//        for (vector<pair<string, NFAState *> >::const_iterator it2 = u.begin(); it2 != u.end(); it2++) {
-//            cout << it->second->getId();
-//            cout << " ";
-//            cout << it2->second->getId();
-//            cout << " ";
-//
-//            cout << it2->first << endl;
-//
-//        }
-//        cout<<"DONE"<<endl;
-//    }
-//    cout<<"botato"<<endl;
-//    for (const auto &element: this->get_input_table()) {
-//        cout<<element<<endl;
-//    }
+
     global_states.clear();
     return start_state;
 }
