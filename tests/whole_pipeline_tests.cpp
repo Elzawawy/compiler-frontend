@@ -25,7 +25,6 @@ TEST_CASE("PDF's inputs") {
 
     unordered_set<DFAState *> newDFA = partitioning(nullptr, dfa_gen.getMarked_dfa_states_());
 
-    constructTransitiontable(*(newDFA.begin()), newDFA);
 
     LexicalAnalyzerDriver lexicalAnalyzerDriver(dfa_start_state, "../test_cases/a_test_program.txt");
 
@@ -112,6 +111,7 @@ TEST_CASE("Test B") {
     NFAState *nfa_start_state = x.regex_to_nfa(language_parser->getInput_table(), language_parser->getExpressions());
     DFA dfa_gen;
     DFAState *dfa_start_state = dfa_gen.GenerateDFA(*nfa_start_state, x.get_input_table());
+    constructTransitiontable(dfa_start_state,dfa_gen.getMarked_dfa_states_(),"../test_cases/case_1/transition_table.csv");
 
     LexicalAnalyzerDriver lexicalAnalyzerDriver(dfa_start_state, "../test_cases/case_1/b_test_program.txt");
     string output;
@@ -151,6 +151,8 @@ TEST_CASE("Test C") {
     NFAState *nfa_start_state = x.regex_to_nfa(language_parser->getInput_table(), language_parser->getExpressions());
     DFA dfa_gen;
     DFAState *dfa_start_state = dfa_gen.GenerateDFA(*nfa_start_state, x.get_input_table());
+    constructTransitiontable(dfa_start_state,dfa_gen.getMarked_dfa_states_(),"../test_cases/case_2/transition_table.csv");
+
 
     LexicalAnalyzerDriver lexicalAnalyzerDriver(dfa_start_state, "../test_cases/case_2/c_test_program.txt");
     string output;
@@ -191,6 +193,8 @@ TEST_CASE("Test D") {
     NFAState *nfa_start_state = x.regex_to_nfa(language_parser->getInput_table(), language_parser->getExpressions());
     DFA dfa_gen;
     DFAState *dfa_start_state = dfa_gen.GenerateDFA(*nfa_start_state, x.get_input_table());
+    constructTransitiontable(dfa_start_state,dfa_gen.getMarked_dfa_states_(),"../test_cases/case_3/transition_table.csv");
+
 
     LexicalAnalyzerDriver lexicalAnalyzerDriver(dfa_start_state, "../test_cases/case_3/d_test_program.txt");
     string output;

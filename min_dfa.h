@@ -9,7 +9,7 @@
 
 unordered_set<DFAState *>  partitioning(DFAState *** transitionTable , unordered_set<DFAState *> listofstates);
 
-DFAState ***   constructTransitiontable( DFAState* root , unordered_set<DFAState *> listofstates);
+DFAState ***   constructTransitiontable( DFAState* root , unordered_set<DFAState *> listofstates, const string &out_file_relative_path);
 
 
 #endif //LEXGEN_MIN_DFA_H

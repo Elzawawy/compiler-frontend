@@ -91,7 +91,7 @@ void setMark(unordered_set<DFAState *> listofstates) {
 }
 
 
-DFAState ***constructTransitiontable(DFAState *root, unordered_set<DFAState *> listofstates) {
+DFAState ***constructTransitiontable(DFAState *root, unordered_set<DFAState *> listofstates, const string &out_file_relative_path) {
     unordered_map<string, DFAState *> neighbours = root->get_neighbours();
     unordered_map<string, DFAState *>::iterator neighboursIterator = neighbours.begin();
     std::vector<string> transitions = transitionsEnumerator(root);
@@ -115,7 +115,7 @@ DFAState ***constructTransitiontable(DFAState *root, unordered_set<DFAState *> l
         matrix[i] = new DFAState *[transitions.size()]; // build rows
     //cout	<< listofstates.size()<<endl;
     std::ofstream transition_table_file;
-    transition_table_file.open("../output/transition_table.csv");
+    transition_table_file.open(out_file_relative_path);
     transition_table_file << " ";
     for (auto &&input: transitions) {
         transition_table_file << input << " ";
