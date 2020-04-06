@@ -10,7 +10,7 @@ FLEX is a tool for generating lexical analyzers (scanners or lexers) written by 
 
 ## How does it work
 
-<p align='center'><img src="./images/flex1.png"/></p>
+<p align='center'><img src="./images/1.png"/></p>
 
 - The description is in the form of pairs of regular expressions and C code, called rules. flex generates as output a C source file, `lex.yy.c`,  which defines a routine `yylex()`.
 
@@ -88,7 +88,7 @@ Here is the input file,
 3. `$ ./a.out`
 
 Here, is an example run of the executable,
-<p align='center'><img src="./images/flex2.png"/></p>
+<p align='center'><img src="./images/2.png"/></p>
 
 **Note.** You can keep giving inputs to terminal till `CTRL+D` keystrokes is interpreted by terminal and program returns the result.
 
@@ -124,7 +124,7 @@ Here is the input file,
 
 Here, is an example run of the executable,
 
-<p align='center'><img src="./images/flex3.png"/></p>
+<p align='center'><img src="./images/3.png"/></p>
 
 **Note.** Here in this sample we see another variant where a `\n` rule exits the program and prints the output instead of making the program infinitely loop and only have to exit the program by `CTRL+D` to end.
 
