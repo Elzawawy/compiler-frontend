@@ -10,6 +10,10 @@
 #include <fstream>
 #include <streambuf>
 
+#define PUNCTUATION_NAME "Punctuation"
+#define KEYWORD_NAME "Keyword"
+
+
 TEST_CASE("PDF's inputs") {
     auto language_parser = new LanguageParser();
     language_parser->parseFile("../test_cases/a_lexical_rules.txt");
@@ -23,7 +27,7 @@ TEST_CASE("PDF's inputs") {
 
     constructTransitiontable(*(newDFA.begin()), newDFA);
 
-    LexicalAnalyzerDriver lexicalAnalyzerDriver(dfa_start_state, "../test_cases/a_test_program1.txt");
+    LexicalAnalyzerDriver lexicalAnalyzerDriver(dfa_start_state, "../test_cases/a_test_program.txt");
 
     Token *token = (lexicalAnalyzerDriver.GetNextToken());
 
@@ -109,24 +113,32 @@ TEST_CASE("Test B") {
     DFA dfa_gen;
     DFAState *dfa_start_state = dfa_gen.GenerateDFA(*nfa_start_state, x.get_input_table());
     unordered_set<DFAState *> newDFA = partitioning(nullptr, dfa_gen.getMarked_dfa_states_());
+    dfa_start_state.get
 
     LexicalAnalyzerDriver lexicalAnalyzerDriver(dfa_start_state, "../test_cases/b_test_program.txt");
     string output;
     vector<Token *> tokens;
-    int i=0;
+    int i = 0;
+    ofstream out_file("../output/output_tokens.txt", ios::out);
     while (!lexicalAnalyzerDriver.IsInputOver()) {
         Token *token = (lexicalAnalyzerDriver.GetNextToken());
-        if(token == nullptr) break;
+        if (token == nullptr) break;
         tokens.push_back(token);
-        output+=token->GetTokenName();
-        output+='\n';
+        if (token->GetTokenName() == KEYWORD_NAME || token->GetTokenName() == PUNCTUATION_NAME) {
+            output += token->GetLexeme();
+        } else {
+            output += token->GetTokenName();
+        }
+        output += '\n';
         i++;
     }
     output.erase(output.end() - 1);
     std::ifstream t("../test_cases/b_output_program.txt");
     std::string str((std::istreambuf_iterator<char>(t)),
                     std::istreambuf_iterator<char>());
+
     REQUIRE(output == str);
+    t.close();
 
 
     for (auto &&item  : tokens) {

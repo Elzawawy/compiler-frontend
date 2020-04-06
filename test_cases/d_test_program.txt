@@ -1,7 +1,8 @@
-:= program example ;
+program example ;
 var  sum , count  : integer ;
 	begin
-		pass := 0 ;
+		pass ++ ;
+		pass -- ;
 		while pass <> 10  do
 		begin
 		pass := pass + 1 ;

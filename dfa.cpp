@@ -1,5 +1,6 @@
 #include <stack>
 #include <memory>
+#include <climits>
 #include "dfa.h"
 
 #define EPSILON "\\L"
@@ -121,14 +122,15 @@ std::unordered_set<NFAState *> *DFA::EpsilonClosureOnNFAState(NFAState &nfa_stat
 }
 
 string DFA::GetTokenNameIfAcceptanceExist(const std::unordered_set<NFAState *> &generators_) {
-    int priority = -1;
+//    int priority = INT_MAX;
     std::string token_name = "";
     for (auto generator : generators_) {
         if (dynamic_cast<NFAAcceptanceState *> (generator)) {
-            if (((NFAAcceptanceState *) generator)->get_priority() < priority) {
-                priority = ((NFAAcceptanceState *) generator)->get_priority();
+//            if (((NFAAcceptanceState *) generator)->get_priority() < priority) {
+//                priority = ((NFAAcceptanceState *) generator)->get_priority();
                 token_name = ((NFAAcceptanceState *) generator)->get_token();
-            }
+                break;
+//            }
         }
     }
 
