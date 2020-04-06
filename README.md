@@ -1,8 +1,8 @@
-# LEXGEN (LAG)
+# LEXGEN (LAG) 
 
-LEXGEN or as we like to call it LAG (**L**exical **A**nalyzer **G**enerator) is **phase 1** assignment of a **compiler frontend pipeline**. This work is done as the project for PLT (**P**rogramming **L**anguage **T**ranslation) course at Alexandria University, Faculty of Engineering Computer and Communications Department, offered in Spring 2020.
+LEXGEN or as we like to call it LAG (**L**exical **A**nalyzer **G**enerator) is *phase 1* assignment of a **compiler frontend pipeline**. This work is done as the project for PLT (**P**rogramming **L**anguage **T**ranslation) course at Alexandria University, Faculty of Engineering Computer and Communications Department, offered in Spring 2020.
 
-<p align='center'>
+<p align='center'> Made with <b>love</b> :heart: and <b>hard work</b> :rocket:
 <img src="./images/1.png"/>
 </p>
 
@@ -19,7 +19,7 @@ We lastly explain the last component of our LAG which is a **driver**, that is, 
 
 ---
 
-## Component 1: Language Parser
+## Component :one: : Language Parser
 
 - In other words, it is the lexical rules file reader, that parses lexemes specification.
 
@@ -97,7 +97,7 @@ Two classes resembles this component work.
 
 ---
 
-## Component 2: NFA-GEN
+## Component :two: : NFA-GEN
 
 This component is required to construct a
 **non-deterministic finite automata (NFA)** for the given regular expressions, combine these
@@ -155,7 +155,7 @@ This way of implementation will allow us later to introduce and implement **LAG*
 
 ---
 
-## Component 3: DFA-GEN
+## Component :three: : DFA-GEN
 
 That component convert the resultingNFA to a DFA, minimize it and emit the transition table for the reducedDFA.
 But, first let's mention the DFA in more depth.
@@ -232,7 +232,9 @@ For the minimal DFA produced, we construct a transition table that maps the stat
 Columns are the input symbols + a column for source states.
 Each row is a map between the source state and destination states under certain input symbols specified in header above. This table is output formatted as a **CSV (Spreadsheet) file**.
 
-## Component 4: LexDriver
+---
+
+## Component :four: : LexDriver
 
 It is the lexical analyzer program that simulates the resulting DFA machine.
 that simulates the resulting DFA machine.
@@ -251,7 +253,7 @@ The generated lexical analyzer read its input one character at a time, until it 
 
 There are three implementation strategies:
 
-- **Table driven.
+- Table driven.
 - Direct coded,
 - Hand coded.
 
