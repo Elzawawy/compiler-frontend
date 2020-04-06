@@ -273,3 +273,24 @@ More about the strategies and the implementation of such scanners from section 2
 Also section 3.2 about input buffering in [1] discusses some ways that the simple but important task of reading the source program can be speeded which we indeed follow and take into consideration in ou implementation.
 
 ---
+
+## Running Test cases and Output
+
+The `test-cases` folder in the top directory contains for each test case a folder named `Case *` where there is the inputs as lexical rules and the input program and the output file we validate against and then there are the 2 files that we produce as output:
+
+1. `transition_table.csv` : This is a CSV file that contain a transition table, there are (n+1) columns where n is the number of input symbols in the language. The rows are the number of states.
+
+2. `output_tokens.txt` : This is the stream of tokens that our lexical analyzer generated produce for each test case.
+
+We built Integration Tests to compare the output file given for each test case and our test case to indicate. 
+Refer to those folders to check the test cases output accordingly.
+
+---
+
+## References
+
+1. Compilers, Principles, Techniques, & Tools, Second Edition by Alfred V. Aho & Monica S. Lam & Ravi Sethi & Jeffrey D. Ullman
+
+2. Engineering a Compiler, Second Edition by Keith D. Cooper & Linda Torczon.
+
+---
