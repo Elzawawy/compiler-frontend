@@ -1,0 +1,17 @@
+program example ;
+var  sum , count  : integer ;
+	begin
+		pass := 0 ;
+		count := 0.343 ;
+		sum := 3403 ;
+		while pass <> 10  do
+		begin
+		pass := pass + 1 ;
+read (mnt) ;
+if mnt <= 0 then
+count := count + 1.234
+else
+sum := sum + mnt
+end ;
+write (sum , count)
+end.

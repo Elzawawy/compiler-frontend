@@ -1,13 +1,11 @@
-#include <iostream>
-#include "nfa_state.h"
-#include "dfa.h"
 #include <queue>
 #include <unordered_set>
+#include "nfa.h"
+#include "dfa.h"
+#include "language_parser.h"
+#include "nfa_state.h"
 
 using namespace std;
-
-#include "nfa.h"
-#include "language_parser.h"
 
 int main() {
 
@@ -17,5 +15,6 @@ int main() {
     NFAState *nfa_start_state = x.regex_to_nfa(language_parser->getInput_table(), language_parser->getExpressions());
     DFA dfa_gen = DFA();
     DFAState *dfa_start_state = dfa_gen.GenerateDFA(*nfa_start_state, x.get_input_table());
+
     return 0;
 }

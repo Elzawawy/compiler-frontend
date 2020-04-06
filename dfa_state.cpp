@@ -12,12 +12,14 @@ DFAState::DFAState(std::unordered_set<NFAState *> generators) : id_(id_counter++
 DFANormalState::DFANormalState(const std::unordered_set<NFAState *> &generators) :
         DFAState(generators) {}
 
-DFAAcceptanceState::DFAAcceptanceState(const std::unordered_set<NFAState *> &generators, string token_name) :
+DFANormalState::DFANormalState() {}
+
+DFAAcceptanceState::DFAAcceptanceState(const unordered_set<NFAState *> &generators, string token_name) :
         DFAState(generators), token_name(std::move(token_name)) {}
 
 DFADeadState::DFADeadState() : DFAState() {}
 
-/****************************** Getters for member variables of instance. ******************************/
+/****************************** Getters & Setters for member variables of instance. ******************************/
 
 int DFAState::get_id() const {
     return this->id_;
@@ -39,10 +41,16 @@ void DFAAcceptanceState::set_token_name(string token_name) {
     this->token_name = std::move(token_name);
 }
 
+DFAAcceptanceState::DFAAcceptanceState() {}
+
 /****************************** Public functions of instance. ******************************/
 
 void DFAState::AddNeighbour(const string &input, DFAState *neighbour) {
     this->neighbours_.insert({input, neighbour});
+}
+void DFAState::UpdateNeighbours(string symbol, DFAState * state)
+{
+    neighbours_[symbol] = state;
 }
 
 bool DFAState::operator==(const DFAState &other) const {
@@ -62,3 +70,36 @@ bool DFAState::operator==(const DFAState &other) const {
     }
     return true;
 }
+
+DFAState* DFAState::GetNeighbour(const string &input) {
+  return this->neighbours_[input];
+}
+
+bool DFAState::IsDeadState() {
+  return false;
+}
+
+bool DFADeadState::IsDeadState() {
+    return true;
+}
+
+string DFAState::getCombiningsymbol()
+{
+	return combiningSymbol;
+}
+
+void DFAState::setCombiningsymbol(string& Symbol)
+{
+	this->combiningSymbol = Symbol;
+}
+
+DFAState * DFAState::getEquivstate()
+{
+	return equivState;
+}
+
+void DFAState::setEquivstate(DFAState * state)
+{
+	equivState = state;
+}
+
