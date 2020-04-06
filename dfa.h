@@ -17,7 +17,7 @@ private:
      * @param nfa_states A reference to a vector that contains the NFAStates.
      * @return An unordered set pointer of the NFA states on epsilon transitions.
      */
-    std::unordered_set<NFAState*>* EpsilonClosureOnNFAStates(const std::vector<NFAState>& nfa_states);
+    std::unordered_set<NFAState*>* EpsilonClosureOnNFAStates(const std::vector<NFAState*> &nfa_states);
 
     /**
      * Used to get the set of NFA states to which there is a transition on input symbol (a) from some NFA state (s) in the DFA state (T) .
@@ -26,14 +26,14 @@ private:
      * @return A vector pointer of NFAState which are the destination of the transitions based on the input symbol
      */
 
-    std::vector<NFAState>* Move(const DFAState& dfa_state, const std::string& input);
+    std::vector<NFAState*>* Move(const DFAState& dfa_state, const std::string& input);
 
     /**
      * Used to get the set of NFA states reachable from a NFA state on epsilon-transitions alone.
      * @param nfa_state A reference to a single NFAState.
      * @return An unordered set pointer of the NFA states on epsilon transitions.
      */
-    std::unordered_set<NFAState*>* EpsilonClosureOnNFAState(NFAState& nfa_state);
+    std::unordered_set<NFAState*>* EpsilonClosureOnNFAState(NFAState* nfa_state);
 
     std::string GetTokenNameIfAcceptanceExist(const std::unordered_set<NFAState*>& generators_);
 

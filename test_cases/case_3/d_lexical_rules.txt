@@ -1,6 +1,5 @@
 letter = a-z | A-Z
 digit = 0 - 9
-id: letter (letter|digit)*
 digits = digit+
 {program var integer}
 num: digit+
@@ -13,3 +12,4 @@ incop: \+\+
 decop: \-\-
 mulop: \* | /
 [: ; , . \( \)]
+id: letter (letter|digit)*

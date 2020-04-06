@@ -174,6 +174,9 @@ std::string RegularExpression::infix_to_postfix(std::unordered_set<std::string> 
                 infix_to_postfix_stack.push(std::string(1, regex[i]));
 
             }
+            if(regex[i]==POSITIVE_CLOSURE_OPERATOR&&regex[i+1]==LEFT_PARENTHESES){
+                regex.insert(i+1, "-", 1);
+            }
         }
 
     }

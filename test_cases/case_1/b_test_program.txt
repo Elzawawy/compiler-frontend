@@ -1,4 +1,4 @@
-:= program example ;
+program example ;
 var  sum , count  : integer ;
 	begin
 		pass := 0 ;
