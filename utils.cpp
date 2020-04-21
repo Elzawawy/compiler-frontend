@@ -1,6 +1,6 @@
 #include <unordered_set>
 #include <algorithm>
-#include "dfa_state.h"
+#include "lexgen/dfa_state.h"
 
 struct DFAStateHashingFunction{
     size_t operator()(const DFAState& d) const{

@@ -1,5 +1,5 @@
 /**
-    Compiler Phase 1: LEXGEN
+    Compiler Front-end Project
     utils.h
     Purpose: contains generic multiple methods to be reused by more than one component.
 
