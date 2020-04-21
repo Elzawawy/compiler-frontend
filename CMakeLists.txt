@@ -4,4 +4,4 @@ project(LEXGEN)
 set(CMAKE_CXX_STANDARD 17)
 
 
-add_executable(LEXGEN language_parser.cpp language_parser.h nfa_state.cpp nfa_state.h dfa_state.cpp dfa_state.h dfa.cpp dfa.h nfa.cpp nfa.h token.cpp token.h regular_expression.cpp regular_expression.h utils.h partition.cpp partition.h min_dfa.cpp min_dfa.h lexical_analyzer_driver.cpp lexical_analyzer_driver.h tests/tests_main.cpp tests/lexical_analyzer_driver_test.cpp tests/catch.h tests/whole_pipeline_tests.cpp min_dfa.h)
+add_executable(LEXGEN lexgen/language_parser.cpp lexgen/language_parser.h lexgen/nfa_state.cpp lexgen/nfa_state.h lexgen/dfa_state.cpp lexgen/dfa_state.h lexgen/dfa.cpp lexgen/dfa.h lexgen/nfa.cpp lexgen/nfa.h lexgen/token.cpp lexgen/token.h lexgen/regular_expression.cpp lexgen/regular_expression.h utils.h lexgen/partition.cpp lexgen/partition.h lexgen/min_dfa.cpp lexgen/min_dfa.h lexgen/lexical_analyzer_driver.cpp lexgen/lexical_analyzer_driver.h lexgen/tests/tests_main.cpp lexgen/tests/lexical_analyzer_driver_test.cpp lexgen/tests/catch.h lexgen/tests/whole_pipeline_tests.cpp lexgen/min_dfa.h)

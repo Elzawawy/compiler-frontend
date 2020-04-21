@@ -1,7 +1,7 @@
 #ifndef LEXGEN_DFA_H
 #define LEXGEN_DFA_H
 
-#include "utils.cpp"
+#include "../utils.cpp"
 #include <unordered_set>
 #include <queue>
 #include <string>

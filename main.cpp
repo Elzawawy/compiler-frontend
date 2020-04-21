@@ -1,9 +1,9 @@
 #include <queue>
 #include <unordered_set>
-#include "nfa.h"
-#include "dfa.h"
-#include "language_parser.h"
-#include "nfa_state.h"
+#include "lexgen/nfa.h"
+#include "lexgen/dfa.h"
+#include "lexgen/language_parser.h"
+#include "lexgen/nfa_state.h"
 
 using namespace std;
 

@@ -13,7 +13,7 @@
 #include <sstream>
 #include <algorithm>
 #include "language_parser.h"
-#include "utils.h"
+#include "../utils.h"
 
 #define KEYWORD_INDICATOR '{'
 #define KEYWORD_NAME "Keyword"
