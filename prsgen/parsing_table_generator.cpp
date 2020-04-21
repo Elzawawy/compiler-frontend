@@ -4,16 +4,20 @@
 
 #include "parsing_table_generator.h"
 
-void ParsingTableGenerator::computeFirst(NonTerminal& non_terminal)
+ParsingTableGenerator::ParsingTableGenerator(std::set<std::string>& terminals_,
+        std::vector<NonTerminal>& non_terminals_)
+        :terminals_(terminals_), non_terminals_(non_terminals_) { }
+
+void ParsingTableGenerator::computeFirst()
 {
     //TODO: PRSGEN-5
 }
-void ParsingTableGenerator::computeFollow(NonTerminal& non_terminal)
+void ParsingTableGenerator::computeFollow()
 {
     //TODO: PRSGEN-6
 }
-void ParsingTableGenerator::constructParsingTable(std::set<std::string>& terminals,
-        std::vector<NonTerminal>& non_terminals)
+
+void ParsingTableGenerator::constructParsingTable()
 {
     //TODO: PRSGEN-7
 }
