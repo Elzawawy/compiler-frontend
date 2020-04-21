@@ -11,3 +11,17 @@ const std::vector<NonTerminal>& GrammarParser::getNon_terminals_() const
 {
     return non_terminals_;
 }
+
+void GrammarParser::parseFile(std::string file_name)
+{
+    //TODO: PRSGEN-2
+}
+
+void GrammarParser::eliminateRightFactoring()
+{
+    //TODO: PRSGEN-3
+}
+void GrammarParser::eliminateLeftFactoring()
+{
+    //TODO: PRSGEN-4
+}
