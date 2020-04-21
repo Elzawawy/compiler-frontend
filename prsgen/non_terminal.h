@@ -1,13 +1,12 @@
 //
 // Created by zawawy on 4/21/20.
 //
-
-#ifndef PRSGEN_NON_TERMINAL_H
-#define PRSGEN_NON_TERMINAL_H
-
 #include <set>
 #include <vector>
 #include <map>
+
+#ifndef PRSGEN_NON_TERMINAL_H
+#define PRSGEN_NON_TERMINAL_H
 
 class NonTerminal {
 private:
