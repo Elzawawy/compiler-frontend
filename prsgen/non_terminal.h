@@ -14,7 +14,7 @@ private:
     std::set<std::string> first_;
     std::set<std::string> follow_;
     std::vector<std::vector<std::string>> production_rules_;
-    std::map<std::string, int> parse_table_entry_;
+    std::map<std::string, int> parse_table_entry_; //string is the input
 public:
     explicit NonTerminal(const std::string& name_);
     const std::string& getName_() const;
@@ -26,6 +26,7 @@ public:
     void setProduction_rules_(const std::vector<std::vector<std::string>>& production_rules_);
     const std::map<std::string, int>& getParse_table_entry_() const;
     void setParse_table_entry_(const std::map<std::string, int>& parse_table_entry_);
+    std::vector<std::string> GetProductionRule(std::string inputToken);
 };
 
 #endif //PRSGEN_NON_TERMINAL_H

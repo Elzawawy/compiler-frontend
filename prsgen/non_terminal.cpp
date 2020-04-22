@@ -43,3 +43,8 @@ void NonTerminal::setParse_table_entry_(const std::map<std::string, int>& parse_
 {
     NonTerminal::parse_table_entry_ = parse_table_entry_;
 }
+
+std::vector<std::string> NonTerminal::GetProductionRule(std::string inputToken) {
+    int productionIndex =  this->getParse_table_entry_().at(inputToken);
+    return this->production_rules_.at(productionIndex);
+}
