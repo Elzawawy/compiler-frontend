@@ -9,6 +9,7 @@
 #include "non_terminal.h"
 #include <vector>
 #include <string>
+#include <fstream>
 
 class PredicativeParser {
 
@@ -17,14 +18,22 @@ private:
     LexicalAnalyzerDriver &lexical_analyzer_;
     std::set<std::string> &terminals_;
     std::map<std::string, NonTerminal> non_terminals_;
+    std::ofstream output_file_;
+
+    void ProceedOnTerminal(std::string &stackTopEntry, Token *currentToken);
+
+    void ProceedOnNonTerminal(std::string &stackTopEntry, Token *currentToken);
+
+public:
 
 
 public:
-    //TODO: PRSGEN-8
     PredicativeParser(LexicalAnalyzerDriver &lexicalAnalyzer, std::map<std::string, NonTerminal> &nonTerminals,
-                      std::set<std::string> &terminals);
+                      std::set<std::string> &terminals, std::string outputFileName);
 
     void Parse();
+
+    virtual ~PredicativeParser();
 };
 
 #endif //PRSGEN_PREDICTIVE_PARSER_H

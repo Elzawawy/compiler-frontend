@@ -26,7 +26,8 @@ public:
     void setProduction_rules_(const std::vector<std::vector<std::string>>& production_rules_);
     const std::map<std::string, int>& getParse_table_entry_() const;
     void setParse_table_entry_(const std::map<std::string, int>& parse_table_entry_);
-    std::vector<std::string> GetProductionRule(std::string inputToken);
+    int GetProductionRuleIndex(std::string token);
+    std::vector<std::string> GetProductionRule(int index);
 };
 
 #endif //PRSGEN_NON_TERMINAL_H
