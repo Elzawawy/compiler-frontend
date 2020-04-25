@@ -37,7 +37,7 @@ void trimBothEnds(std::string& str)
 void stripFirstAndLastChars(std::string& str)
 {
     str.erase(0, 1);
-    str.erase(str.length()-1, str.length()-1);
+    str.erase(str.length()-1);
 }
 
 /**
