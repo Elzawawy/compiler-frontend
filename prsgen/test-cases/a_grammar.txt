@@ -14,4 +14,4 @@
 # SIMPLE_EXPRESSION ::= TERM | SIGN TERM | SIMPLE_EXPRESSION 'addop' TERM
 # TERM ::= FACTOR | TERM 'mulop' FACTOR
 # FACTOR ::= 'id' | 'num' | '(' EXPRESSION ')'
-# SIGN ::= 'addop' | 'addop'
+# SIGN ::= 'addop'
