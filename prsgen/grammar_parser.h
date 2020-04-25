@@ -15,7 +15,7 @@ private:
 public:
     const std::set<std::string>& getTerminals_() const;
     const std::vector<NonTerminal>& getNon_terminals_() const;
-    void parseFile(std::string file_name);
+    void parseFile(std::string grammar_file_path);
     void eliminateLeftFactoring();
     void eliminateRightFactoring();
 };
