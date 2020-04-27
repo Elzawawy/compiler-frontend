@@ -1,4 +1,4 @@
-#include "catch.h"
+#include "../../catch.h"
 #include "../nfa.h"
 #include "../language_parser.h"
 #include "../dfa.h"
