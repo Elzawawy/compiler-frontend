@@ -1,7 +1,3 @@
-//
-// Created by zawawy on 4/21/20.
-//
-
 #ifndef PRSGEN_PREDICTIVE_PARSER_H
 #define PRSGEN_PREDICTIVE_PARSER_H
 
@@ -25,11 +21,8 @@ private:
     void ProceedOnNonTerminal(std::string &stackTopEntry, Token *currentToken);
 
 public:
-
-
-public:
     PredicativeParser(LexicalAnalyzerDriver &lexicalAnalyzer, std::map<std::string, NonTerminal> &nonTerminals,
-                      std::set<std::string> &terminals, std::string outputFileName);
+                      std::set<std::string> &terminals, const std::string& outputFileName);
 
     void Parse();
 

@@ -1,7 +1,3 @@
-//
-// Created by zawawy on 4/21/20.
-//
-
 #include "predictive_parser.h"
 #include <utility>
 #include <numeric>
@@ -14,7 +10,7 @@ const int EMPTY_CELL_INDEX = -2;
 PredicativeParser::PredicativeParser(LexicalAnalyzerDriver &lexicalAnalyzerDriver,
                                      std::map<std::string, NonTerminal> &nonTerminals, // map of name and object non terminals
                                      std::set<std::string> &terminals,
-                                     std::string outputFileName) :
+                                     const std::string& outputFileName) :
         lexical_analyzer_{lexicalAnalyzerDriver},
         non_terminals_{std::move(nonTerminals)},
         terminals_{terminals} {
@@ -40,6 +36,11 @@ void PredicativeParser::Parse() {
         }
     }
     // Check if there is still tokens in the input buffer (driver.getNextToken)
+    if(currentToken->GetTokenName() != END_MARKER){
+        output_file_ << "Parsing ended while there is still tokens" << endl;
+    }
+    output_file_.close();
+    delete currentToken;
 }
 
 void PredicativeParser::ProceedOnTerminal(string &stackTopEntry, Token *currentToken) {
