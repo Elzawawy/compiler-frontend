@@ -22,7 +22,7 @@ void GrammarParser::eliminateRightFactoring() {
 }
 
 void GrammarParser::eliminateLeftFactoring() {
-    
+
     std::vector<NonTerminal> temp_non_terminals_;
     temp_non_terminals_.push_back((this->non_terminals_)[0]);
     int non_terminals_index = 0;
