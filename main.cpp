@@ -49,6 +49,6 @@ int main() {
 	B->setProduction_rules_(prodrules);
 
 	//cout << X->checkImmediateLeftRecursion(B);
-
+	X->eliminateImmediateLeftRecursion(B);
     return 0;
 }

@@ -19,7 +19,7 @@ public:
     void parseFile(std::string file_name);
     void eliminateLeftFactoring();
 	void eliminateLeftRecursion();
-	std::vector<NonTerminal> eliminateImmediateLeftRecursion(NonTerminal* non_terminal);
+	std::vector<NonTerminal *> eliminateImmediateLeftRecursion(NonTerminal* non_terminal);
 	bool checkImmediateLeftRecursion(NonTerminal* non_terminal);
 
 
