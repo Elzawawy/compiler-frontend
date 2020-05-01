@@ -1,7 +1,7 @@
 //
 // Created by zawawy on 4/21/20.
 //
-#include <set>
+#include <unordered_set>
 #include <vector>
 #include <map>
 
@@ -11,17 +11,17 @@
 class NonTerminal {
 private:
     std::string name_;
-    std::set<std::string> first_;
-    std::set<std::string> follow_;
+    std::unordered_set<std::string> first_;
+    std::unordered_set<std::string> follow_;
     std::vector<std::vector<std::string>> production_rules_;
     std::map<std::string, int> parse_table_entry_;
 public:
     explicit NonTerminal(const std::string& name_);
     const std::string& getName_() const;
-    const std::set<std::string>& getFirst_() const;
-    void setFirst_(const std::set<std::string>& first_);
-    const std::set<std::string>& getFollow_() const;
-    void setFollow_(const std::set<std::string>& follow_);
+    const std::unordered_set<std::string>& getFirst_() const;
+    void setFirst_(const std::unordered_set<std::string>& first_);
+    const std::unordered_set<std::string>& getFollow_() const;
+    void setFollow_(const std::unordered_set<std::string>& follow_);
     const std::vector<std::vector<std::string>>& getProduction_rules_() const;
     void setProduction_rules_(const std::vector<std::vector<std::string>>& production_rules_);
     const std::map<std::string, int>& getParse_table_entry_() const;
