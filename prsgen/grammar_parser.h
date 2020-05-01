@@ -21,7 +21,7 @@ public:
 	void eliminateLeftRecursion();
 	std::vector<NonTerminal *> eliminateImmediateLeftRecursion(NonTerminal* non_terminal);
 	bool checkImmediateLeftRecursion(NonTerminal* non_terminal);
-
+	std::vector<std::vector<std::string>> subsitution(NonTerminal* current_non_terminal, NonTerminal* input);
 
 };
 

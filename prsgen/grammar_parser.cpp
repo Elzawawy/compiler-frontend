@@ -22,6 +22,10 @@ void GrammarParser::eliminateLeftRecursion()
     //TODO: PRSGEN-3
 	
 }
+
+
+
+
 std::vector<NonTerminal *> GrammarParser::eliminateImmediateLeftRecursion(NonTerminal * non_terminal)
 {
 	//create new non terminal and new nonterminal `
@@ -104,6 +108,72 @@ bool GrammarParser::checkImmediateLeftRecursion(NonTerminal * non_terminal)
 	}
 
 	return false;
+}
+
+std::vector<std::vector<std::string>> GrammarParser::subsitution(NonTerminal * current_non_terminal, NonTerminal * input)
+{
+
+	std::vector<std::vector<std::string>> production_rules_current = current_non_terminal->getProduction_rules_();
+	std::vector<std::vector<std::string>> production_rules_input = input->getProduction_rules_();
+
+
+	std::vector< std::vector<std::string> >::iterator row;
+	std::vector<std::string>::iterator col;
+
+	std::vector< std::vector<std::string> > tmp_prod_rules;
+	std::vector<std::string> tmp_vstr;
+
+	//loop through current non terminal elements
+	for (row = production_rules_current.begin(); row != production_rules_current.end(); row++)
+	{
+		
+			col = row->begin();
+			// check if first letter is identical to the input name
+			if (input->getName_().compare(*col) != 0)
+			{
+				//if not identical copy all vectors to new production rule as there wont be any change in them 
+				for (col = row->begin(); col != row->end(); col++) 
+				{
+
+					tmp_vstr.push_back(*col);
+
+
+
+
+				}
+				tmp_prod_rules.push_back(tmp_vstr);
+				tmp_vstr.clear();
+			}
+			else
+
+			{
+				//if identical clone the current vector into the new production rule times the input length 
+
+
+				std::vector< std::vector<std::string> >::iterator input_row;
+				std::vector<std::string>::iterator input_col;
+				
+//					
+
+				for (input_row = production_rules_input.begin(); input_row != production_rules_input.end(); input_row++) {
+					
+				//concat input production rules with one I want to substitue with from the beginning 
+				std::vector<std::string> the_copy (*input_row);
+				for (col = row->begin()+1; col != row->end(); col++)
+				{
+					the_copy.push_back(*col);
+				}
+				tmp_prod_rules.push_back(the_copy);
+				}
+			}
+
+			
+	}
+
+
+
+
+	return std::vector<std::vector<std::string>>();
 }
 
 
