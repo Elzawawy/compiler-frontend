@@ -2,19 +2,42 @@
 #include <utility>
 #include <set>
 #include <unordered_set>
+#include <iostream>
 
 using std::vector;
 using std::string;
 using std::set;
 using std::unordered_set;
+using std::make_pair;
+using std::cout;
+using std::endl;
 
-const string epsilon = "\L";
+const string epsilon = "\\L";
 
 ParsingTableGenerator::ParsingTableGenerator(std::unordered_set<std::string> &terminals_,
                                              std::vector<NonTerminal> &non_terminals_)
         : terminals_(terminals_), non_terminals_(non_terminals_) {
     for (auto &&non_terminal:non_terminals_) {
-        name_non_terminal_.insert(std::make_pair(non_terminal.getName_(), &non_terminal));
+        name_non_terminal_.insert(make_pair(non_terminal.getName_(), &non_terminal));
+    }
+    //for each production element if it's a non terminal then add it to the map with the value to be the set of its parents
+    for (auto &&non_terminal:non_terminals_) {
+        for (auto &&production  : non_terminal.getProduction_rules_()) {
+            for (auto &&production_element: production) {
+                //If the element is a non terminal
+                if (name_non_terminal_.count(production_element)) {
+                    //Check if this non terminal production element is added to the map before
+                    if (non_terminal_parent_non_terminals.count(production_element)) {
+                        non_terminal_parent_non_terminals[production_element].insert(
+                                non_terminal.getName_());
+                    } else {
+                        non_terminal_parent_non_terminals.
+                                insert(
+                                make_pair(production_element, unordered_set<string>{non_terminal.getName_()}));
+                    }
+                }
+            }
+        }
     }
 };
 
