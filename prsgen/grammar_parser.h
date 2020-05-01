@@ -7,6 +7,9 @@
 
 #include <set>
 #include "non_terminal.h"
+#include <unordered_map>
+#include <iostream>
+
 class GrammarParser {
 
 private:
