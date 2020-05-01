@@ -36,8 +36,10 @@ void trimBothEnds(std::string& str)
 */
 void stripFirstAndLastChars(std::string& str)
 {
-    str.erase(0, 1);
-    str.erase(str.length()-1);
+    if(str.size()> 2) {
+        str.erase(0, 1);
+        str.erase(str.length()-1);
+    }
 }
 
 /**
@@ -47,6 +49,23 @@ void stripFirstAndLastChars(std::string& str)
 void removeAllSpaces(std::string& str)
 {
     str.erase(std::remove(str.begin(), str.end(), ' '), str.end());
+}
+
+void removeExtraSpaces(std::string& str)
+{
+    bool seen_space = false;
+    auto end{ std::remove_if(str.begin(), str.end(),
+            [&seen_space](unsigned ch) {
+              bool is_space = std::isspace(ch);
+              std::swap(seen_space, is_space);
+              return seen_space && is_space;
+            }
+    )
+    };
+    if (end != str.begin() && std::isspace(static_cast<unsigned>(end[-1])))
+        --end;
+
+    str.erase(end, str.end());
 }
 
 /**
