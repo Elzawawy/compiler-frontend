@@ -27,11 +27,11 @@ ParsingTableGenerator::ParsingTableGenerator(std::unordered_set<std::string> &te
                 //If the element is a non terminal
                 if (name_non_terminal_.count(production_element)) {
                     //Check if this non terminal production element is added to the map before
-                    if (non_terminal_parent_non_terminals.count(production_element)) {
-                        non_terminal_parent_non_terminals[production_element].insert(
+                    if (non_terminal_non_terminal_parents.count(production_element)) {
+                        non_terminal_non_terminal_parents[production_element].insert(
                                 non_terminal.getName_());
                     } else {
-                        non_terminal_parent_non_terminals.
+                        non_terminal_non_terminal_parents.
                                 insert(
                                 make_pair(production_element, unordered_set<string>{non_terminal.getName_()}));
                     }
