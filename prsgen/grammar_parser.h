@@ -5,7 +5,7 @@
 #ifndef PRSGEN_GRAMMAR_PARSER_H
 #define PRSGEN_GRAMMAR_PARSER_H
 
-#include <set>
+#include <unordered_set>
 #include "non_terminal.h"
 #include <unordered_map>
 #include <iostream>
@@ -13,12 +13,12 @@
 class GrammarParser {
 
 private:
-    std::set<std::string> terminals_;
+    std::unordered_set<std::string> terminals_;
     std::vector<NonTerminal> non_terminals_;
 public:
-    const std::set<std::string>& getTerminals_() const;
+    const std::unordered_set<std::string>& getTerminals_() const;
     const std::vector<NonTerminal>& getNon_terminals_() const;
-    void parseFile(std::string file_name);
+    void parseFile(std::string grammar_file_path);
     void eliminateLeftFactoring();
     void eliminateRightFactoring();
 };
