@@ -22,7 +22,7 @@ int main() {
 //    DFAState *dfa_start_state = dfa_gen.GenerateDFA(*nfa_start_state, x.get_input_table());
 	GrammarParser *X = new GrammarParser();
 	
-	
+	/*
 	NonTerminal* A = new NonTerminal("A");
 
 	std::vector<std::vector<std::string> > prodrules;
@@ -69,12 +69,91 @@ int main() {
 	S->setProduction_rules_(prodrules);
 
 
-
+	std::vector<NonTerminal *> terminals;
+	terminals.push_back(S);
+	terminals.push_back(A);
 	//cout << X->checkImmediateLeftRecursion(A);
 //	X->eliminateImmediateLeftRecursion(A);
 
-	X->subsitution(A, S);
+//	X->subsitution(A, S);
+	X->eliminateLeftRecursion(terminals);
+	*/
+
+	NonTerminal* S = new NonTerminal("S");
+
+	std::vector<std::vector<std::string> > prodrules;
+
+	std::vector<std::string> tmp2;
+	std::vector<std::string> tmp3;
+	std::vector<std::string> tmp;
+	tmp.push_back("E");
+	prodrules.push_back(tmp);
+	S->setProduction_rules_(prodrules);
 
 
+	NonTerminal* E = new NonTerminal("E");
+
+	prodrules.clear();
+
+	tmp.clear();
+	tmp.push_back("E");
+	tmp.push_back("+");
+	tmp.push_back("T");
+	prodrules.push_back(tmp);
+
+	tmp2.clear();
+	tmp2.push_back("T");
+
+	prodrules.push_back(tmp2);
+
+	E->setProduction_rules_(prodrules);
+
+
+	NonTerminal* T = new NonTerminal("T");
+
+	prodrules.clear();
+
+	tmp.clear();
+	tmp.push_back("E");
+	tmp.push_back("-");
+	tmp.push_back("T");
+	prodrules.push_back(tmp);
+
+	tmp2.clear();
+	tmp2.push_back("F");
+
+	prodrules.push_back(tmp2);
+
+	T->setProduction_rules_(prodrules);
+
+	NonTerminal* F = new NonTerminal("F");
+
+	prodrules.clear();
+
+	tmp.clear();
+	tmp.push_back("E");
+	tmp.push_back("*");
+	tmp.push_back("F");
+	prodrules.push_back(tmp);
+
+	tmp2.clear();
+	tmp2.push_back("id");
+
+	prodrules.push_back(tmp2);
+
+	F->setProduction_rules_(prodrules);
+
+
+	std::vector<NonTerminal *> terminals;
+	terminals.push_back(S);
+	terminals.push_back(E);
+	terminals.push_back(T);
+	terminals.push_back(F);
+
+	terminals = X->eliminateLeftRecursion(terminals);
+
+
+
+	//TEST CASE LINK
     return 0;
 }

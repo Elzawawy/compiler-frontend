@@ -17,11 +17,6 @@ void GrammarParser::parseFile(std::string file_name)
     //TODO: PRSGEN-2
 }
 
-void GrammarParser::eliminateLeftRecursion()
-{
-    //TODO: PRSGEN-3
-	
-}
 
 
 
@@ -110,7 +105,7 @@ bool GrammarParser::checkImmediateLeftRecursion(NonTerminal * non_terminal)
 	return false;
 }
 
-std::vector<std::vector<std::string>> GrammarParser::subsitution(NonTerminal * current_non_terminal, NonTerminal * input)
+NonTerminal * GrammarParser::subsitution(NonTerminal * current_non_terminal, NonTerminal * input)
 {
 
 	std::vector<std::vector<std::string>> production_rules_current = current_non_terminal->getProduction_rules_();
@@ -159,6 +154,7 @@ std::vector<std::vector<std::string>> GrammarParser::subsitution(NonTerminal * c
 					
 				//concat input production rules with one I want to substitue with from the beginning 
 				std::vector<std::string> the_copy (*input_row);
+				//skip the substituted symbol and continue concat with the given non terminal
 				for (col = row->begin()+1; col != row->end(); col++)
 				{
 					the_copy.push_back(*col);
@@ -170,10 +166,11 @@ std::vector<std::vector<std::string>> GrammarParser::subsitution(NonTerminal * c
 			
 	}
 
+	NonTerminal * new_non_terminal = new NonTerminal(current_non_terminal->getName_());
+	new_non_terminal->setProduction_rules_(tmp_prod_rules);
 
 
-
-	return std::vector<std::vector<std::string>>();
+	return new_non_terminal;
 }
 
 
@@ -181,4 +178,33 @@ std::vector<std::vector<std::string>> GrammarParser::subsitution(NonTerminal * c
 void GrammarParser::eliminateLeftFactoring()
 {
     //TODO: PRSGEN-4
+}
+
+std::vector<NonTerminal*> GrammarParser::eliminateLeftRecursion(std::vector<NonTerminal*> non_terminal_list)
+{
+	std::vector<NonTerminal*> new_non_terminal_list;
+	std::vector<NonTerminal*> ::iterator non_terminal_iterator = non_terminal_list.begin();
+	
+	for (int i = 0; i < non_terminal_list.size(); i = i++) 
+	{
+		NonTerminal* processing_non_terminal = *(non_terminal_list.begin()+i);
+		for (int j = 0; j < i; j++) 
+		{
+			processing_non_terminal = subsitution(processing_non_terminal , *(non_terminal_iterator + j)  );
+		
+		}
+		if (checkImmediateLeftRecursion(processing_non_terminal))
+		{
+			std::vector<NonTerminal*> after_immediate_fix = eliminateImmediateLeftRecursion(processing_non_terminal);
+			new_non_terminal_list.insert(new_non_terminal_list.end(), after_immediate_fix.begin(), after_immediate_fix.end());
+			*(non_terminal_list.begin() + i) = after_immediate_fix[0];
+		}
+		else
+		{
+			new_non_terminal_list.push_back(*non_terminal_list.begin() + i);
+		}
+	}
+
+
+	return new_non_terminal_list;
 }
