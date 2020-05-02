@@ -144,9 +144,9 @@ void GrammarParser::eliminateLeftFactoring() {
     std::vector<NonTerminal> temp_non_terminals_;
     temp_non_terminals_.push_back((this->non_terminals_)[0]);
     int non_terminals_index = 0;
-    bool possible_factoring=false;
+    bool possible_factoring = false;
     for (int iterator = 0; iterator < temp_non_terminals_.size(); iterator++) {
-        possible_factoring=false;
+        possible_factoring = false;
         std::vector<std::vector<std::string>> production_rules = (temp_non_terminals_[iterator]).getProduction_rules_();
         std::map<std::string, std::vector<int>> factoring_map;
 
@@ -170,7 +170,7 @@ void GrammarParser::eliminateLeftFactoring() {
                  * then push the index of the production rule in the array of the value of the map
                  */
             else {
-                possible_factoring=true;
+                possible_factoring = true;
                 std::map<std::string, std::vector<int>>::iterator it = factoring_map.find(
                         (production_rules[index])[0]);
                 (it->second).push_back(index);
@@ -235,19 +235,18 @@ void GrammarParser::eliminateLeftFactoring() {
 
                 name_index++;
                 production_rules_iterator++;
-            }
-            else{
+            } else {
                 std::vector<std::string> temp_pr;
 
                 for (int origin_production_rule_index = 0; origin_production_rule_index <
                                                            production_rules[(element.second)[0]].size(); origin_production_rule_index++) {
                     temp_pr.push_back((production_rules[(element.second)[0]])[origin_production_rule_index]);
-               }
+                }
 
                 editted_factored_production_rules.push_back((temp_pr));
 
             }
-             non_production_rules_iterator++;
+            non_production_rules_iterator++;
         }
         /**
          *  Editting the original factored non terminal by adding the eddited production rule
@@ -264,5 +263,5 @@ void GrammarParser::eliminateLeftFactoring() {
 
         }
     }
-    this->non_terminals_=temp_non_terminals_;
+    this->non_terminals_ = temp_non_terminals_;
 }
