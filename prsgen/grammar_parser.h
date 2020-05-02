@@ -7,6 +7,7 @@
 
 #include <unordered_set>
 #include "non_terminal.h"
+#define EPSILON_EXPRESSION "\\L"
 class GrammarParser {
 
 private:

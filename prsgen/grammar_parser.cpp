@@ -13,6 +13,8 @@
 #define PRODUCTION_RULES_SEPARATOR '|'
 #define PRODUCTION_RULE_TERMS_SEPARATOR ' '
 #define TERMINAL_INDICATOR '\''
+#define ESCAPE_CHARACTER '\\'
+#define ONE_SPACE_STRING " "
 
 const std::unordered_set<std::string>& GrammarParser::getTerminals_() const
 {
@@ -72,13 +74,13 @@ std::unordered_set<std::string> GrammarParser::extractTerminalsFromRHS(std::stri
     for (unsigned long i = 0; i<right_hand_side.size(); i++) {
         std::string found_terminal;
         if (right_hand_side[i]==TERMINAL_INDICATOR) {
-            right_hand_side.replace(i, 1, " ");
-            while (right_hand_side[++i]!=TERMINAL_INDICATOR or right_hand_side[i-1]=='\\') {
-                if (right_hand_side[i]=='\\')
-                    continue;
+            right_hand_side.replace(i, 1, ONE_SPACE_STRING);
+            while (i<right_hand_side.size()
+                    and (right_hand_side[++i]!=TERMINAL_INDICATOR or right_hand_side[i-1]==ESCAPE_CHARACTER)) {
+                if (right_hand_side[i]==ESCAPE_CHARACTER) continue;
                 found_terminal += right_hand_side[i];
             }
-            right_hand_side.replace(i, 1, " ");
+            right_hand_side.replace(i, 1, ONE_SPACE_STRING);
             terminals.insert(found_terminal);
         }
     }
@@ -92,9 +94,9 @@ std::vector<std::vector<std::string>> GrammarParser::extractProductionRulesFromR
     std::vector<std::vector<std::string>> production_rules;
     std::string found_rule;
     for (unsigned long i = 0; i<right_hand_side.size(); i++) {
-        if (right_hand_side[i]==PRODUCTION_RULES_SEPARATOR and right_hand_side[i-1]!='\\') {
+        if (right_hand_side[i]==PRODUCTION_RULES_SEPARATOR and right_hand_side[i-1]!=ESCAPE_CHARACTER) {
             production_rules.push_back(vectorizeProductionRuleString(found_rule));
-            found_rule = "";
+            found_rule.clear();
         }
         else
             found_rule += right_hand_side[i];
@@ -111,7 +113,7 @@ std::vector<std::string> GrammarParser::vectorizeProductionRuleString(std::strin
             PRODUCTION_RULE_TERMS_SEPARATOR);
     for (auto& rule_term : rule_terms) {
         util::trimBothEnds(rule_term);
-        if (rule_term[0]=='\\')
+        if (rule_term[0]==ESCAPE_CHARACTER and rule_term != EPSILON_EXPRESSION)
             rule_term.erase(rule_term.begin());
     }
     return rule_terms;
