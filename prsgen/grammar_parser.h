@@ -12,6 +12,9 @@ class GrammarParser {
 private:
     std::unordered_set<std::string> terminals_;
     std::vector<NonTerminal> non_terminals_;
+    std::unordered_set<std::string> extractTerminalsFromRHS(std::string& right_hand_side);
+    std::vector<std::vector<std::string>> extractProductionRulesFromRHS(std::string& right_hand_side, NonTerminal& non_terminal);
+    std::vector<std::string> vectorizeProductionRuleString(std::string& production_rule);
 public:
     const std::unordered_set<std::string>& getTerminals_() const;
     const std::vector<NonTerminal>& getNon_terminals_() const;
