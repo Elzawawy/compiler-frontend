@@ -2,6 +2,17 @@
 #include "lexical_analyzer_driver.h"
 #include <algorithm>
 
+std::vector<Token *> example {
+    new Token("*", "*"),
+    new Token("+", "+"),
+    new Token("a", "id"),
+    new Token(")", ")"),
+    new Token("+", "+"),
+    new Token("(", "("),
+    new Token("*", "*"),
+    new Token("$", "$"),
+    };
+int counter = 0;
 bool LexicalAnalyzerDriver::IsInputOver() {
   return this->input_over_;
 }
@@ -27,40 +38,48 @@ LexicalAnalyzerDriver::LexicalAnalyzerDriver(DFAState *root_state_, const string
 //The caller is the parser.
 //TAKE CARE this function assumes that a lexeme is strictly smaller than the size of a single buffer so make sure the buffer size is large enough
 Token *LexicalAnalyzerDriver::GetNextToken() {
-  if(this->IsSkippableCharacter(*this->forward_)) this->IncreaseForwardPointer(true);
-  //start with setting lexeme_begin with forward in order to satrt a new lexeme
-  this->lexeme_begin_ = this->forward_;
-  while (true) {
-//    //Skippable characters are handled in the forward pointer transition functions but this check is for the first ever character
-//    if (this->IsSkippableCharacter(*this->forward_)) {
-//      this->IncreaseForwardPointer();
+
+    return example.at(counter++);
+
+
+
+
+
+
+//  if(this->IsSkippableCharacter(*this->forward_)) this->IncreaseForwardPointer(true);
+//  //start with setting lexeme_begin with forward in order to satrt a new lexeme
+//  this->lexeme_begin_ = this->forward_;
+//  while (true) {
+////    //Skippable characters are handled in the forward pointer transition functions but this check is for the first ever character
+////    if (this->IsSkippableCharacter(*this->forward_)) {
+////      this->IncreaseForwardPointer();
+////    }
+//
+//    //if dead state then pop until finding an accepting state else return error
+//    //if the char now is 0 then the buffer isn't fully filled and that means the input is finished not at the end of the buffer
+//    //forward is pointing to the next character
+//    if (characters_states_.top().second->IsDeadState() || *this->forward_ == EOF || this->IsSkippableCharacter(*this->forward_)) {
+//      for (int i = 0; i < this->characters_states_.size(); ++i) {
+//        if (this->characters_states_.top().second->IsAcceptingState()) {
+//          Token *token = this->GetTokenFromStatesStack();
+//          if(*this->forward_ == EOF) this->input_over_ = true;
+//          //Push the s  tate after the root state onto the stack in order to be used in the next call of GetNextToken
+//          this->characters_states_.push(make_pair(this->dummy_initial_transition_char_, this->root_state_));
+//          return token;
+//        }
+//
+//        this->characters_states_.pop();
+//        //After calling decrease pointer if there's an error, then there's no accepting state as we reached lexeme_begin without finding one
+//        if (!this->DecreaseForwardPointer()) return nullptr;
+//      }
 //    }
-
-    //if dead state then pop until finding an accepting state else return error
-    //if the char now is 0 then the buffer isn't fully filled and that means the input is finished not at the end of the buffer
-    //forward is pointing to the next character
-    if (characters_states_.top().second->IsDeadState() || *this->forward_ == EOF || this->IsSkippableCharacter(*this->forward_)) {
-      for (int i = 0; i < this->characters_states_.size(); ++i) {
-        if (this->characters_states_.top().second->IsAcceptingState()) {
-          Token *token = this->GetTokenFromStatesStack();
-          if(*this->forward_ == EOF) this->input_over_ = true;
-          //Push the s  tate after the root state onto the stack in order to be used in the next call of GetNextToken
-          this->characters_states_.push(make_pair(this->dummy_initial_transition_char_, this->root_state_));
-          return token;
-        }
-
-        this->characters_states_.pop();
-        //After calling decrease pointer if there's an error, then there's no accepting state as we reached lexeme_begin without finding one
-        if (!this->DecreaseForwardPointer()) return nullptr;
-      }
-    }
-
-    //Push the neighbour onto the stack transitioned wth the current character forward points to
-    this->characters_states_.push(make_pair(*this->forward_,
-                                            this->characters_states_.top().second->GetNeighbour(string{*this->forward_})));
-
-    this->IncreaseForwardPointer();
-  }
+//
+//    //Push the neighbour onto the stack transitioned wth the current character forward points to
+//    this->characters_states_.push(make_pair(*this->forward_,
+//                                            this->characters_states_.top().second->GetNeighbour(string{*this->forward_})));
+//
+//    this->IncreaseForwardPointer();
+//  }
 
 }
 

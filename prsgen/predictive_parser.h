@@ -22,7 +22,7 @@ private:
 
 public:
     PredicativeParser(LexicalAnalyzerDriver &lexicalAnalyzer, std::map<std::string, NonTerminal> &nonTerminals,
-                      std::set<std::string> &terminals, const std::string& outputFileName);
+                      std::set<std::string> &terminals, const std::string& outputFilePath);
 
     void Parse();
 
