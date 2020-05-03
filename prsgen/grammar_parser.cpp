@@ -192,7 +192,7 @@ std::vector<T*> convertFrom(std::vector<T>& source)
 
 
 
-std::vector<NonTerminal*> GrammarParser::eliminateLeftRecursion(std::vector<NonTerminal> non_terminal_list)
+void GrammarParser::eliminateLeftRecursion(std::vector<NonTerminal> non_terminal_list)
 {
 	std::vector<NonTerminal *> non_terminal_list_p = convertFrom (non_terminal_list);
 	
@@ -229,5 +229,5 @@ for (int j = 0; j < new_non_terminal_list.size(); j++)
 
 
 }
-	return new_non_terminal_list;
+	
 }
