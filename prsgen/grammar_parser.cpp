@@ -264,4 +264,14 @@ void GrammarParser::eliminateLeftFactoring() {
         }
     }
     this->non_terminals_ = temp_non_terminals_;
+
+    std::cout<<"********* After Abdallah ************"<<std::endl;
+    for (auto &non_terminal: non_terminals_) {
+        std::cout << "---------" << non_terminal.getName_() << "----------" << std::endl;
+        for (auto &rule: non_terminal.getProduction_rules_()) {
+            std::cout << "==========RULE =========" << std::endl;
+            for (auto &term: rule)
+                std::cout << term << std::endl;
+        }
+    }
 }
