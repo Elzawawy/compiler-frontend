@@ -1,9 +1,1 @@
-illegal E
-illegal E
-TE'
-FT'
-id
-Match id
-\L
-\L
-Parsing ended while there is still tokens
+Terminals in grammar rules and regular expressions in lexical rules don't match

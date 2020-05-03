@@ -20,9 +20,11 @@ private:
 
     void ProceedOnNonTerminal(std::string &stackTopEntry, Token *currentToken);
 
+    bool checkTerminalsAndRegularExpressions();
+
 public:
     PredicativeParser(LexicalAnalyzerDriver &lexicalAnalyzer, std::map<std::string, NonTerminal> &nonTerminals,
-                      std::set<std::string> &terminals, const std::string& outputFilePath);
+                      std::set<std::string> &terminals, const std::string &outputFilePath);
 
     void Parse();
 

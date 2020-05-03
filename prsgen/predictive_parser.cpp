@@ -1,6 +1,7 @@
 #include "predictive_parser.h"
 #include <utility>
 #include <numeric>
+#include <algorithm>
 
 const std::string END_MARKER = "$";
 const std::string EPSILON = "\\L";
@@ -10,7 +11,7 @@ const int EMPTY_CELL_INDEX = -2;
 PredicativeParser::PredicativeParser(LexicalAnalyzerDriver &lexicalAnalyzerDriver,
                                      std::map<std::string, NonTerminal> &nonTerminals, // map of name and object non terminals
                                      std::set<std::string> &terminals,
-                                     const std::string& outputFilePath) :
+                                     const std::string &outputFilePath) :
         lexical_analyzer_{lexicalAnalyzerDriver},
         non_terminals_{std::move(nonTerminals)},
         terminals_{terminals} {
@@ -19,29 +20,33 @@ PredicativeParser::PredicativeParser(LexicalAnalyzerDriver &lexicalAnalyzerDrive
 
 void PredicativeParser::Parse() {
     //TODO: difference between terminals and RE names
-    // Push the end marker "$" and start non terminal to the stack
-    stack_.push(END_MARKER);
-    stack_.push(non_terminals_.begin()->second.getName_());
+    if (checkTerminalsAndRegularExpressions()) {
+        // Push the end marker "$" and start non terminal to the stack
+        stack_.push(END_MARKER);
+        stack_.push(non_terminals_.begin()->second.getName_());
 
-    // Call first token from lexical analyzer
-    Token *currentToken = lexical_analyzer_.GetNextToken();
-    std::string stackTopEntry = stack_.top();
-    while (stack_.top() != END_MARKER) {
-        // If the top of stack is a terminal
-        if (terminals_.find(stackTopEntry) != terminals_.end()) {
-            ProceedOnTerminal(stackTopEntry, currentToken);
+        // Call first token from lexical analyzer
+        Token *currentToken = lexical_analyzer_.GetNextToken();
+        std::string stackTopEntry = stack_.top();
+        while (stack_.top() != END_MARKER) {
+            // If the top of stack is a terminal
+            if (terminals_.find(stackTopEntry) != terminals_.end()) {
+                ProceedOnTerminal(stackTopEntry, currentToken);
+            }
+                // If the top of stack is a non-terminal
+            else {
+                ProceedOnNonTerminal(stackTopEntry, currentToken);
+            }
         }
-            // If the top of stack is a non-terminal
-        else {
-            ProceedOnNonTerminal(stackTopEntry, currentToken);
+        // Check if there is still tokens in the input buffer (driver.getNextToken)
+        if (currentToken->GetTokenName() != END_MARKER) {
+            output_file_ << "Parsing ended while there is still tokens" << endl;
         }
-    }
-    // Check if there is still tokens in the input buffer (driver.getNextToken)
-    if(currentToken->GetTokenName() != END_MARKER){
-        output_file_ << "Parsing ended while there is still tokens" << endl;
+        delete currentToken;
+    } else {
+        output_file_ << "Terminals in grammar rules and regular expressions in lexical rules don't match" << endl;
     }
     output_file_.close();
-    delete currentToken;
 }
 
 void PredicativeParser::ProceedOnTerminal(string &stackTopEntry, Token *currentToken) {
@@ -55,10 +60,10 @@ void PredicativeParser::ProceedOnTerminal(string &stackTopEntry, Token *currentT
         // Call for the next token from lexical analyzer
         *currentToken = *lexical_analyzer_.GetNextToken();
     }
-    // If the terminal doesn't match the current token
+        // If the terminal doesn't match the current token
     else {
         // Output missing token error message in output file
-        output_file_ << "Error missing " << stackTopEntry << endl;
+        output_file_ << "Error, missing " << stackTopEntry << endl;
         // Pop the top entry of the stack
         stack_.pop();
         stackTopEntry = stack_.top();
@@ -96,4 +101,14 @@ void PredicativeParser::ProceedOnNonTerminal(string &stackTopEntry, Token *curre
 
 PredicativeParser::~PredicativeParser() {
     output_file_.close();
+}
+
+bool PredicativeParser::checkTerminalsAndRegularExpressions() {
+    std::set<std::string> difference;
+    std::set<std::string> regular_expressions_names = lexical_analyzer_.GetRegularExpressionsNames();
+    std::set_difference(terminals_.begin(), terminals_.end(), regular_expressions_names.begin(),
+                        regular_expressions_names.end(),
+                        std::inserter(difference, difference.end()));
+
+    return difference.empty();
 }

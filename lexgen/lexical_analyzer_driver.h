@@ -9,6 +9,7 @@
 #include <string>
 #include <fstream>
 #include <stack>
+#include <set>
 #include "dfa_state.h"
 #include "token.h"
 
@@ -25,6 +26,9 @@ class LexicalAnalyzerDriver {
   vector<vector<char>> buffers_;
   vector<char>::iterator forward_, lexeme_begin_;
   stack<pair<char, DFAState*>> characters_states_;
+
+    //TODO: remove this set after creating the lexical analyzer top level object
+  set<string> regular_expressions_names_;
   int active_buffer_;
   streamsize active_buffer_size_;
   const char dummy_initial_transition_char_ = 'L';
@@ -33,11 +37,18 @@ class LexicalAnalyzerDriver {
   void IncreaseForwardPointer(bool skip_skippable_chars_recursively = false);
   bool IsSkippableCharacter(char c) const;
 
+  //TODO: remove this function after creating the lexical analyzer top level object
+  void SetRegularExpressionsNames(const vector<RegularExpression> &regular_expressions);
+
  public:
-  LexicalAnalyzerDriver(DFAState *root_state_, const string &input_file_name_);
+  LexicalAnalyzerDriver(DFAState *root_state_, const string &input_file_name_, const vector<RegularExpression> &regular_expressions);
   Token *GetNextToken();
   bool IsInputOver();
   Token* GetTokenFromStatesStack();
+
+  //TODO: remove this function after creating the lexical analyzer top level object
+  set<string> GetRegularExpressionsNames();
+
   virtual ~LexicalAnalyzerDriver();
 };
 

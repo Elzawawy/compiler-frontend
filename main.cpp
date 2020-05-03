@@ -14,14 +14,20 @@ int main() {
 
     auto language_parser = new LanguageParser();
     language_parser->parseFile(
-            "/home/mostafayousry/TERM10/Programming Languages Translation/Assignments/LEXGEN/lexgen/test_cases/a_lexical_rules.txt");
+            "/home/mostafayousry/TERM10/Programming Languages Translation/Assignments/LEXGEN/lexgen/test_cases/case_1/b_lexical_rules.txt");
     NFA x = NFA();
     NFAState *nfa_start_state = x.regex_to_nfa(language_parser->getInput_table(), language_parser->getExpressions());
     DFA dfa_gen = DFA();
     DFAState *dfa_start_state = dfa_gen.GenerateDFA(*nfa_start_state, x.get_input_table());
     LexicalAnalyzerDriver lexicalAnalyzerDriver(dfa_start_state,
-                                                "/home/mostafayousry/TERM10/Programming Languages Translation/Assignments/LEXGEN/lexgen/test_cases/a_test_program.txt");
-    set<string> terminals{"id", "+", "*", "(", ")", "$"};
+                                                "/home/mostafayousry/TERM10/Programming Languages Translation/Assignments/LEXGEN/lexgen/test_cases/case_1/b_test_program.txt",
+                                                language_parser->getExpressions());
+
+//    set<string> ex = lexicalAnalyzerDriver.GetRegularExpressionsNames();
+//    for (string x : ex) {
+//        cout << x << endl;
+//    }
+        set<string> terminals{"id", "+", "*", "(", ")", "$"};
     NonTerminal e = NonTerminal("E");
     NonTerminal e_ = NonTerminal("E\'");
     NonTerminal t = NonTerminal("T");
