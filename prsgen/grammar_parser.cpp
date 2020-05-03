@@ -228,7 +228,8 @@ void GrammarParser::eliminateLeftRecursion()
             *(non_terminal_list_p.begin()+i) = after_immediate_fix[0];
         }
         else {
-            new_non_terminal_list.push_back(*non_terminal_list_p.begin()+i);
+            NonTerminal* x = new NonTerminal(*(*non_terminal_list_p.begin()+i));
+            new_non_terminal_list.push_back(x);
         }
     }
     non_terminals_.clear();
