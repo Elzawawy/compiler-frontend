@@ -5,7 +5,6 @@
 #include "grammar_parser.h"
 #include <algorithm>    // std::transform
 
-
 #include <fstream>
 #include <iostream>
 #include "grammar_parser.h"
@@ -209,9 +208,9 @@ std::vector<T*> convertFrom(std::vector<T>& source)
     return target;
 }
 
-void GrammarParser::eliminateLeftRecursion(std::vector<NonTerminal> non_terminal_list)
+void GrammarParser::eliminateLeftRecursion()
 {
-    std::vector<NonTerminal*> non_terminal_list_p = convertFrom(non_terminal_list);
+    std::vector<NonTerminal*> non_terminal_list_p = convertFrom(non_terminals_);
 
     std::vector<NonTerminal*> new_non_terminal_list;
     std::vector<NonTerminal*>::iterator non_terminal_iterator = non_terminal_list_p.begin();
@@ -238,6 +237,17 @@ void GrammarParser::eliminateLeftRecursion(std::vector<NonTerminal> non_terminal
     for (int j = 0; j<new_non_terminal_list.size(); j++) {
         non_terminals_.push_back(**(new_non_terminal_list.begin()+j));
 
+    }
+//    for (auto& terminal: terminals_)
+//        std::cout << terminal << std::endl;
+    std::cout << "**************After Abdo************" << std::endl;
+    for (auto& non_terminal: non_terminals_) {
+        std::cout << "---------" << non_terminal.getName_() << "----------" << std::endl;
+        for (auto& rule: non_terminal.getProduction_rules_()) {
+            std::cout << "==========RULE =========" << std::endl;
+            for (auto& term: rule)
+                std::cout << term << std::endl;
+        }
     }
 
 }
@@ -288,7 +298,7 @@ std::vector<std::string> GrammarParser::vectorizeProductionRuleString(std::strin
             PRODUCTION_RULE_TERMS_SEPARATOR);
     for (auto& rule_term : rule_terms) {
         util::trimBothEnds(rule_term);
-        if (rule_term[0]==ESCAPE_CHARACTER and rule_term != EPSILON_EXPRESSION)
+        if (rule_term[0]==ESCAPE_CHARACTER and rule_term!=EPSILON_EXPRESSION)
             rule_term.erase(rule_term.begin());
     }
     return rule_terms;

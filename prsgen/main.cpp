@@ -5,5 +5,6 @@
 #include "grammar_parser.h"
 int main(){
     GrammarParser grammarParser;
-    grammarParser.parseFile("../prsgen/test-cases/a_grammar.txt");
+    grammarParser.parseFile("../prsgen/test-cases/testing_recursion.txt");
+    grammarParser.eliminateLeftRecursion();
 }

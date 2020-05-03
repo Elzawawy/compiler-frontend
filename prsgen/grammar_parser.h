@@ -25,7 +25,7 @@ public:
     const std::vector<NonTerminal>& getNon_terminals_() const;
     void parseFile(std::string grammar_file_path);
     void eliminateLeftFactoring();
-	void  eliminateLeftRecursion(std::vector<NonTerminal > non_terminal_list);
+	void eliminateLeftRecursion();
 	std::vector<NonTerminal *> eliminateImmediateLeftRecursion(NonTerminal* non_terminal);
 	bool checkImmediateLeftRecursion(NonTerminal* non_terminal);
 	NonTerminal * subsitution(NonTerminal* current_non_terminal, NonTerminal* input);
