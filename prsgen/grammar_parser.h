@@ -18,7 +18,7 @@ public:
     const std::vector<NonTerminal>& getNon_terminals_() const;
     void parseFile(std::string file_name);
     void eliminateLeftFactoring();
-	std::vector<NonTerminal *>  eliminateLeftRecursion(std::vector<NonTerminal *> non_terminal_list);
+	void  eliminateLeftRecursion(std::vector<NonTerminal > non_terminal_list);
 	std::vector<NonTerminal *> eliminateImmediateLeftRecursion(NonTerminal* non_terminal);
 	bool checkImmediateLeftRecursion(NonTerminal* non_terminal);
 	NonTerminal * subsitution(NonTerminal* current_non_terminal, NonTerminal* input);

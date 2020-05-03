@@ -144,13 +144,15 @@ int main() {
 	F->setProduction_rules_(prodrules);
 
 
-	std::vector<NonTerminal *> terminals;
-	terminals.push_back(S);
-	terminals.push_back(E);
-	terminals.push_back(T);
-	terminals.push_back(F);
+	std::vector<NonTerminal > terminals;
+	terminals.push_back(*S);
+	terminals.push_back(*E);
+	terminals.push_back(*T);
+	terminals.push_back(*F);
 
-	terminals = X->eliminateLeftRecursion(terminals);
+	
+
+	 X->eliminateLeftRecursion(terminals);
 
 
 

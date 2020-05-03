@@ -3,6 +3,8 @@
 //
 #include <iostream>
 #include "grammar_parser.h"
+#include <algorithm>    // std::transform
+
 const std::set<std::string>& GrammarParser::getTerminals_() const
 {
     return terminals_;
@@ -180,14 +182,28 @@ void GrammarParser::eliminateLeftFactoring()
     //TODO: PRSGEN-4
 }
 
-std::vector<NonTerminal*> GrammarParser::eliminateLeftRecursion(std::vector<NonTerminal*> non_terminal_list)
+template <typename T>
+std::vector<T*> convertFrom(std::vector<T>& source)
 {
-	std::vector<NonTerminal*> new_non_terminal_list;
-	std::vector<NonTerminal*> ::iterator non_terminal_iterator = non_terminal_list.begin();
+	std::vector<T*> target(source.size());
+	std::transform(source.begin(), source.end(), target.begin(), [](T& t) { return &t; });
+	return target;
+}
+
+
+
+std::vector<NonTerminal*> GrammarParser::eliminateLeftRecursion(std::vector<NonTerminal> non_terminal_list)
+{
+	std::vector<NonTerminal *> non_terminal_list_p = convertFrom (non_terminal_list);
 	
-	for (int i = 0; i < non_terminal_list.size(); i = i++) 
+	
+
+	std::vector<NonTerminal*> new_non_terminal_list;
+	std::vector<NonTerminal*> ::iterator non_terminal_iterator = non_terminal_list_p.begin();
+	
+	for (int i = 0; i < non_terminal_list_p.size(); i = i++) 
 	{
-		NonTerminal* processing_non_terminal = *(non_terminal_list.begin()+i);
+		NonTerminal* processing_non_terminal = *(non_terminal_list_p.begin()+i);
 		for (int j = 0; j < i; j++) 
 		{
 			processing_non_terminal = subsitution(processing_non_terminal , *(non_terminal_iterator + j)  );
@@ -197,14 +213,21 @@ std::vector<NonTerminal*> GrammarParser::eliminateLeftRecursion(std::vector<NonT
 		{
 			std::vector<NonTerminal*> after_immediate_fix = eliminateImmediateLeftRecursion(processing_non_terminal);
 			new_non_terminal_list.insert(new_non_terminal_list.end(), after_immediate_fix.begin(), after_immediate_fix.end());
-			*(non_terminal_list.begin() + i) = after_immediate_fix[0];
+			*(non_terminal_list_p.begin() + i) = after_immediate_fix[0];
 		}
 		else
 		{
-			new_non_terminal_list.push_back(*non_terminal_list.begin() + i);
+			new_non_terminal_list.push_back(*non_terminal_list_p.begin() + i);
 		}
 	}
+	non_terminals_.clear();
+	non_terminals_.reserve(non_terminal_list_p.size());
+
+for (int j = 0; j < new_non_terminal_list.size(); j++)
+{
+	non_terminals_.push_back( **(new_non_terminal_list.begin() + j ));
 
 
+}
 	return new_non_terminal_list;
 }
