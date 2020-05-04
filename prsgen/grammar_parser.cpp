@@ -15,6 +15,8 @@
 #define TERMINAL_INDICATOR '\''
 #define ESCAPE_CHARACTER '\\'
 #define ONE_SPACE_STRING " "
+#define isInvalidNonTerminal(term) !non_terminals_names_.count(term) and !terminals_.count(term) and term!=EPSILON_EXPRESSION
+#define isEscapedTerminal(term) term[0]==ESCAPE_CHARACTER and term!=EPSILON_EXPRESSION
 
 const std::unordered_set<std::string>& GrammarParser::getTerminals_() const
 {
@@ -27,6 +29,8 @@ const std::vector<NonTerminal>& GrammarParser::getNon_terminals_() const
 
 void GrammarParser::parseFile(std::string grammar_file_path)
 {
+    // extract all non terminal names (L.H.S of all rules) at the beginning.
+    extractNonTerminalNamesFromFile(grammar_file_path);
     std::ifstream file(grammar_file_path);
     if (file.is_open()) {
         std::string non_terminal_definition;
@@ -40,11 +44,11 @@ void GrammarParser::parseFile(std::string grammar_file_path)
             std::string left_hand_side = definition_sides[LEFT_HAND_SIDE_INDEX];
             util::trimBothEnds(left_hand_side);
             NonTerminal non_terminal(left_hand_side);
-            std::unordered_set<std::string> terminals = extractTerminalsFromRHS(right_hand_side);
-            terminals_.insert(terminals.begin(), terminals.end());
-            non_terminal.setProduction_rules_(extractProductionRulesFromRHS(right_hand_side, non_terminal));
+            extractTerminalsFromRHS(right_hand_side);
+            extractProductionRulesFromRHS(right_hand_side, non_terminal);
             non_terminals_.push_back(non_terminal);
         }
+        file.close();
     }
     for (auto& terminal: terminals_)
         std::cout << terminal << std::endl;
@@ -67,10 +71,27 @@ void GrammarParser::eliminateLeftFactoring()
     //TODO: PRSGEN-4
 }
 
-std::unordered_set<std::string> GrammarParser::extractTerminalsFromRHS(std::string& right_hand_side)
+void GrammarParser::extractNonTerminalNamesFromFile(std::string grammar_file_path)
+{
+    std::ifstream file(grammar_file_path);
+    if (file.is_open()) {
+        std::string non_terminal_definition;
+        while (std::getline(file, non_terminal_definition, NON_TERMINAL_SEPARATOR)) {
+            // guard against any empty lines detected.
+            if (non_terminal_definition.empty()) continue;
+            // split sides of the non-terminal definition.
+            std::vector<std::string> definition_sides = util::splitOnStringDelimiter(non_terminal_definition,
+                    NON_TERMINAL_SIDES_SEPARATOR);
+            util::trimBothEnds(definition_sides[LEFT_HAND_SIDE_INDEX]);
+            non_terminals_names_.insert(definition_sides[LEFT_HAND_SIDE_INDEX]);
+        }
+        file.close();
+    }
+}
+
+void GrammarParser::extractTerminalsFromRHS(std::string& right_hand_side)
 {
     util::trimBothEnds(right_hand_side);
-    std::unordered_set<std::string> terminals;
     for (unsigned long i = 0; i<right_hand_side.size(); i++) {
         std::string found_terminal;
         if (right_hand_side[i]==TERMINAL_INDICATOR) {
@@ -81,13 +102,12 @@ std::unordered_set<std::string> GrammarParser::extractTerminalsFromRHS(std::stri
                 found_terminal += right_hand_side[i];
             }
             right_hand_side.replace(i, 1, ONE_SPACE_STRING);
-            terminals.insert(found_terminal);
+            terminals_.insert(found_terminal);
         }
     }
-    return terminals;
 }
 
-std::vector<std::vector<std::string>> GrammarParser::extractProductionRulesFromRHS(std::string& right_hand_side,
+void GrammarParser::extractProductionRulesFromRHS(std::string& right_hand_side,
         NonTerminal& non_terminal)
 {
     util::trimBothEnds(right_hand_side);
@@ -102,7 +122,7 @@ std::vector<std::vector<std::string>> GrammarParser::extractProductionRulesFromR
             found_rule += right_hand_side[i];
     }
     production_rules.push_back(vectorizeProductionRuleString(found_rule));
-    return production_rules;
+    non_terminal.setProduction_rules_(production_rules);
 }
 
 std::vector<std::string> GrammarParser::vectorizeProductionRuleString(std::string& production_rule)
@@ -113,8 +133,14 @@ std::vector<std::string> GrammarParser::vectorizeProductionRuleString(std::strin
             PRODUCTION_RULE_TERMS_SEPARATOR);
     for (auto& rule_term : rule_terms) {
         util::trimBothEnds(rule_term);
-        if (rule_term[0]==ESCAPE_CHARACTER and rule_term != EPSILON_EXPRESSION)
+        if (isEscapedTerminal(rule_term))
             rule_term.erase(rule_term.begin());
+
+        if (isInvalidNonTerminal(rule_term)) {
+            std::cerr << "Error found in grammar rules ! A non-terminal (" << rule_term << ") was used but not defined."
+                      << std::endl;
+            std::exit(0);
+        }
     }
     return rule_terms;
 }
