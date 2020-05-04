@@ -110,16 +110,16 @@ void ParsingTableGenerator::computeFollow() {
 void ParsingTableGenerator::constructParsingTable() {
     for (auto &&non_terminal : non_terminals_) {
         unordered_map<string, int> current_parsing_table_entry;
+        const unordered_set<string> &current_non_terminal_follow = name_non_terminal_[non_terminal.getName_()]->getFollow_();
+        //For each terminal in the follow set of the parent non terminal add an entry in the parsing table with synch in it
+        //to be used in error handling. Take Care that the value in the entry is overriden if the first production element is an epsilon
+        //or a non terminal that derives to an epsilon
+        fill_parsing_table_entry_with_keys_and_value(current_parsing_table_entry,
+                                                     current_non_terminal_follow,
+                                                     synch);
         //j is the index of the production in the non terminal class
         int j = 0;
         for (auto &&production : non_terminal.getProduction_rules_()) {
-            const unordered_set<string> &current_non_terminal_follow = name_non_terminal_[non_terminal.getName_()]->getFollow_();
-            //For each terminal in the follow set of the parent non terminal add an entry in the parsing table with synch in it
-            //to be used in error handling. Take Care that the value in the entry is overriden if the first production element is an epsilon
-            //or a non terminal that derives to an epsilon
-            fill_parsing_table_entry_with_keys_and_value(current_parsing_table_entry,
-                                                         current_non_terminal_follow,
-                                                         synch);
             //If the first element in the production is a terminal then it's first set contains non more than this terminal
             if (terminals_.count(production[0])) {
                 current_parsing_table_entry[production[0]] = j++;
