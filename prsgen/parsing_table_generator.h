@@ -18,6 +18,9 @@ private:
                                 const NonTerminal &current,
                                 const NonTerminal &parent);
 
+    void fill_parsing_table_entry_with_keys_and_value(std::unordered_map<std::string, int> &parsing_table_entry,
+                                                      const std::unordered_set<std::string> &keys, const int value);
+
 public:
     const std::string epsilon = "\\L";
     const int synch = -1;
