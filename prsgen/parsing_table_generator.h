@@ -33,7 +33,7 @@ public:
 
     void constructParsingTable();
 
-    void writeParseingTable();
+    void writeParsingTable();
 };
 
 #endif //PRSGEN_PARSING_TABLE_GENERATOR_H

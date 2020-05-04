@@ -155,8 +155,22 @@ void ParsingTableGenerator::constructParsingTable() {
     }
 }
 
-void ParsingTableGenerator::writeParseingTable() {
-    //TODO: PRSGEN-9
+void ParsingTableGenerator::writeParsingTable() {
+    for (auto &&non_terminal  : non_terminals_) {
+        cout << non_terminal.getName_() << ": ";
+        for (auto &&cell : non_terminal.getParse_table_entry_()) {
+            const vector<vector<string>> &productions = non_terminal.getProduction_rules_();
+            cout << "(" << cell.first << ", ";
+            if(cell.second == -1) cout<<"synch";
+            else {
+                for (auto &&item: productions[cell.second]) {
+                    cout<<item<<" ";
+                }
+            }
+            cout<<")" << ", ";
+        }
+        cout << endl;
+    }
 }
 
 void ParsingTableGenerator::fill_follow_from_production(std::unordered_set<std::string> &follow,
