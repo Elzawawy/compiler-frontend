@@ -2,17 +2,6 @@
 #include "lexical_analyzer_driver.h"
 #include <algorithm>
 
-//std::vector<Token *> example {
-//    new Token("*", "*"),
-//    new Token("+", "+"),
-//    new Token("a", "id"),
-//    new Token(")", ")"),
-//    new Token("+", "+"),
-//    new Token("(", "("),
-//    new Token("*", "*"),
-//    new Token("$", "$"),
-//    };
-//int counter = 0;
 bool LexicalAnalyzerDriver::IsInputOver() {
   return this->input_over_;
 }
@@ -40,8 +29,6 @@ LexicalAnalyzerDriver::LexicalAnalyzerDriver(DFAState *root_state_, const string
 //The caller is the parser.
 //TAKE CARE this function assumes that a lexeme is strictly smaller than the size of a single buffer so make sure the buffer size is large enough
 Token *LexicalAnalyzerDriver::GetNextToken() {
-
-    //return example.at(counter++);
   if(this->IsSkippableCharacter(*this->forward_)) this->IncreaseForwardPointer(true);
   //start with setting lexeme_begin with forward in order to satrt a new lexeme
   this->lexeme_begin_ = this->forward_;
