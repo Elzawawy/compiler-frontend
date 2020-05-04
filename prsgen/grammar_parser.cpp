@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <regex>
 #include "grammar_parser.h"
 #include "../utils.h"
 #define NON_TERMINAL_SEPARATOR '#'
@@ -18,6 +19,7 @@
 #define ONE_SPACE_STRING " "
 #define isInvalidNonTerminal(term) !non_terminals_names_.count(term) and !terminals_.count(term) and term!=EPSILON_EXPRESSION
 #define isEscapedTerminal(term) term[0]==ESCAPE_CHARACTER and term!=EPSILON_EXPRESSION
+#define isWrongNonTerminalName(name) !std::regex_match(name, std::regex("^[A-Za-z0-9_`]+$"))
 
 const std::unordered_set<std::string>& GrammarParser::getTerminals_() const
 {
@@ -91,6 +93,13 @@ void GrammarParser::extractNonTerminalNamesFromFile(std::string grammar_file_pat
                 std::exit(0);
             }
             util::trimBothEnds(definition_sides[LEFT_HAND_SIDE_INDEX]);
+            //Validation Case 2: Wrong Non-Terminal Name
+            if (isWrongNonTerminalName(definition_sides[LEFT_HAND_SIDE_INDEX])) {
+                std::cerr << "Error found in grammar rules ! Wrong Non Terminal Name"
+                          << "Please re-check the input file format required."
+                          << std::endl;
+                std::exit(0);
+            }
             non_terminals_names_.insert(definition_sides[LEFT_HAND_SIDE_INDEX]);
         }
         file.close();
