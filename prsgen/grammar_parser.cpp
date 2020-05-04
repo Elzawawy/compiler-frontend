@@ -10,6 +10,7 @@
 #define NON_TERMINAL_SIDES_SEPARATOR "::="
 #define LEFT_HAND_SIDE_INDEX 0
 #define RIGHT_HAND_SIDE_INDEX 1
+#define RULE_SIDES_NUMBER 2
 #define PRODUCTION_RULES_SEPARATOR '|'
 #define PRODUCTION_RULE_TERMS_SEPARATOR ' '
 #define TERMINAL_INDICATOR '\''
@@ -82,6 +83,13 @@ void GrammarParser::extractNonTerminalNamesFromFile(std::string grammar_file_pat
             // split sides of the non-terminal definition.
             std::vector<std::string> definition_sides = util::splitOnStringDelimiter(non_terminal_definition,
                     NON_TERMINAL_SIDES_SEPARATOR);
+            // Validation Case 1: Missing rule sides separator.
+            if (definition_sides.size()!=RULE_SIDES_NUMBER) {
+                std::cerr << "Error found in grammar rules ! Missing `::=` on any rule."
+                          << "Please re-check the input file format required."
+                          << std::endl;
+                std::exit(0);
+            }
             util::trimBothEnds(definition_sides[LEFT_HAND_SIDE_INDEX]);
             non_terminals_names_.insert(definition_sides[LEFT_HAND_SIDE_INDEX]);
         }
