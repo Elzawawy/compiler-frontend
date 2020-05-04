@@ -1,11 +1,9 @@
 #include "parsing_table_generator.h"
 #include <utility>
-#include <set>
 #include <unordered_set>
 
 using std::vector;
 using std::string;
-using std::set;
 using std::unordered_set;
 
 const string epsilon = "\L";
