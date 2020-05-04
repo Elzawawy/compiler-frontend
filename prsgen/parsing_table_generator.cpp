@@ -1,4 +1,5 @@
 #include "parsing_table_generator.h"
+#include "grammar_parser.h"
 #include <utility>
 #include <unordered_set>
 
@@ -6,7 +7,7 @@ using std::vector;
 using std::string;
 using std::unordered_set;
 
-const string epsilon = "\L";
+const string epsilon = EPSILON_EXPRESSION;
 
 ParsingTableGenerator::ParsingTableGenerator(std::unordered_set<std::string> &terminals_,
                                              std::vector<NonTerminal> &non_terminals_)
