@@ -9,8 +9,8 @@ const int SYNC_INDEX = -1;
 const int EMPTY_CELL_INDEX = -2;
 
 PredicativeParser::PredicativeParser(LexicalAnalyzerDriver &lexicalAnalyzerDriver,
-                                     std::map<std::string, NonTerminal> &nonTerminals, // map of name and object non terminals
-                                     std::set<std::string> &terminals,
+                                     std::unordered_map<std::string, NonTerminal> &nonTerminals, // map of name and object non terminals
+                                     std::unordered_set<std::string> &terminals,
                                      const std::string &outputFilePath) :
         lexical_analyzer_{lexicalAnalyzerDriver},
         non_terminals_{std::move(nonTerminals)},
@@ -19,11 +19,10 @@ PredicativeParser::PredicativeParser(LexicalAnalyzerDriver &lexicalAnalyzerDrive
 }
 
 void PredicativeParser::Parse() {
-    //TODO: difference between terminals and RE names
     if (checkTerminalsAndRegularExpressions()) {
         // Push the end marker "$" and start non terminal to the stack
         stack_.push(END_MARKER);
-        stack_.push(non_terminals_.begin()->second.getName_());
+        stack_.push("METHOD_BODY");
 
         // Call first token from lexical analyzer
         Token *currentToken = lexical_analyzer_.GetNextToken();
@@ -58,7 +57,11 @@ void PredicativeParser::ProceedOnTerminal(string &stackTopEntry, Token *currentT
         stack_.pop();
         stackTopEntry = stack_.top();
         // Call for the next token from lexical analyzer
-        *currentToken = *lexical_analyzer_.GetNextToken();
+        if (lexical_analyzer_.IsInputOver()){
+            *currentToken = Token("$", "$");
+        } else{
+            *currentToken = *lexical_analyzer_.GetNextToken();
+        }
     }
         // If the terminal doesn't match the current token
     else {
@@ -77,12 +80,17 @@ void PredicativeParser::ProceedOnNonTerminal(string &stackTopEntry, Token *curre
         case SYNC_INDEX: // If there is a synchronizing token
             // Output illegal non terminal error message in output file and call next token from lexical analyzer
             output_file_ << "illegal " << stackTopEntry << endl;
-            *currentToken = *lexical_analyzer_.GetNextToken();
+            stack_.pop();
+            stackTopEntry = stack_.top();
             break;
         case EMPTY_CELL_INDEX: // If there isn't a production rule under the token (empty cell)
             // Output illegal non terminal error message in output file and call next token from lexical analyzer
             output_file_ << "illegal " << stackTopEntry << endl;
-            *currentToken = *lexical_analyzer_.GetNextToken();
+            if (lexical_analyzer_.IsInputOver()){
+                *currentToken = Token("$", "$");
+            } else{
+                *currentToken = *lexical_analyzer_.GetNextToken();
+            }
             break;
         default: // If there is a production rule under the token
             std::vector<std::string> productionRule = nonTerminal.GetProductionRule(productionRuleIndex);
@@ -110,5 +118,5 @@ bool PredicativeParser::checkTerminalsAndRegularExpressions() {
                         regular_expressions_names.end(),
                         std::inserter(difference, difference.end()));
 
-    return difference.empty();
+    return !difference.empty();
 }

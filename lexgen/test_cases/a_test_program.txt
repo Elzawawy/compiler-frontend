@@ -1,5 +1,6 @@
-int sum , count , pass ,
-mnt; while (pass!= 10.2E2000)
+int x;
+x = 5;
+if (x > 2)
 {
-pass = pass + 1 ;
+x = 0;
 }

@@ -1,10 +1,10 @@
 #ifndef LEXGEN_DFA_H
 #define LEXGEN_DFA_H
 
-#include "../utils.cpp"
 #include <unordered_set>
 #include <queue>
 #include <string>
+#include "dfa_state.h"
 
 class DFA {
 private:

@@ -44,7 +44,10 @@ void NonTerminal::setParse_table_entry_(const std::unordered_map<std::string, in
 }
 
 int NonTerminal::GetProductionRuleIndex(std::string token) {
-    return this->getParse_table_entry_().at(token);
+    if (parse_table_entry_.find(token) == parse_table_entry_.end()) {
+        return -2;
+    }
+    return parse_table_entry_.at(token);
 }
 
 std::vector<std::string> NonTerminal::GetProductionRule(int index) {

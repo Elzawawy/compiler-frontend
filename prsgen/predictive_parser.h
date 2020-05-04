@@ -12,8 +12,8 @@ class PredicativeParser {
 private:
     std::stack<std::string> stack_;
     LexicalAnalyzerDriver &lexical_analyzer_;
-    std::set<std::string> &terminals_;
-    std::map<std::string, NonTerminal> non_terminals_;
+    std::unordered_set<std::string> &terminals_;
+    std::unordered_map<std::string, NonTerminal> non_terminals_;
     std::ofstream output_file_;
 
     void ProceedOnTerminal(std::string &stackTopEntry, Token *currentToken);
@@ -23,8 +23,8 @@ private:
     bool checkTerminalsAndRegularExpressions();
 
 public:
-    PredicativeParser(LexicalAnalyzerDriver &lexicalAnalyzer, std::map<std::string, NonTerminal> &nonTerminals,
-                      std::set<std::string> &terminals, const std::string &outputFilePath);
+    PredicativeParser(LexicalAnalyzerDriver &lexicalAnalyzer, std::unordered_map<std::string, NonTerminal> &nonTerminals,
+                      std::unordered_set<std::string> &terminals, const std::string &outputFilePath);
 
     void Parse();
 
