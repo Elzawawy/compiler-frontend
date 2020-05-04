@@ -14,10 +14,14 @@ private:
     std::unordered_map<std::string, std::unordered_set<std::string>> non_terminal_non_terminal_parents;
 
     void
-    fill_follow_from_production(std::unordered_set<std::string> &follow, const std::vector<std::string> &production, const NonTerminal &current,
+    fill_follow_from_production(std::unordered_set<std::string> &follow, const std::vector<std::string> &production,
+                                const NonTerminal &current,
                                 const NonTerminal &parent);
 
 public:
+    const std::string epsilon = "\\L";
+    const int synch = -1;
+
     ParsingTableGenerator(std::unordered_set<std::string> &terminals_, std::vector<NonTerminal> &non_terminals_);
 
     void computeFirst();
