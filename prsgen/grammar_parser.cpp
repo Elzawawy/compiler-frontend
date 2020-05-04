@@ -137,7 +137,8 @@ std::vector<std::string> GrammarParser::vectorizeProductionRuleString(std::strin
             rule_term.erase(rule_term.begin());
 
         if (isInvalidNonTerminal(rule_term)) {
-            std::cerr << "Error found in grammar rules ! A non-terminal (" << rule_term << ") was used but not defined."
+            std::cerr << "Error found in grammar rules ! A non-terminal (" << rule_term
+                      << ") was used but not defined. This maybe also because of wrong input file format required."
                       << std::endl;
             std::exit(0);
         }
