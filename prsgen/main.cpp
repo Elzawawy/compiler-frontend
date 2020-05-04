@@ -11,8 +11,8 @@ using namespace std;
 int main() {
     GrammarParser grammarParser;
     grammarParser.parseFile("../prsgen/test-cases/a_grammar.txt");
-//    grammarParser.eliminateLeftFactoring();
-//    grammarParser.eliminateLeftRecursion();
+    grammarParser.eliminateLeftFactoring();
+    grammarParser.eliminateLeftRecursion();
     ParsingTableGenerator parsing_table_generator(grammarParser.getTerminals_(),
                                                   grammarParser.getNon_terminals_());
     parsing_table_generator.computeFirst();
