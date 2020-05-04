@@ -1,4 +1,4 @@
-#include "catch.h"
+#include "../../catch.h"
 #include "../dfa_state.h"
 #include "../lexical_analyzer_driver.h"
 
