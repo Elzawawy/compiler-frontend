@@ -21,11 +21,11 @@
 #define ESCAPE_CHARACTER '\\'
 #define ONE_SPACE_STRING " "
 
-const std::unordered_set<std::string> &GrammarParser::getTerminals_() const {
+std::unordered_set<std::string> &GrammarParser::getTerminals_() {
     return terminals_;
 }
 
-const std::vector<NonTerminal> &GrammarParser::getNon_terminals_() const {
+std::vector<NonTerminal> &GrammarParser::getNon_terminals_() {
     return non_terminals_;
 }
 

@@ -24,8 +24,8 @@ private:
     std::vector<std::string> vectorizeProductionRuleString(std::string& production_rule);
 
 public:
-    const std::unordered_set<std::string>& getTerminals_() const;
-    const std::vector<NonTerminal>& getNon_terminals_() const;
+	std::unordered_set<std::string>& getTerminals_();
+	std::vector<NonTerminal>& getNon_terminals_();
     void parseFile(std::string grammar_file_path);
     void eliminateLeftFactoring();
 	void eliminateLeftRecursion();
