@@ -40,11 +40,11 @@ void NonTerminal::setProduction_rules_(const std::vector<std::vector<std::string
 {
     NonTerminal::production_rules_ = production_rules_;
 }
-const std::map<std::string, int>& NonTerminal::getParse_table_entry_() const
+const std::unordered_map<std::string, int>& NonTerminal::getParse_table_entry_() const
 {
     return parse_table_entry_;
 }
-void NonTerminal::setParse_table_entry_(const std::map<std::string, int>& parse_table_entry_)
+void NonTerminal::setParse_table_entry_(const std::unordered_map<std::string, int>& parse_table_entry_)
 {
     NonTerminal::parse_table_entry_ = parse_table_entry_;
 }

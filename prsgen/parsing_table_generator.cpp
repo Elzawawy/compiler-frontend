@@ -19,6 +19,7 @@ using std::unordered_set;
 using std::make_pair;
 using std::cout;
 using std::endl;
+using std::unordered_map;
 const string epsilon = EPSILON_EXPRESSION;
 
 /******** Public Methods ********/
@@ -113,14 +114,74 @@ void ParsingTableGenerator::computeFollow()
     }
 }
 
+/**
+ * This function assumes that the grammar isn't ambiguous
+ */
 void ParsingTableGenerator::constructParsingTable()
 {
-    //TODO: PRSGEN-7
+    for (auto&& non_terminal : non_terminals_) {
+        unordered_map<string, int> current_parsing_table_entry;
+        const unordered_set<string>& current_non_terminal_follow = name_non_terminal_[non_terminal.getName_()]->getFollow_();
+        //For each terminal in the follow set of the parent non terminal add an entry in the parsing table with synch in it
+        //to be used in error handling. Take Care that the value in the entry is overriden if the first production element is an epsilon
+        //or a non terminal that derives to an epsilon
+        fill_parsing_table_entry_with_keys_and_value(current_parsing_table_entry,
+                current_non_terminal_follow,
+                synch);
+        //j is the index of the production in the non terminal class
+        int j = 0;
+        for (auto&& production : non_terminal.getProduction_rules_()) {
+            //If the first element in the production is a terminal then it's first set contains non more than this terminal
+            if (terminals_.count(production[0])) {
+                current_parsing_table_entry[production[0]] = j++;
+                continue;
+            }
+            //If the current element in the production is an epsilon or if the first of the non terminal derives to epsilon
+            if (production[0]==epsilon) {
+                //Add an entry for for each terminal in the current non terminal's (the parent of the production) follow set with the production
+                fill_parsing_table_entry_with_keys_and_value(current_parsing_table_entry,
+                        current_non_terminal_follow,
+                        j);
+                j++;
+                continue;
+            }
+            const unordered_set<string>& production_element_non_terminal_first = name_non_terminal_[production[0]]->getFirst_();
+            //if the current production element is a non terminal then for each terminal in its first set add an entry in the
+            //current parent non terminal's parsing table entry
+            fill_parsing_table_entry_with_keys_and_value(current_parsing_table_entry,
+                    production_element_non_terminal_first,
+                    j);
+            //Remove the epsilon if it was added due to its presence in the first set
+            current_parsing_table_entry.erase(epsilon);
+            if (production_element_non_terminal_first.count(epsilon)) {
+                //Add an entry for for each terminal in the current non terminal's (the parent of the production) follow set with the production
+                fill_parsing_table_entry_with_keys_and_value(current_parsing_table_entry,
+                        current_non_terminal_follow,
+                        j);
+            }
+            j++;
+        }
+        non_terminal.setParse_table_entry_(current_parsing_table_entry);
+    }
 }
 
-void ParsingTableGenerator::writeParseingTable()
+void ParsingTableGenerator::writeParsingTable()
 {
-    //TODO: PRSGEN-9
+    for (auto&& non_terminal  : non_terminals_) {
+        cout << non_terminal.getName_() << ": ";
+        for (auto&& cell : non_terminal.getParse_table_entry_()) {
+            const vector<vector<string>>& productions = non_terminal.getProduction_rules_();
+            cout << "(" << cell.first << ", ";
+            if (cell.second==-1) cout << "synch";
+            else {
+                for (auto&& item: productions[cell.second]) {
+                    cout << item << " ";
+                }
+            }
+            cout << ")" << ", ";
+        }
+        cout << endl;
+    }
 }
 
 /******** Private Methods ********/
@@ -160,4 +221,14 @@ void ParsingTableGenerator::fill_follow_from_production(std::unordered_set<std::
             follow.merge(right_sibling_first);
         }
     }
+}
+
+void ParsingTableGenerator::fill_parsing_table_entry_with_keys_and_value(
+        std::unordered_map<std::string, int>& parsing_table_entry, const std::unordered_set<std::string>& keys,
+        const int value)
+{
+    for (auto&& key : keys) {
+        parsing_table_entry[key] = value;
+    }
+
 }
