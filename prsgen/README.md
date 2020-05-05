@@ -20,6 +20,8 @@ Conceptually, for well-formed programs, the parser constructs a parse tree and p
 
 We begin the documentation of our PRSGEN by explaining the first component, the **grammar parser**, then we continue to explain the second component which is the **parsing table generator** and the third final component is the **predictive non-recursive parser**. In each component we explain what its goal and job exactly and then give a brief of how internally it works in a some what high level.
 
+---
+
 ## Component One: Grammar Parser
 
 The parser generator expects mainly an LL(1) grammar (CFG) as input but we also support elimination of left recursion and applying left factoring transformation.
@@ -51,6 +53,8 @@ Specify the manner in which the terminals and non-terminals can be combined to f
 - `Right side of the production`: consisting of zero or more terminals and non-terminals. The components of the body describe one way in which strings of the non-terminal at the head can be constructed.
 
 <p align='center'><img src="./images/3.png"/></p>
+
+---
 
 ### What is an LL(1) Grammar
 
@@ -93,9 +97,11 @@ The Grammar Parser class has three main public methods to use.
 
 - `applyLeftFactoring()` : which operates on the grammar input from file and apply left factoring transformation.This method have to be called after `parseFile` method is called and not before that.
 
+We implemented the algorithms found in Chapter 4 of [1] for left recursion elimination and left factoring transformation. You can head there and read more about the formal algorithms and their intuitions.
+
 The Grammar Parser owns the two data-structures that are used in the system throughout later on.
 
-- `terminals_` : unordered_set of strings that contains all terminals found throughout the file.
+- `terminals_` : unordered_set of strings that contains all terminals found throughout the file. It is an unordered_set because under the hood such a data structure is implemented as hash table which is the perfect case we need to have fast lookups.
 
 - `non_terminals_` : vector of NonTerminal object that is found throughout the file with their production rules included inside each object.
 
@@ -105,7 +111,9 @@ The Grammar Parser owns the two data-structures that are used in the system thro
 
 The construction of both top-down and bottom-up parsers is aided by two functions, **FIRST** and **FOLLOW** , associated with a grammar G. During top-down parsing, FIRST and FOLLOW allow us to choose which production to apply, based on the next input symbol.
 
-We should compute First and Follow sets and uses them to construct a predictive parsing table for the grammar. The table is to be used to drive a predictive top-down parser. A predictive parsing table M [A; a], is basically a two-dimensional array, where A is a non-terminal, and a is a terminal or the symbol $, the input end-marker.
+We should compute First and Follow sets and uses them to construct a predictive parsing table for the grammar. The table is to be used to drive a predictive top-down parser.
+
+A predictive parsing table M [A; a], is basically a two-dimensional array, where A is a non-terminal, and a is a terminal or the symbol $, the input end-marker. The implementation of such a table was a design issue we should tackle to have the best way we can store it to save time and speed-up performance while having ease of implementation of our algorithms.
 
 ---
 
@@ -124,6 +132,8 @@ For the parsing table generator class we have three methods that are exposed and
 - `computeFollow()` : it computes the FOLLOW set associated with grammar G which is the input file for **Grammar Parser**. For each non-terminal we keep a set FOLLOW, the collection of all the FOLLOW sets from all non-terminals resembles the FOLLOW set of grammar G. Only note that it must be called after computeFirst in this current version since it depends on the FIRST set itself. 
 
 - `constructParsingTable()` : this final method constructs the parsing table from the FIRST and FOLLOW sets of all non-terminals and thus as well need to be called after both above method are called first strictly. A future plan is to call both methods internally to avoid such dependency to be known on the user of the low level components (if any).
+
+For each of the above three methods, we implemented the algorithms from Chapter 4 of [1] where you can read more about the formal algorithm.
 
 ---
 
@@ -163,7 +173,7 @@ in practice. The compiler designer must supply informative error messages that n
 
 ### Interaction with Lexical Analyzer Design
 
-We had some design alternatives when discussing the interaction of the parser generator with the lexical analyzer generator. The main ones we were to choose from was as follows: 
+We had some design alternatives when discussing the interaction of the parser generator with the lexical analyzer generator. The main ones we were to choose from was as follows:
 
 - **Processes Communication:** running each module independently in a process and providing means for inter-process-communication to exchange tokens.
 
@@ -172,6 +182,8 @@ We had some design alternatives when discussing the interaction of the parser ge
 In both above cases we would have a pure classic OS problem in our hands. A Producer-Consumer problem, due to our limited time we had to move to a simpler and yet efficient solution to our system.
 
 - **Dependency Injection Design Pattern:** Both modules are not independent which loses isolation but given our goal is to build a full frontend compiler in the first place not every module alone that is quite understandable relaxation to make at this step. Dependency Injection pattern solution simply says that we will inject an instance of the Lexical Analyzer object inside the Parser Generator Object where it depends on it. It keeps asking for next token every while to fill its input buffer. Following this design pattern guarantees quality of code and ease of communication while simplicity in hand and mind over isolation and independence.
+
+<p align='center'><img src="./images/5.png"/></p>
 
 ---
 

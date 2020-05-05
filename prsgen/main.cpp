@@ -33,7 +33,7 @@ int main() {
 
     GrammarParser grammarParser;
     grammarParser.parseFile("../prsgen/test-cases/a_grammar.txt");
-    grammarParser.eliminateLeftFactoring();
+    grammarParser.applyLeftFactoring();
     grammarParser.eliminateLeftRecursion();
     ParsingTableGenerator parsing_table_generator(grammarParser.getTerminals_(),
                                                   grammarParser.getNon_terminals_());
