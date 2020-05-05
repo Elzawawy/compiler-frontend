@@ -19,8 +19,8 @@ typedef std::vector<std::string> ProductionRule;
 
 class GrammarParser {
 public:
-    const std::unordered_set<std::string>& getTerminals_() const;
-    const std::vector<NonTerminal>& getNon_terminals_() const;
+	std::unordered_set<std::string>& getTerminals_();
+	std::vector<NonTerminal>& getNon_terminals_();
     void parseFile(std::string grammar_file_path);
     void eliminateLeftRecursion();
     void eliminateLeftFactoring();

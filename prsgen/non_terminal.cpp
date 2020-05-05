@@ -16,19 +16,19 @@ const std::string& NonTerminal::getName_() const
 {
     return name_;
 }
-const std::set<std::string>& NonTerminal::getFirst_() const
+const std::unordered_set<std::string>& NonTerminal::getFirst_() const
 {
     return first_;
 }
-void NonTerminal::setFirst_(const std::set<std::string>& first_)
+void NonTerminal::setFirst_(const std::unordered_set<std::string>& first_)
 {
     NonTerminal::first_ = first_;
 }
-const std::set<std::string>& NonTerminal::getFollow_() const
+const std::unordered_set<std::string>& NonTerminal::getFollow_() const
 {
     return follow_;
 }
-void NonTerminal::setFollow_(const std::set<std::string>& follow_)
+void NonTerminal::setFollow_(const std::unordered_set<std::string>& follow_)
 {
     NonTerminal::follow_ = follow_;
 }

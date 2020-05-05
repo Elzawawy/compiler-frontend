@@ -8,13 +8,11 @@
     @date 21/4/2020
 */
 
-
 #include <fstream>
 #include <iostream>
 #include <regex>
 #include "grammar_parser.h"
 #include "../utils.h"
-
 #define NON_TERMINAL_SEPARATOR '#'
 #define NON_TERMINAL_SIDES_SEPARATOR "::="
 #define RULE_SIDES_NUMBER 2
@@ -30,12 +28,12 @@
 #define isWrongNonTerminalName(name) !std::regex_match(name, std::regex("^[A-Za-z0-9_`]+$"))
 
 /******** Public Methods ********/
-const std::unordered_set<std::string>& GrammarParser::getTerminals_() const
+std::unordered_set<std::string>& GrammarParser::getTerminals_()
 {
     return terminals_;
 }
 
-const std::vector<NonTerminal>& GrammarParser::getNon_terminals_() const
+std::vector<NonTerminal>& GrammarParser::getNon_terminals_()
 {
     return non_terminals_;
 }
