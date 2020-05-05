@@ -21,6 +21,9 @@ int main() {
     ParsingTableGenerator parsing_table_generator(grammarParser.getTerminals_(),
                                                   grammarParser.getNon_terminals_());
     parsing_table_generator.computeFirst();
+    parsing_table_generator.computeFollow();
+    cout<<"========================================================"<<endl;
+    cout<<"--------------------first sets--------------------------"<<endl;
     for (auto &&non_terminal: grammarParser.getNon_terminals_()) {
         cout<<non_terminal.getName_()<<" first set: ";
         for(auto &&element: non_terminal.getFirst_()) {
@@ -28,4 +31,13 @@ int main() {
         }
         cout<<endl;
     }
+    cout<<"--------------------follow sets--------------------------"<<endl;
+    for (auto &&non_terminal: grammarParser.getNon_terminals_()) {
+        cout<<non_terminal.getName_()<<" follow set: ";
+        for(auto &&element: non_terminal.getFollow_()) {
+            cout<<element<<" ";
+        }
+        cout<<endl;
+    }
+
 }
