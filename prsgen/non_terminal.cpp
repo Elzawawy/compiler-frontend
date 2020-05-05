@@ -1,7 +1,12 @@
-//
-// Created by zawawy on 4/21/20.
-//
+/**
+    Compiler Phase 2: PRSGEN
+    non_terminal.cpp
+    Purpose: the non terminal entity class that holds non terminal data.
 
+    @author(s) Amr Elzawawy
+    @version 1.0
+    @date 21/4/2020
+*/
 #include "non_terminal.h"
 #define EMPTY_CELL_INDEX  -2
 

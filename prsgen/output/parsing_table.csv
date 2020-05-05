@@ -1,18 +1,18 @@
-$num$mulop$relop$assign$while$int$id$float$;$}${$)$addop$if$else$($
-METHOD_BODY$ $ $ $ $STATEMENT_LIST$STATEMENT_LIST$STATEMENT_LIST$STATEMENT_LIST$ $ $ $ $ $STATEMENT_LIST$ $ $
-STATEMENT_LIST$ $ $ $ $STATEMENT STATEMENT_LIST`$STATEMENT STATEMENT_LIST`$STATEMENT STATEMENT_LIST`$STATEMENT STATEMENT_LIST`$ $ $ $ $ $STATEMENT STATEMENT_LIST`$ $ $
-STATEMENT_LIST`$ $ $ $ $STATEMENT STATEMENT_LIST`$STATEMENT STATEMENT_LIST`$STATEMENT STATEMENT_LIST`$STATEMENT STATEMENT_LIST`$ $ $ $ $ $STATEMENT STATEMENT_LIST`$ $ $
-STATEMENT$ $ $ $ $WHILE$DECLARATION$ASSIGNMENT$DECLARATION$ $synch$ $ $ $IF$ $ $
-DECLARATION$ $ $ $ $synch$PRIMITIVE_TYPE id ;$synch$PRIMITIVE_TYPE id ;$ $synch$ $ $ $synch$ $ $
-PRIMITIVE_TYPE$ $ $ $ $ $int$synch$float$ $ $ $ $ $ $ $ $
-IF$ $ $ $ $synch$synch$synch$synch$ $synch$ $ $ $if ( EXPRESSION ) { STATEMENT } else { STATEMENT }$ $ $
-WHILE$ $ $ $ $while ( EXPRESSION ) { STATEMENT }$synch$synch$synch$ $synch$ $ $ $synch$ $ $
-ASSIGNMENT$ $ $ $ $synch$synch$id assign EXPRESSION ;$synch$ $synch$ $ $ $synch$ $ $
-EXPRESSION$SIMPLE_EXPRESSION EXPRESSION0$ $ $ $ $ $SIMPLE_EXPRESSION EXPRESSION0$ $synch$ $ $synch$SIMPLE_EXPRESSION EXPRESSION0$ $ $SIMPLE_EXPRESSION EXPRESSION0$
-EXPRESSION0$ $ $relop SIMPLE_EXPRESSION$ $ $ $ $ $\L$ $ $\L$ $ $ $ $
-SIMPLE_EXPRESSION$TERM SIMPLE_EXPRESSION`$ $synch$ $ $ $TERM SIMPLE_EXPRESSION`$ $synch$ $ $synch$SIGN TERM SIMPLE_EXPRESSION`$ $ $TERM SIMPLE_EXPRESSION`$
-SIMPLE_EXPRESSION`$ $ $\L$ $ $ $ $ $\L$ $ $\L$addop TERM SIMPLE_EXPRESSION`$ $ $ $
-TERM$FACTOR TERM`$ $synch$ $ $ $FACTOR TERM`$ $synch$ $ $synch$synch$ $ $FACTOR TERM`$
-TERM`$ $mulop FACTOR TERM`$\L$ $ $ $ $ $\L$ $ $\L$\L$ $ $ $
-FACTOR$num$synch$synch$ $ $ $id$ $synch$ $ $synch$synch$ $ $( EXPRESSION )$
-SIGN$synch$ $ $ $ $ $synch$ $ $ $ $ $addop$ $ $synch$
+$num$relop$assign$while$mulop$addop$else$)${$;$id$int$float$if$}$($
+METHOD_BODY$ $ $ $STATEMENT_LIST$ $ $ $ $ $ $STATEMENT_LIST$STATEMENT_LIST$STATEMENT_LIST$STATEMENT_LIST$ $ $
+STATEMENT_LIST$ $ $ $STATEMENT STATEMENT_LIST`$ $ $ $ $ $ $STATEMENT STATEMENT_LIST`$STATEMENT STATEMENT_LIST`$STATEMENT STATEMENT_LIST`$STATEMENT STATEMENT_LIST`$ $ $
+STATEMENT_LIST`$ $ $ $STATEMENT STATEMENT_LIST`$ $ $ $ $ $ $STATEMENT STATEMENT_LIST`$STATEMENT STATEMENT_LIST`$STATEMENT STATEMENT_LIST`$STATEMENT STATEMENT_LIST`$ $ $
+STATEMENT$ $ $ $WHILE$ $ $ $ $ $ $ASSIGNMENT$DECLARATION$DECLARATION$IF$synch$ $
+DECLARATION$ $ $ $synch$ $ $ $ $ $ $synch$PRIMITIVE_TYPE id ;$PRIMITIVE_TYPE id ;$synch$synch$ $
+PRIMITIVE_TYPE$ $ $ $ $ $ $ $ $ $ $synch$int$float$ $ $ $
+IF$ $ $ $synch$ $ $ $ $ $ $synch$synch$synch$if ( EXPRESSION ) { STATEMENT } else { STATEMENT }$synch$ $
+WHILE$ $ $ $while ( EXPRESSION ) { STATEMENT }$ $ $ $ $ $ $synch$synch$synch$synch$synch$ $
+ASSIGNMENT$ $ $ $synch$ $ $ $ $ $ $id assign EXPRESSION ;$synch$synch$synch$synch$ $
+EXPRESSION$SIMPLE_EXPRESSION EXPRESSION0$ $ $ $ $SIMPLE_EXPRESSION EXPRESSION0$ $synch$ $synch$SIMPLE_EXPRESSION EXPRESSION0$ $ $ $ $SIMPLE_EXPRESSION EXPRESSION0$
+EXPRESSION0$ $relop SIMPLE_EXPRESSION$ $ $ $ $ $\L$ $\L$ $ $ $ $ $ $
+SIMPLE_EXPRESSION$TERM SIMPLE_EXPRESSION`$synch$ $ $ $SIGN TERM SIMPLE_EXPRESSION`$ $synch$ $synch$TERM SIMPLE_EXPRESSION`$ $ $ $ $TERM SIMPLE_EXPRESSION`$
+SIMPLE_EXPRESSION`$ $\L$ $ $ $addop TERM SIMPLE_EXPRESSION`$ $\L$ $\L$ $ $ $ $ $ $
+TERM$FACTOR TERM`$synch$ $ $ $synch$ $synch$ $synch$FACTOR TERM`$ $ $ $ $FACTOR TERM`$
+TERM`$ $\L$ $ $mulop FACTOR TERM`$\L$ $\L$ $\L$ $ $ $ $ $ $
+FACTOR$num$synch$ $ $synch$synch$ $synch$ $synch$id$ $ $ $ $( EXPRESSION )$
+SIGN$synch$ $ $ $ $addop$ $ $ $ $synch$ $ $ $ $synch$
