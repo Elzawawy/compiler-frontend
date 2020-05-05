@@ -6,4 +6,5 @@
 int main(){
     GrammarParser grammarParser;
     grammarParser.parseFile("../prsgen/test-cases/a_grammar.txt");
+    grammarParser.eliminateLeftRecursion();
 }

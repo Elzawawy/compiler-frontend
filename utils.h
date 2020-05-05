@@ -125,5 +125,14 @@ bool comparePairsAccordingToFirstLength(const std::pair<T, T>& a,
 {
     return a.first.length()>b.first.length();
 }
+
+template<typename T>
+std::vector<T*> convertFrom(std::vector<T>& source)
+{
+    std::vector<T*> target(source.size());
+    std::transform(source.begin(), source.end(), target.begin(), [](T& t) { return &t; });
+    return target;
+}
+
 }
 #endif //LEXGEN_UTILS_H
