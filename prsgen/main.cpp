@@ -1,6 +1,12 @@
-//
-// Created by zawawy on 4/25/20.
-//
+/**
+    Compiler Phase 2: PRSGEN
+    grammar_parser.h
+    Purpose: Takes in a file of grammar rules (non-terminals definition) and parses into non-terminals, terminals and production rules.
+
+    @author(s) Amr Elzawawy , Abdelrahman El-Dawy, Abdallah El-Maradny, Omar Swidan, Mostafa Yousry.
+    @version 1.0
+    @date 24/4/2020
+*/
 
 #include "grammar_parser.h"
 #include "parsing_table_generator.h"
