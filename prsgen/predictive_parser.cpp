@@ -51,10 +51,19 @@ void PredicativeParser::Parse()
             else {
                 ProceedOnNonTerminal(stack_top_entry, current_token);
             }
+
+            // Check if the lexical analyzer couldn't identify a token
+            if (current_token == nullptr) {
+                output_file_ << "Illegal token. Lexical analyzer couldn't identify a token" << endl;
+                break;
+            }
         }
-        // Check if there is still tokens in the input buffer (driver.getNextToken)
-        if (current_token->GetTokenName()!=END_MARKER) {
-            output_file_ << "Parsing ended while there are still tokens" << endl;
+
+        if (current_token != nullptr) {
+            // Check if there is still tokens in the input buffer (driver.getNextToken)
+            if (current_token->GetTokenName() != END_MARKER) {
+                output_file_ << "Parsing ended while there are still tokens" << endl;
+            }
         }
         delete current_token;
     }
