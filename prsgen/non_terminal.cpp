@@ -3,6 +3,7 @@
 //
 
 #include "non_terminal.h"
+#define EMPTY_CELL_INDEX  -2
 
 NonTerminal::NonTerminal(const std::string &name_)
         : name_(name_) {}
@@ -45,7 +46,7 @@ void NonTerminal::setParse_table_entry_(const std::unordered_map<std::string, in
 
 int NonTerminal::GetProductionRuleIndex(std::string token) {
     if (parse_table_entry_.find(token) == parse_table_entry_.end()) {
-        return -2;
+        return EMPTY_CELL_INDEX;
     }
     return parse_table_entry_.at(token);
 }

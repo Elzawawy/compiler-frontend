@@ -52,15 +52,11 @@ int main() {
         cout << endl;
     }
     cout << "--------------------Parsing Table------------------------" << endl;
-    parsing_table_generator.writeParsingTable();
+    parsing_table_generator.writeParsingTable("../prsgen/output/parsing_table.csv");
 
-    std::unordered_map<std::string, NonTerminal> non_terminals_map;
-    for (auto &&non_terminal: grammarParser.getNon_terminals_()) {
-        non_terminals_map.insert({non_terminal.getName_(), non_terminal});
-    }
-    PredicativeParser predicativeParser = PredicativeParser(lexicalAnalyzerDriver, non_terminals_map,
+    PredicativeParser predicativeParser = PredicativeParser(lexicalAnalyzerDriver, grammarParser.getNon_terminals_(),
                                                             grammarParser.getTerminals_(),
-                                                            "../prsgen/output.txt");
+                                                            "../prsgen/output/parsing_log.txt");
     predicativeParser.Parse();
 
     return 0;

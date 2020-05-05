@@ -24,6 +24,7 @@ private:
 public:
     const std::string epsilon = "\\L";
     const int synch = -1;
+    const int empty = -2;
 
     ParsingTableGenerator(std::unordered_set<std::string> &terminals_, std::vector<NonTerminal> &non_terminals_);
 
@@ -33,7 +34,7 @@ public:
 
     void constructParsingTable();
 
-    void writeParsingTable();
+    void writeParsingTable(const std::string &out_file_relative_path);
 };
 
 #endif //PRSGEN_PARSING_TABLE_GENERATOR_H

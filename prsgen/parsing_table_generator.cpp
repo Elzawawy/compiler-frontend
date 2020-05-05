@@ -3,6 +3,8 @@
 #include <utility>
 #include <unordered_set>
 #include <iostream>
+#include <fstream>
+#include <numeric>
 
 using std::vector;
 using std::string;
@@ -155,21 +157,33 @@ void ParsingTableGenerator::constructParsingTable() {
     }
 }
 
-void ParsingTableGenerator::writeParsingTable() {
+void ParsingTableGenerator::writeParsingTable(const std::string &out_file_relative_path) {
+    std::ofstream transition_table_file;
+    transition_table_file.open(out_file_relative_path);
+    transition_table_file << "$";
+    for (auto &&terminal: terminals_) {
+        transition_table_file << terminal << "$";
+    }
+    transition_table_file << "\n";
     for (auto &&non_terminal  : non_terminals_) {
-        cout << non_terminal.getName_() << ": ";
-        for (auto &&cell : non_terminal.getParse_table_entry_()) {
-            const vector<vector<string>> &productions = non_terminal.getProduction_rules_();
-            cout << "(" << cell.first << ", ";
-            if(cell.second == -1) cout<<"synch";
-            else {
-                for (auto &&item: productions[cell.second]) {
-                    cout<<item<<" ";
-                }
+        transition_table_file << non_terminal.getName_() << "$";
+        for (auto &&terminal: terminals_) {
+            int production_rule_index = non_terminal.GetProductionRuleIndex(terminal);
+            if (production_rule_index == synch) {
+                transition_table_file << "synch" << "$";
+            } else if (production_rule_index != empty) {
+                std::vector<std::string> production_rule = non_terminal.GetProductionRule(production_rule_index);
+                std::string production_rule_string = std::accumulate(production_rule.begin(), production_rule.end(),
+                                                                     std::string(""),
+                                                                     [](std::string &ss, std::string &s) {
+                                                                         return ss.empty() ? s : ss + " " + s;
+                                                                     });
+                transition_table_file << production_rule_string << "$";
+            } else {
+                transition_table_file << " " << "$";
             }
-            cout<<")" << ", ";
         }
-        cout << endl;
+        transition_table_file << endl;
     }
 }
 
