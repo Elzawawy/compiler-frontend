@@ -1,1 +1,0 @@
-Terminals in grammar rules and regular expressions in lexical rules don't match

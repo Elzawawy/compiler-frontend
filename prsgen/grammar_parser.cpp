@@ -93,7 +93,7 @@ void GrammarParser::eliminateLeftRecursion()
         non_terminals_.push_back(**(new_non_terminal_list.begin()+j));
 }
 
-void GrammarParser::eliminateLeftFactoring()
+void GrammarParser::applyLeftFactoring()
 {
     std::vector<NonTerminal> temp_non_terminals_;
     temp_non_terminals_.push_back((this->non_terminals_)[0]);

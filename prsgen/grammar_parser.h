@@ -23,7 +23,7 @@ public:
 	std::vector<NonTerminal>& getNon_terminals_();
     void parseFile(std::string grammar_file_path);
     void eliminateLeftRecursion();
-    void eliminateLeftFactoring();
+    void applyLeftFactoring();
 
 private:
     std::unordered_set<std::string> terminals_;

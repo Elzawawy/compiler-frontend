@@ -33,7 +33,7 @@ int main() {
 
     GrammarParser grammarParser;
     grammarParser.parseFile("../prsgen/test-cases/a_grammar.txt");
-    grammarParser.eliminateLeftFactoring();
+    grammarParser.applyLeftFactoring();
     grammarParser.eliminateLeftRecursion();
     ParsingTableGenerator parsing_table_generator(grammarParser.getTerminals_(),
                                                   grammarParser.getNon_terminals_());
@@ -57,7 +57,6 @@ int main() {
         }
         cout << endl;
     }
-    cout << "--------------------Parsing Table------------------------" << endl;
     parsing_table_generator.writeParsingTable("../prsgen/output/parsing_table.csv");
 
     PredicativeParser predicativeParser = PredicativeParser(lexicalAnalyzerDriver, grammarParser.getNon_terminals_(),
