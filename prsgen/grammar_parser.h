@@ -3,15 +3,17 @@
     grammar_parser.h
     Purpose: Takes in a file of grammar rules (non-terminals definition) and parses into non-terminals, terminals and production rules.
 
-    @author(s) Amr Elzawawy , Abdelrahman El-Dawy
+    @author(s) Amr Elzawawy , Abdelrahman El-Dawy, Abdallah El-Maradny
     @version 1.0
-    @date 24/4/2020
+    @date 21/4/2020
 */
 #ifndef PRSGEN_GRAMMAR_PARSER_H
 #define PRSGEN_GRAMMAR_PARSER_H
 
 #include <unordered_set>
 #include "non_terminal.h"
+#include <unordered_map>
+#include <iostream>
 #define EPSILON_EXPRESSION "\\L"
 typedef std::vector<std::string> ProductionRule;
 

@@ -1,10 +1,16 @@
-//
-// Created by zawawy on 4/21/20.
-//
+/**
+    Compiler Phase 2: PRSGEN
+    non_terminal.h
+    Purpose: the non terminal entity class that holds non terminal data.
+
+    @author(s) Amr Elzawawy
+    @version 1.0
+    @date 21/4/2020
+*/
+
 #include <set>
 #include <vector>
 #include <map>
-
 #ifndef PRSGEN_NON_TERMINAL_H
 #define PRSGEN_NON_TERMINAL_H
 

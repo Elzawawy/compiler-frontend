@@ -3,16 +3,18 @@
     grammar_parser.cpp
     Purpose: Takes in a file of grammar rules (non-terminals definition) and parses into non-terminals, terminals and production rules.
 
-    @author(s) Amr Elzawawy, Abdelrahman El-Dawy
+    @author(s) Amr Elzawawy, Abdelrahman El-Dawy, Abdallah El-Maradny
     @version 1.0
-    @date 24/4/2020
+    @date 21/4/2020
 */
+
 
 #include <fstream>
 #include <iostream>
 #include <regex>
 #include "grammar_parser.h"
 #include "../utils.h"
+
 #define NON_TERMINAL_SEPARATOR '#'
 #define NON_TERMINAL_SIDES_SEPARATOR "::="
 #define RULE_SIDES_NUMBER 2
@@ -32,6 +34,7 @@ const std::unordered_set<std::string>& GrammarParser::getTerminals_() const
 {
     return terminals_;
 }
+
 const std::vector<NonTerminal>& GrammarParser::getNon_terminals_() const
 {
     return non_terminals_;
@@ -90,16 +93,122 @@ void GrammarParser::eliminateLeftRecursion()
     non_terminals_.reserve(non_terminal_list_p.size());
     for (int j = 0; j<new_non_terminal_list.size(); j++)
         non_terminals_.push_back(**(new_non_terminal_list.begin()+j));
-    std::cout << "**************After Abdo************" << std::endl;
-    for (auto& non_terminal: non_terminals_) {
-        std::cout << "---------" << non_terminal.getName_() << "----------" << std::endl;
-        for (auto& rule: non_terminal.getProduction_rules_()) {
-            std::cout << "==========RULE =========" << std::endl;
-            for (auto& term: rule)
-                std::cout << term << std::endl;
+}
+
+void GrammarParser::eliminateLeftFactoring()
+{
+    std::vector<NonTerminal> temp_non_terminals_;
+    temp_non_terminals_.push_back((this->non_terminals_)[0]);
+    int non_terminals_index = 0;
+    bool possible_factoring = false;
+    for (int iterator = 0; iterator<temp_non_terminals_.size(); iterator++) {
+        possible_factoring = false;
+        std::vector<std::vector<std::string>> production_rules = (temp_non_terminals_[iterator]).getProduction_rules_();
+        std::map<std::string, std::vector<int>> factoring_map;
+
+        /**
+         *  iterating over the production rules and getting the common starts and marking them as factors to be
+         *  factorized in the next loop
+         */
+        for (int index = 0; index<production_rules.size(); index++) {
+
+            /**if the start of the production rule is not present in the factoring map
+             * then add a new key in the factoring map with the new start of this production rule and add the index of the
+             * production rule as the first element in the array of values of the factoring map
+             */
+            if (factoring_map.find((production_rules[index])[0])==factoring_map.end()) {
+                std::vector<int> factored_index;
+                factored_index.push_back(index);
+                factoring_map.insert({(production_rules[index])[0], factored_index});
+
+            }
+                /**if the start of the production rule is present in the factoring map which means that it should be factore
+                 * then push the index of the production rule in the array of the value of the map
+                 */
+            else {
+                possible_factoring = true;
+                auto it = factoring_map.find((production_rules[index])[0]);
+                (it->second).push_back(index);
+            }
+        }
+        /**
+         *   Looping over the factoring map and creating new non terminals if needed by checking each array value in the map
+         *   and using their indices to factor the common production rules
+         */
+        auto it = factoring_map.begin();
+        std::vector<std::vector<std::string>> factored_production_rules;
+        std::vector<std::vector<std::string>> edited_factored_production_rules;
+        int name_index = 0, production_rules_iterator = 0, non_production_rules_iterator = 0;
+        bool new_non_terminals_added = false;
+        std::string factored_non_terminal_name;
+        for (std::pair<std::string, std::vector<int>> element : factoring_map) {
+            //check if at least 2 production rules has a common start
+            std::vector<std::string> pr;
+            if ((element.second).size()>1) {
+
+                new_non_terminals_added = true;
+                factored_non_terminal_name = (temp_non_terminals_[iterator]).getName_()+std::to_string(name_index);
+
+                /**
+                 *  editing the production rules of the factored rule by adding the new non terminals
+                 */
+                pr.push_back(element.first);
+                pr.push_back(factored_non_terminal_name);
+                (edited_factored_production_rules).push_back(pr);
+                pr.clear();
+
+                /**
+                 * creating the new non terminal for the factored production rules
+                 */
+                for (int index : (element.second)) {
+                    /**
+                     * from the productions indices saved , loop over the vector of strings in the production
+                     * and add it to the new production and neglecting the first element which was the common element
+                     */
+                    std::vector<std::string> temp_pr;
+                    for (int origin_production_rule_index = 1;
+                         origin_production_rule_index<production_rules[index].size();
+                         origin_production_rule_index++)
+                        temp_pr.push_back((production_rules[index])[origin_production_rule_index]);
+
+                    if (temp_pr.empty())
+                        temp_pr.emplace_back(EPSILON_EXPRESSION);
+
+                    (factored_production_rules).push_back(temp_pr);
+                }
+                // Adding new factored non terminals with factored production rule.
+                auto* factored_non_terminal = new NonTerminal(factored_non_terminal_name);
+                factored_non_terminal->setProduction_rules_(factored_production_rules);
+                temp_non_terminals_.push_back(*factored_non_terminal);
+                factored_production_rules.clear();
+
+                name_index++;
+                production_rules_iterator++;
+            }
+            else {
+                std::vector<std::string> temp_pr;
+                for (const auto& origin_production_rule_index : production_rules[(element.second)[0]])
+                    temp_pr.push_back(origin_production_rule_index);
+
+                edited_factored_production_rules.push_back((temp_pr));
+            }
+            non_production_rules_iterator++;
+        }
+        /**
+         *  Editing the original factored non terminal by adding the eddited production rule
+         */
+        if (new_non_terminals_added)
+            (temp_non_terminals_[iterator]).setProduction_rules_(edited_factored_production_rules);
+        /**
+         *If the previous rule has nothing to be factored then add new non terminal from the original vector
+         */
+        if (!new_non_terminals_added && non_terminals_index<non_terminals_.size()-1) {
+            non_terminals_index++;
+            temp_non_terminals_.push_back((non_terminals_[non_terminals_index]));
+
         }
     }
-
+    this->non_terminals_ = temp_non_terminals_;
 }
 
 /******** Private Methods: Parse Grammar File Needed Helper Methods ********/
@@ -226,7 +335,6 @@ std::vector<NonTerminal*> GrammarParser::eliminateImmediateLeftRecursion(NonTerm
             // it's alpha then push the next of this non terminal to alpha vector
             for (col = col+1; col!=row->end(); col++)
                 tmp_alpha.push_back(*col);
-
             //append  non-terminal` as the given rule in the end of the alpha
             tmp_alpha.push_back(non_terminal->getName_()+"`");
             alphas.push_back(tmp_alpha);
@@ -271,7 +379,6 @@ bool GrammarParser::checkImmediateLeftRecursion(NonTerminal* non_terminal)
 
 NonTerminal* GrammarParser::substitution(NonTerminal* current_non_terminal, NonTerminal* input)
 {
-
     std::vector<std::vector<std::string>> production_rules_current = current_non_terminal->getProduction_rules_();
     std::vector<std::vector<std::string>> production_rules_input = input->getProduction_rules_();
     std::vector<std::vector<std::string> >::iterator row;
