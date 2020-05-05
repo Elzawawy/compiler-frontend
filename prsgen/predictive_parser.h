@@ -30,8 +30,8 @@ private:
     std::unordered_map<std::string, NonTerminal> non_terminals_;
     std::string starting_non_terminal_;
     std::ofstream output_file_;
-    void ProceedOnTerminal(std::string& stack_top_entry, Token* current_token);
-    void ProceedOnNonTerminal(std::string& stack_top_entry, Token* current_token);
+    void ProceedOnTerminal(std::string& stack_top_entry, Token** current_token);
+    void ProceedOnNonTerminal(std::string& stack_top_entry, Token** current_token);
     bool checkTerminalsAndRegularExpressions();
 };
 #endif //PRSGEN_PREDICTIVE_PARSER_H

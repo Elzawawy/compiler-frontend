@@ -45,11 +45,11 @@ void PredicativeParser::Parse()
         while (stack_.top()!=END_MARKER) {
             // If the top of stack is a terminal
             if (terminals_.find(stack_top_entry)!=terminals_.end()) {
-                ProceedOnTerminal(stack_top_entry, current_token);
+                ProceedOnTerminal(stack_top_entry, &current_token);
             }
                 // If the top of stack is a non-terminal
             else {
-                ProceedOnNonTerminal(stack_top_entry, current_token);
+                ProceedOnNonTerminal(stack_top_entry, &current_token);
             }
 
             // Check if the lexical analyzer couldn't identify a token
@@ -73,10 +73,10 @@ void PredicativeParser::Parse()
     output_file_.close();
 }
 
-void PredicativeParser::ProceedOnTerminal(string& stack_top_entry, Token* current_token)
+void PredicativeParser::ProceedOnTerminal(string& stack_top_entry, Token** current_token)
 {
     // If the terminal matches the current token
-    if (stack_top_entry==current_token->GetTokenName()) {
+    if (stack_top_entry== (*current_token)->GetTokenName()) {
         // Output matching message in output file
         output_file_ << "Match " << stack_top_entry << endl;
         // Pop the top entry of the stack
@@ -84,10 +84,15 @@ void PredicativeParser::ProceedOnTerminal(string& stack_top_entry, Token* curren
         stack_top_entry = stack_.top();
         // Call for the next token from lexical analyzer
         if (lexical_analyzer_.IsInputOver()) {
-            *current_token = Token("$", "$");
+            *current_token = new Token("$", "$");
         }
         else {
-            *current_token = *lexical_analyzer_.GetNextToken();
+            Token *next_token = lexical_analyzer_.GetNextToken();
+            if (next_token != nullptr){
+                *current_token = next_token;
+            }else{
+                *current_token = nullptr;
+            }
         }
     }
         // If the terminal doesn't match the current token
@@ -100,10 +105,10 @@ void PredicativeParser::ProceedOnTerminal(string& stack_top_entry, Token* curren
     }
 }
 
-void PredicativeParser::ProceedOnNonTerminal(string& stack_top_entry, Token* current_token)
+void PredicativeParser::ProceedOnNonTerminal(string& stack_top_entry, Token** current_token)
 {
     NonTerminal non_terminal = non_terminals_.at(stack_top_entry);
-    int production_rule_index = non_terminal.GetProductionRuleIndex(current_token->GetTokenName());
+    int production_rule_index = non_terminal.GetProductionRuleIndex((*current_token)->GetTokenName());
     switch (production_rule_index) {
     case SYNCH_INDEX: // If there is a synchronizing token
         // Output illegal non terminal error message in output file and call next token from lexical analyzer
@@ -113,12 +118,17 @@ void PredicativeParser::ProceedOnNonTerminal(string& stack_top_entry, Token* cur
         break;
     case EMPTY_CELL_INDEX: // If there isn't a production rule under the token (empty cell)
         // Output illegal non terminal error message in output file and call next token from lexical analyzer
-        output_file_ << "Illegal " << stack_top_entry << " Drop token : " << current_token->GetTokenName() << endl;
+        output_file_ << "Illegal " << stack_top_entry << " Drop token : " << (*current_token)->GetTokenName() << endl;
         if (lexical_analyzer_.IsInputOver()) {
-            *current_token = Token("$", "$");
+            *current_token = new Token("$", "$");
         }
         else {
-            *current_token = *lexical_analyzer_.GetNextToken();
+            Token *next_token = lexical_analyzer_.GetNextToken();
+            if (next_token != nullptr){
+                *current_token = next_token;
+            }else{
+                *current_token = nullptr;
+            }
         }
         break;
     default: // If there is a production rule under the token

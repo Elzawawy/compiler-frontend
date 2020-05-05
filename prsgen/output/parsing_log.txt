@@ -71,5 +71,5 @@ TERM` -> \L
 SIMPLE_EXPRESSION` -> \L
 EXPRESSION0 -> \L
 Match ;
-Error, missing }
+Match }
 STATEMENT_LIST` -> \L
