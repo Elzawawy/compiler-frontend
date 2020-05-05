@@ -1,5 +1,6 @@
 #include <queue>
 #include <unordered_set>
+#include "prsgen/grammar_parser.h"
 //#include "lexgen/nfa.h"
 //#include "lexgen/dfa.h"
 //#include "lexgen/language_parser.h"

@@ -36,8 +36,10 @@ void trimBothEnds(std::string& str)
 */
 void stripFirstAndLastChars(std::string& str)
 {
-    str.erase(0, 1);
-    str.erase(str.length()-1, str.length()-1);
+    if (str.size()>2) {
+        str.erase(0, 1);
+        str.erase(str.length()-1);
+    }
 }
 
 /**
@@ -47,6 +49,23 @@ void stripFirstAndLastChars(std::string& str)
 void removeAllSpaces(std::string& str)
 {
     str.erase(std::remove(str.begin(), str.end(), ' '), str.end());
+}
+
+void removeExtraSpaces(std::string& str)
+{
+    bool seen_space = false;
+    auto end{std::remove_if(str.begin(), str.end(),
+            [&seen_space](unsigned ch) {
+              bool is_space = std::isspace(ch);
+              std::swap(seen_space, is_space);
+              return seen_space && is_space;
+            }
+    )
+    };
+    if (end!=str.begin() && std::isspace(static_cast<unsigned>(end[-1])))
+        --end;
+
+    str.erase(end, str.end());
 }
 
 /**
@@ -61,6 +80,36 @@ std::vector<std::string> splitOnDelimiter(const std::string& str, char delimiter
     std::istringstream tokenStream(str);
     while (std::getline(tokenStream, token, delimiter))
         tokens.push_back(token);
+    return tokens;
+}
+
+std::vector<std::string> splitOnFirstOfDelimiters(const std::string& str, const std::string& delimiters)
+{
+    std::size_t current, previous = 0;
+    std::vector<std::string> tokens;
+    current = str.find_first_of(delimiters);
+    while (current!=std::string::npos) {
+        std::string token = str.substr(previous, current-previous);
+        tokens.push_back(token);
+        previous = current+1;
+        current = str.find_first_of(delimiters, previous);
+    }
+    tokens.push_back(str.substr(previous, current-previous));
+    return tokens;
+}
+
+std::vector<std::string> splitOnStringDelimiter(const std::string& str, const std::string& delimiter)
+{
+    size_t pos_start = 0, pos_end, delimiter_len = delimiter.length();
+    std::string token;
+    std::vector<std::string> tokens;
+
+    while ((pos_end = str.find(delimiter, pos_start))!=std::string::npos) {
+        token = str.substr(pos_start, pos_end-pos_start);
+        pos_start = pos_end+delimiter_len;
+        tokens.push_back(token);
+    }
+    tokens.push_back(str.substr(pos_start));
     return tokens;
 }
 
