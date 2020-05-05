@@ -1,6 +1,6 @@
-# LEXGEN (LAG) 
+# LEXGEN (LAG)
 
-LEXGEN or as we like to call it LAG (**L**exical **A**nalyzer **G**enerator) is *phase 1* assignment of a **compiler frontend pipeline**. This work is done as the project for PLT (**P**rogramming **L**anguage **T**ranslation) course at Alexandria University, Faculty of Engineering Computer and Communications Department, offered in Spring 2020.
+LEXGEN or as we like to call it LAG (**L**exical **A**nalyzer **G**enerator) is *phase 1* of a **compiler frontend pipeline**. This work is done as the project for PLT (**P**rogramming **L**anguage **T**ranslation) course at Alexandria University, Faculty of Engineering Computer and Communications Department, offered in Spring 2020.
 
 <p align='center'> Made with <b>love</b> :heart: and <b>hard work</b> :rocket:
 <img src="./images/1.png"/>
