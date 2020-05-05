@@ -56,10 +56,13 @@ Token *LexicalAnalyzerDriver::GetNextToken() {
         if (!this->DecreaseForwardPointer()) return nullptr;
       }
     }
-
+    DFAState* neighbour= this->characters_states_.top().second->GetNeighbour(string{*this->forward_});
+    //return null if the current input is not available in the possible inputs specified in the regular expressions file
+    //take care that if the input is present in the input table then it would have to lead to a transition either to a normal state
+    //or to a dead state
+    if(neighbour == nullptr) return nullptr;
     //Push the neighbour onto the stack transitioned wth the current character forward points to
-    this->characters_states_.push(make_pair(*this->forward_,
-                                            this->characters_states_.top().second->GetNeighbour(string{*this->forward_})));
+    this->characters_states_.push(make_pair(*this->forward_, neighbour));
 
     this->IncreaseForwardPointer();
   }
@@ -101,13 +104,13 @@ void LexicalAnalyzerDriver::IncreaseForwardPointer(bool skip_skippable_chars_rec
     }
     this->forward_ = this->buffers_[this->active_buffer_].begin();
     this->input_over_ = !this->input_file_.good();
-    //If the input is over the last element read after it will have a /0 even if it's the begining of a buffer as gcount() returns 0 if noting is read
-    //this will make the forward iterator be pointing at a \0
+    //If the input is over the last element read after it will have a EOF even if it's the begining of a buffer as gcount() returns 0 if noting is read
+    //this will make the forward iterator be pointing at a EOF
     this->active_buffer_size_ = ((this->input_file_) ? this->buffer_size_ : this->input_file_.gcount());
-    //Set the last character in the buffer to \0 in order to indicate the end of the input
+    //Set the last character in the buffer to EOF in order to indicate the end of the input
     //Take care that this is needed asa this is a  circular buffer.
-    //Each buffer is filled with initialized with buffer size + 1 that's why we add the \0 index active buffer size
-    this->buffers_[this->active_buffer_][this->active_buffer_size_] = static_cast<char>('EOF');
+    //Each buffer is filled with initialized with buffer size + 1 that's why we add the EOF index active buffer size
+    this->buffers_[this->active_buffer_][this->active_buffer_size_] = static_cast<char>(EOF);
   } else {
     this->forward_++;
   }
@@ -125,7 +128,7 @@ bool LexicalAnalyzerDriver::DecreaseForwardPointer() {
   //Jump to the previous buffer if at the beginning of the current buffer the mod handles the circulation in the buffer
   if (this->forward_ == this->buffers_[this->active_buffer_].begin()) {
     this->active_buffer_ = (this->active_buffer_ - 1) % this->number_of_buffers_;
-    //Take care that end points to the element one past the last element and the last element is the \0
+    //Take care that end points to the element one past the last element and the last element is the EOF
     this->forward_ = this->buffers_[this->active_buffer_].end() - 2;
     this->forward_iterator_fills_buffer_ = false;
   } else this->forward_--;

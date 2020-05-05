@@ -72,6 +72,7 @@ bool DFAState::operator==(const DFAState &other) const {
 }
 
 DFAState* DFAState::GetNeighbour(const string &input) {
+    if(!this->neighbours_.count(input)) return nullptr;
   return this->neighbours_[input];
 }
 
