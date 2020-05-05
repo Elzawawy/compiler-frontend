@@ -83,13 +83,13 @@ void PredicativeParser::ProceedOnNonTerminal(string &stack_top_entry, Token *cur
     switch (production_rule_index) {
         case SYNCH_INDEX: // If there is a synchronizing token
             // Output illegal non terminal error message in output file and call next token from lexical analyzer
-            output_file_ << "Illegal " << stack_top_entry << "Drop non terminal : " << stack_top_entry << endl;
+            output_file_ << "Illegal " << stack_top_entry << " Drop non terminal : " << stack_top_entry << endl;
             stack_.pop();
             stack_top_entry = stack_.top();
             break;
         case EMPTY_CELL_INDEX: // If there isn't a production rule under the token (empty cell)
             // Output illegal non terminal error message in output file and call next token from lexical analyzer
-            output_file_ << "Illegal " << stack_top_entry << "Drop token : " << current_token->GetTokenName() << endl;
+            output_file_ << "Illegal " << stack_top_entry << " Drop token : " << current_token->GetTokenName() << endl;
             if (lexical_analyzer_.IsInputOver()) {
                 *current_token = Token("$", "$");
             } else {
