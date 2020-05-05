@@ -10,11 +10,27 @@
 
 #include "grammar_parser.h"
 #include "parsing_table_generator.h"
+#include "../lexgen/language_parser.h"
+#include "../lexgen/nfa.h"
+#include "../lexgen/dfa.h"
+#include "../lexgen/lexical_analyzer_driver.h"
+#include "predictive_parser.h"
 #include <iostream>
 
 using namespace std;
 
 int main() {
+    auto language_parser = new LanguageParser();
+    language_parser->parseFile(
+            "../lexgen/test_cases/a_lexical_rules.txt");
+    NFA x = NFA();
+    NFAState *nfa_start_state = x.regex_to_nfa(language_parser->getInput_table(), language_parser->getExpressions());
+    DFA dfa_gen = DFA();
+    DFAState *dfa_start_state = dfa_gen.GenerateDFA(*nfa_start_state, x.get_input_table());
+
+    LexicalAnalyzerDriver lexicalAnalyzerDriver(dfa_start_state, "../lexgen/test_cases/a_test_program.txt",
+                                                language_parser->getExpressions());
+
     GrammarParser grammarParser;
     grammarParser.parseFile("../prsgen/test-cases/a_grammar.txt");
     grammarParser.eliminateLeftFactoring();
@@ -42,5 +58,12 @@ int main() {
         cout << endl;
     }
     cout << "--------------------Parsing Table------------------------" << endl;
-    parsing_table_generator.writeParsingTable();
+    parsing_table_generator.writeParsingTable("../prsgen/output/parsing_table.csv");
+
+    PredicativeParser predicativeParser = PredicativeParser(lexicalAnalyzerDriver, grammarParser.getNon_terminals_(),
+                                                            grammarParser.getTerminals_(),
+                                                            "../prsgen/output/parsing_log.txt");
+    predicativeParser.Parse();
+
+    return 0;
 }

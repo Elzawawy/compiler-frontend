@@ -1,28 +1,28 @@
-#include <queue>
-#include <unordered_set>
-#include "prsgen/grammar_parser.h"
+//#include <queue>
+//#include <unordered_set>
 //#include "lexgen/nfa.h"
 //#include "lexgen/dfa.h"
 //#include "lexgen/language_parser.h"
 //#include "lexgen/nfa_state.h"
-#include <iostream>
-
-#include "prsgen/non_terminal.h"
-
-#include "prsgen/grammar_parser.h"
+//#include "lexgen/lexical_analyzer_driver.h"
+//#include "prsgen/grammar_parser.h"
 
 using namespace std;
 
-int main()
-{
+int main() {
 
 //    auto language_parser = new LanguageParser();
-//    language_parser->parseFile("../test_cases/a_lexical_rules.txt");
+//    language_parser->parseFile(
+//            "./lexgen/test_cases/case_1/b_lexical_rules.txt");
 //    NFA x = NFA();
 //    NFAState *nfa_start_state = x.regex_to_nfa(language_parser->getInput_table(), language_parser->getExpressions());
 //    DFA dfa_gen = DFA();
 //    DFAState *dfa_start_state = dfa_gen.GenerateDFA(*nfa_start_state, x.get_input_table());
-    GrammarParser* X = new GrammarParser();
+
+//    LexicalAnalyzerDriver lexicalAnalyzerDriver(dfa_start_state, "./lexgen/test_cases/case_1/b_test_program.txt",
+//                                                language_parser->getExpressions());
+
+    GrammarParser *X = new GrammarParser();
 
     /*
     NonTerminal* A = new NonTerminal("A");

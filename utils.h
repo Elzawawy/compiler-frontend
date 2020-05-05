@@ -23,7 +23,7 @@ namespace util {
     Removes trailing and starting spaces from a string. (in-place)
     @param str the string to remove from.
 */
-void trimBothEnds(std::string& str)
+inline void trimBothEnds(std::string& str)
 {
     const std::string& chars = "\t\n\v\f\r ";
     str.erase(str.find_last_not_of(chars)+1);
@@ -34,7 +34,7 @@ void trimBothEnds(std::string& str)
     Removes the first and last chars whatever their value from a string. (in-place)
     @param str the string to remove from.
 */
-void stripFirstAndLastChars(std::string& str)
+inline void stripFirstAndLastChars(std::string& str)
 {
     if (str.size()>2) {
         str.erase(0, 1);
@@ -46,12 +46,12 @@ void stripFirstAndLastChars(std::string& str)
     Removes all spaces in every position from a string. (in-place)
     @param str the string to remove from.
 */
-void removeAllSpaces(std::string& str)
+inline void removeAllSpaces(std::string& str)
 {
     str.erase(std::remove(str.begin(), str.end(), ' '), str.end());
 }
 
-void removeExtraSpaces(std::string& str)
+inline void removeExtraSpaces(std::string& str)
 {
     bool seen_space = false;
     auto end{std::remove_if(str.begin(), str.end(),
@@ -73,7 +73,7 @@ void removeExtraSpaces(std::string& str)
     @param str the string to operate on.
     @return vector<string> the tokens resulted from the split of the string.
 */
-std::vector<std::string> splitOnDelimiter(const std::string& str, char delimiter)
+inline std::vector<std::string> splitOnDelimiter(const std::string& str, char delimiter)
 {
     std::vector<std::string> tokens;
     std::string token;
@@ -83,7 +83,7 @@ std::vector<std::string> splitOnDelimiter(const std::string& str, char delimiter
     return tokens;
 }
 
-std::vector<std::string> splitOnFirstOfDelimiters(const std::string& str, const std::string& delimiters)
+inline std::vector<std::string> splitOnFirstOfDelimiters(const std::string& str, const std::string& delimiters)
 {
     std::size_t current, previous = 0;
     std::vector<std::string> tokens;
@@ -98,7 +98,7 @@ std::vector<std::string> splitOnFirstOfDelimiters(const std::string& str, const 
     return tokens;
 }
 
-std::vector<std::string> splitOnStringDelimiter(const std::string& str, const std::string& delimiter)
+inline std::vector<std::string> splitOnStringDelimiter(const std::string& str, const std::string& delimiter)
 {
     size_t pos_start = 0, pos_end, delimiter_len = delimiter.length();
     std::string token;

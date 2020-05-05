@@ -5,7 +5,7 @@
 bool LexicalAnalyzerDriver::IsInputOver() {
   return this->input_over_;
 }
-LexicalAnalyzerDriver::LexicalAnalyzerDriver(DFAState *root_state_, const string &input_file_name_) :
+LexicalAnalyzerDriver::LexicalAnalyzerDriver(DFAState *root_state_, const string &input_file_name_, const vector<RegularExpression> &regular_expressions) :
     root_state_(root_state_),
     input_over_(false),
     forward_iterator_fills_buffer_(true),
@@ -21,6 +21,8 @@ LexicalAnalyzerDriver::LexicalAnalyzerDriver(DFAState *root_state_, const string
   //This char is dummy as it's skipped when returning the lexeme as the root state has no character transitioner
 
   this->characters_states_.push(make_pair(this->dummy_initial_transition_char_, this->root_state_));
+
+  SetRegularExpressionsNames(regular_expressions);
 }
 
 //The caller has to check if no more input is present by calling IsInputOver method
@@ -79,6 +81,9 @@ Token *LexicalAnalyzerDriver::GetTokenFromStatesStack() {
     this->characters_states_.pop();
   }
   reverse(lexeme.begin(), lexeme.end());
+  if(token_name[0] == '\\') {
+    token_name.erase(0, 1);
+  }
   return new Token(lexeme, token_name);
 }
 
@@ -133,4 +138,18 @@ LexicalAnalyzerDriver::~LexicalAnalyzerDriver() {
 }
 bool LexicalAnalyzerDriver::IsSkippableCharacter(char c) const {
   return c == '\n' || c == ' ' || c == '\t';
+}
+
+set<string> LexicalAnalyzerDriver::GetRegularExpressionsNames() {
+    return regular_expressions_names_;
+}
+
+void LexicalAnalyzerDriver::SetRegularExpressionsNames(const vector<RegularExpression> &regular_expressions) {
+    for (auto&& regular_expression : regular_expressions){
+        string regular_expression_name = regular_expression.getName();
+        if(regular_expression_name[0] == '\\'){
+            regular_expression_name.erase(0,1);
+        }
+        regular_expressions_names_.insert(regular_expression_name);
+    }
 }

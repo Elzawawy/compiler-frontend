@@ -58,13 +58,13 @@ void LanguageParser::parseFile(std::string rules_file_path)
 void LanguageParser::keywordAndPunctuationHandler(std::string rule)
 {
     // set the name of the regex according to one of the two types in this handler.
-    std::string regex_name = (rule[0]==KEYWORD_INDICATOR) ? KEYWORD_NAME : PUNCTUATION_NAME;
+    //std::string regex_name = (rule[0]==KEYWORD_INDICATOR) ? KEYWORD_NAME : PUNCTUATION_NAME;
     // remove expression type indicators ([,],{,}) and trim rule.
     util::stripFirstAndLastChars(rule);
     util::trimBothEnds(rule);
     // for each keyword/punctuation in the array defined, lets make a regex and populate the input table with new symbols!
     for (auto& regex_value: util::splitOnDelimiter(rule, ' '))
-        updateExpressionsAndInputTable(regex_name, regex_value);
+        updateExpressionsAndInputTable(regex_value, regex_value);
 }
 
 /**

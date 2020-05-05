@@ -18,11 +18,12 @@ class ParsingTableGenerator {
 public:
     const std::string epsilon = "\\L";
     const int synch = -1;
+    const int empty = -2;
     ParsingTableGenerator(std::unordered_set<std::string>& terminals_, std::vector<NonTerminal>& non_terminals_);
     void computeFirst();
     void computeFollow();
     void constructParsingTable();
-    void writeParsingTable();
+    void writeParsingTable(const std::string& out_file_relative_path);
 
 private:
     std::unordered_set<std::string>& terminals_;
