@@ -18,7 +18,7 @@ class ParsingTableGenerator {
 public:
     const std::string epsilon = "\\L";
     const int synch = -1;
-    ParsingTableGenerator(std::unordered_set<std::string> &terminals_, std::vector<NonTerminal> &non_terminals_);
+    ParsingTableGenerator(std::unordered_set<std::string>& terminals_, std::vector<NonTerminal>& non_terminals_);
     void computeFirst();
     void computeFollow();
     void constructParsingTable();
@@ -32,8 +32,8 @@ private:
     std::unordered_map<std::string, std::unordered_set<std::string>> non_terminal_non_terminal_parents;
     void fill_follow_from_production(std::unordered_set<std::string>& follow,
             const std::vector<std::string>& production, const NonTerminal& current, const NonTerminal& parent);
-  
-    void fill_parsing_table_entry_with_keys_and_value(std::unordered_map<std::string, int> &parsing_table_entry,
-                                                      const std::unordered_set<std::string> &keys, const int value);
+
+    void fill_parsing_table_entry_with_keys_and_value(std::unordered_map<std::string, int>& parsing_table_entry,
+            const std::unordered_set<std::string>& keys, const int value);
 };
 #endif //PRSGEN_PARSING_TABLE_GENERATOR_H
