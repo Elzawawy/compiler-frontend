@@ -45,6 +45,8 @@ Token *LexicalAnalyzerDriver::GetNextToken() {
       for (int i = 0; i < this->characters_states_.size(); ++i) {
         if (this->characters_states_.top().second->IsAcceptingState()) {
           Token *token = this->GetTokenFromStatesStack();
+          //When encountering an acceptance state forward the forward pointer to skip any skippable character to check if the EOF is reached
+          if(this->IsSkippableCharacter(*this->forward_)) this->IncreaseForwardPointer(true);
           if(*this->forward_ == EOF) this->input_over_ = true;
           //Push the s  tate after the root state onto the stack in order to be used in the next call of GetNextToken
           this->characters_states_.push(make_pair(this->dummy_initial_transition_char_, this->root_state_));
