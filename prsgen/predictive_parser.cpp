@@ -43,7 +43,7 @@ void PredicativeParser::Parse() {
         }
         // Check if there is still tokens in the input buffer (driver.getNextToken)
         if (current_token->GetTokenName() != END_MARKER) {
-            output_file_ << "Parsing ended while there is still tokens" << endl;
+            output_file_ << "Parsing ended while there are still tokens" << endl;
         }
         delete current_token;
     } else {
